@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GPSBabel - https://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <time>2026-01-20T10:00:26.286Z</time>
+    <bounds minlat="34.922676491" minlon="-90.366860049" maxlat="34.941029705" maxlon="-90.329503082"/>
+  </metadata>
+  <wpt lat="34.931766800" lon="-90.355677900">
+    <name>HRS22003</name>
+    <cmt>HRS22003</cmt>
+    <desc>HRS22003</desc>
+  </wpt>
+  <wpt lat="34.941027768" lon="-90.346572514">
+    <name>HRS23001</name>
+    <cmt>HRS23001</cmt>
+    <desc>HRS23001</desc>
+  </wpt>
+  <wpt lat="34.929397871" lon="-90.357796637">
+    <name>HRS22001</name>
+    <cmt>HRS22001</cmt>
+    <desc>HRS22001</desc>
+  </wpt>
+  <wpt lat="34.933167100" lon="-90.354320700">
+    <name>HRS22004</name>
+    <cmt>HRS22004</cmt>
+    <desc>HRS22004</desc>
+  </wpt>
+  <wpt lat="34.922676491" lon="-90.366860049">
+    <name>HRS22002</name>
+    <cmt>HRS22002</cmt>
+    <desc>HRS22002</desc>
+  </wpt>
+  <wpt lat="34.935855000" lon="-90.349699900">
+    <name>HRS22005</name>
+    <cmt>HRS22005</cmt>
+    <desc>HRS22005</desc>
+  </wpt>
+  <wpt lat="34.940807793" lon="-90.338827227">
+    <name>HRS23003</name>
+    <cmt>HRS23003</cmt>
+    <desc>HRS23003</desc>
+  </wpt>
+  <wpt lat="34.936680102" lon="-90.329503082">
+    <name>HRS23005</name>
+    <cmt>HRS23005</cmt>
+    <desc>HRS23005</desc>
+  </wpt>
+  <wpt lat="34.940437936" lon="-90.337273203">
+    <name>HRS23004</name>
+    <cmt>HRS23004</cmt>
+    <desc>HRS23004</desc>
+  </wpt>
+  <wpt lat="34.941029705" lon="-90.344423511">
+    <name>HRS23002</name>
+    <cmt>HRS23002</cmt>
+    <desc>HRS23002</desc>
+  </wpt>
+</gpx>
