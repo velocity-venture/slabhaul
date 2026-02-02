@@ -1,0 +1,34 @@
+# Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Platform generated
+android/.gradle/
+android/local.properties
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Environment
+.env
+
+# macOS
+.DS_Store
+*.dSYM.zip
+*.dSYM
+
+# Pub
+.pub-cache/
+.pub/
+pubspec.lock
