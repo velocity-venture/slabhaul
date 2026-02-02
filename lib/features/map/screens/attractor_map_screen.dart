@@ -8,6 +8,7 @@ import 'package:slabhaul/core/utils/constants.dart';
 import 'package:slabhaul/features/map/providers/map_providers.dart';
 import 'package:slabhaul/features/map/providers/wind_providers.dart';
 import 'package:slabhaul/features/map/providers/hotspot_providers.dart';
+import 'package:slabhaul/features/map/providers/streamflow_providers.dart';
 import 'package:slabhaul/features/map/widgets/attractor_bottom_sheet.dart';
 import 'package:slabhaul/features/map/widgets/attractor_filter_bar.dart';
 import 'package:slabhaul/features/map/widgets/attractor_marker.dart';
@@ -17,6 +18,8 @@ import 'package:slabhaul/features/map/widgets/lake_selector.dart';
 import 'package:slabhaul/features/map/widgets/wind_overlay.dart';
 import 'package:slabhaul/features/map/widgets/wind_effects_layer.dart';
 import 'package:slabhaul/features/map/widgets/wind_forecast_slider.dart';
+import 'package:slabhaul/features/map/widgets/inflow_layer.dart';
+import 'package:slabhaul/features/map/widgets/streamflow_bottom_sheet.dart';
 
 /// Full-screen map showing fish attractor locations with clustering, filtering,
 /// wind effects visualization, and forecast slider.
@@ -90,6 +93,8 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
     final hotspotsEnabled = ref.watch(hotspotsEnabledProvider);
     final rankedHotspotsAsync = ref.watch(rankedHotspotsProvider);
     final selectedHotspot = ref.watch(selectedHotspotProvider);
+    final streamflowEnabled = ref.watch(streamflowEnabledProvider);
+    final selectedInflow = ref.watch(selectedInflowProvider);
 
     // When the selected lake changes, animate the map to the lake centre.
     ref.listen<String?>(selectedLakeProvider, (previous, next) {
@@ -129,6 +134,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                 // Dismiss the bottom sheets on map tap.
                 ref.read(selectedAttractorProvider.notifier).state = null;
                 ref.read(selectedHotspotProvider.notifier).state = null;
+                ref.read(selectedInflowProvider.notifier).state = null;
                 setState(() {
                   _showWindPanel = false;
                 });
@@ -146,6 +152,9 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
               // Wind effects layer (bank colors, arrows, calm pockets)
               // Rendered BEFORE markers so markers appear on top
               const WindEffectsLayer(),
+
+              // Inflow/Streamflow layer (flow markers, direction lines)
+              const InflowLayer(),
 
               // Attractor markers with clustering
               filteredAsync.when(
@@ -431,6 +440,20 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
 
           // Hotspot bottom sheet
           if (selectedHotspot != null) const HotspotBottomSheet(),
+
+          // Streamflow bottom sheet
+          if (selectedInflow != null) const StreamflowBottomSheet(),
+
+          // Streamflow overlay (compact info display)
+          if (streamflowEnabled) const StreamflowOverlay(),
+
+          // Streamflow legend (when enabled)
+          if (streamflowEnabled)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + (windEnabled && effectsEnabled ? 280 : 170),
+              right: 12,
+              child: const InflowLayerLegend(),
+            ),
         ],
       ),
 
@@ -497,6 +520,26 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                 ),
               ),
             ),
+          
+          // Streamflow/Inflow toggle
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: FloatingActionButton(
+              mini: true,
+              heroTag: 'streamflow_toggle',
+              backgroundColor:
+                  streamflowEnabled ? AppColors.info : AppColors.card,
+              onPressed: () {
+                ref.read(streamflowEnabledProvider.notifier).state = !streamflowEnabled;
+              },
+              tooltip: streamflowEnabled ? 'Hide streamflow' : 'Show streamflow',
+              child: Icon(
+                Icons.water,
+                color: streamflowEnabled ? Colors.white : AppColors.textSecondary,
+                size: 20,
+              ),
+            ),
+          ),
           
           // Main wind toggle
           FloatingActionButton(

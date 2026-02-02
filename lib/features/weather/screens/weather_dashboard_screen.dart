@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:slabhaul/core/utils/constants.dart';
 import 'package:slabhaul/shared/widgets/skeleton_loader.dart';
 import 'package:slabhaul/features/weather/providers/weather_providers.dart';
@@ -140,10 +141,48 @@ class WeatherDashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Lake Conditions
+                  // Quick Access Cards
+                  _QuickAccessSection(ref: ref),
+                  const SizedBox(height: 12),
+
+                  // Lake Conditions (tappable to detailed view)
                   lakeAsync.when(
-                    data: (conditions) =>
-                        LakeConditionsCard(conditions: conditions),
+                    data: (conditions) => GestureDetector(
+                      onTap: () => context.push('/lake-level'),
+                      child: Stack(
+                        children: [
+                          LakeConditionsCard(conditions: conditions),
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.teal.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Details',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: AppColors.teal,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(Icons.chevron_right,
+                                      size: 14, color: AppColors.teal),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     loading: () => const _WeatherSkeleton(height: 260),
                     error: (err, _) => _ErrorSection(
                       message: 'Could not load lake conditions',
@@ -330,6 +369,153 @@ class _TournamentModeNotice extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Quick Access Section - Cards for navigating to detailed features
+// ---------------------------------------------------------------------------
+
+class _QuickAccessSection extends StatelessWidget {
+  final WidgetRef ref;
+
+  const _QuickAccessSection({required this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Quick Access',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _QuickAccessCard(
+                icon: Icons.phishing,
+                label: 'Bait Tips',
+                sublabel: 'What to use',
+                color: AppColors.teal,
+                onTap: () => context.push('/bait-recommendations'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _QuickAccessCard(
+                icon: Icons.local_fire_department,
+                label: 'Best Areas',
+                sublabel: 'Hot spots',
+                color: AppColors.warning,
+                onTap: () => context.push('/best-areas'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _QuickAccessCard(
+                icon: Icons.water_drop,
+                label: 'Lake Level',
+                sublabel: 'Trends & tips',
+                color: AppColors.info,
+                onTap: () => context.push('/lake-level'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _QuickAccessCard(
+                icon: Icons.map,
+                label: 'Map',
+                sublabel: 'Attractors',
+                color: AppColors.success,
+                onTap: () => context.go('/map'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickAccessCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String sublabel;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _QuickAccessCard({
+    required this.icon,
+    required this.label,
+    required this.sublabel,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    sublabel,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: AppColors.textMuted,
+            ),
+          ],
+        ),
       ),
     );
   }

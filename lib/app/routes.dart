@@ -7,6 +7,8 @@ import '../features/calculator/screens/calculator_screen.dart';
 import '../features/knowledge_base/screens/knowledge_base_screen.dart';
 import '../features/bait_recommendations/screens/bait_recommendations_screen.dart';
 import '../features/hotspots/screens/best_areas_screen.dart';
+import '../features/lake_level/screens/lake_level_screen.dart';
+import '../features/clarity/screens/water_clarity_screen.dart';
 import '../features/auth/screens/profile_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 
@@ -33,6 +35,18 @@ final goRouter = GoRouter(
       path: '/best-areas',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const BestAreasScreen(),
+    ),
+    // Lake Level - detailed water level view
+    GoRoute(
+      path: '/lake-level',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const LakeLevelScreen(),
+    ),
+    // Water Clarity - clarity estimation and zones
+    GoRoute(
+      path: '/water-clarity',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const WaterClarityScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
