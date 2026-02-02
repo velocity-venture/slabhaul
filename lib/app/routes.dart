@@ -5,6 +5,7 @@ import '../features/map/screens/attractor_map_screen.dart';
 import '../features/weather/screens/weather_dashboard_screen.dart';
 import '../features/calculator/screens/calculator_screen.dart';
 import '../features/knowledge_base/screens/knowledge_base_screen.dart';
+import '../features/bait_recommendations/screens/bait_recommendations_screen.dart';
 import '../features/auth/screens/profile_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 
@@ -19,6 +20,12 @@ final goRouter = GoRouter(
       path: '/login',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const LoginScreen(),
+    ),
+    // Bait Recommendations - accessible from any screen
+    GoRoute(
+      path: '/bait-recommendations',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const BaitRecommendationsScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
