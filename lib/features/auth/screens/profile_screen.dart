@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/utils/constants.dart';
 import '../../../core/services/supabase_service.dart';
 import '../providers/auth_providers.dart';
+import '../../settings/widgets/tournament_mode_toggle.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -63,6 +64,12 @@ class ProfileScreen extends ConsumerWidget {
 
               // Status card
               _StatusCard(isLoggedIn: isLoggedIn),
+              const SizedBox(height: 16),
+
+              // Tournament Mode toggle
+              const TournamentModeToggle(),
+              const SizedBox(height: 12),
+              const TournamentModeInfoCard(),
               const SizedBox(height: 16),
 
               // Settings section

@@ -12,6 +12,9 @@ import 'package:slabhaul/features/weather/widgets/seven_day_forecast.dart';
 import 'package:slabhaul/features/weather/widgets/lake_conditions_card.dart';
 import 'package:slabhaul/features/weather/widgets/thermocline_card.dart';
 import 'package:slabhaul/features/weather/providers/thermocline_providers.dart';
+import 'package:slabhaul/features/weather/widgets/solunar_card.dart';
+import 'package:slabhaul/features/weather/providers/solunar_providers.dart';
+import 'package:slabhaul/features/settings/providers/tournament_mode_provider.dart';
 
 class WeatherDashboardScreen extends ConsumerWidget {
   const WeatherDashboardScreen({super.key});
@@ -20,6 +23,7 @@ class WeatherDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final weatherAsync = ref.watch(weatherDataProvider);
     final lakeAsync = ref.watch(lakeConditionsProvider);
+    final isTournamentMode = ref.watch(tournamentModeProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -112,6 +116,10 @@ class WeatherDashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
 
+                  // Solunar Fishing Activity
+                  SolunarCard(forecast: ref.watch(solunarForecastProvider)),
+                  const SizedBox(height: 12),
+
                   // Hourly Forecast Strip
                   weatherAsync.when(
                     data: (weather) =>
@@ -142,18 +150,21 @@ class WeatherDashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Thermocline Predictor
-                  ref.watch(thermoclineDataProvider).when(
-                    data: (thermocline) => ThermoclineCard(
-                      data: thermocline,
-                      maxDepthFt: ref.watch(selectedWeatherLakeProvider).maxDepthFt ?? 35,
-                    ),
-                    loading: () => const _WeatherSkeleton(height: 340),
-                    error: (err, _) => _ErrorSection(
-                      message: 'Could not load thermocline prediction',
-                      onRetry: () => ref.invalidate(thermoclineDataProvider),
-                    ),
-                  ),
+                  // Thermocline Predictor (hidden in tournament mode)
+                  if (!isTournamentMode)
+                    ref.watch(thermoclineDataProvider).when(
+                      data: (thermocline) => ThermoclineCard(
+                        data: thermocline,
+                        maxDepthFt: ref.watch(selectedWeatherLakeProvider).maxDepthFt ?? 35,
+                      ),
+                      loading: () => const _WeatherSkeleton(height: 340),
+                      error: (err, _) => _ErrorSection(
+                        message: 'Could not load thermocline prediction',
+                        onRetry: () => ref.invalidate(thermoclineDataProvider),
+                      ),
+                    )
+                  else
+                    const _TournamentModeNotice(),
                   const SizedBox(height: 24),
                 ]),
               ),
@@ -239,6 +250,69 @@ class _ErrorSection extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tournament Mode Notice (shown when AI features are hidden)
+// ---------------------------------------------------------------------------
+
+class _TournamentModeNotice extends StatelessWidget {
+  const _TournamentModeNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.warning.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.emoji_events,
+              color: AppColors.warning,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 14),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tournament Mode Active',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.warning,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'AI-assisted features are hidden for fair play. '
+                  'Disable in Profile settings.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
