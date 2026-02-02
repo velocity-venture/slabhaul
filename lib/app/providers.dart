@@ -3,6 +3,8 @@ import '../core/services/attractor_service.dart';
 import '../core/services/weather_service.dart';
 import '../core/services/lake_service.dart';
 import '../core/services/generation_service.dart';
+import '../core/services/wind_service.dart';
+import '../core/services/hotspot_service.dart';
 
 final attractorServiceProvider = Provider<AttractorService>((ref) {
   return AttractorService();
@@ -18,4 +20,12 @@ final lakeServiceProvider = Provider<LakeService>((ref) {
 
 final generationServiceProvider = Provider<GenerationService>((ref) {
   return GenerationService();
+});
+
+final windServiceProviderImpl = Provider<WindService>((ref) {
+  return WindService();
+});
+
+final hotspotServiceProviderImpl = Provider<HotspotService>((ref) {
+  return HotspotService();
 });

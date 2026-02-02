@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:slabhaul/core/utils/constants.dart';
 import 'package:slabhaul/features/map/providers/map_providers.dart';
 import 'package:slabhaul/features/map/providers/wind_providers.dart';
+import 'package:slabhaul/features/map/providers/hotspot_providers.dart';
 import 'package:slabhaul/features/map/widgets/attractor_bottom_sheet.dart';
 import 'package:slabhaul/features/map/widgets/attractor_filter_bar.dart';
 import 'package:slabhaul/features/map/widgets/attractor_marker.dart';
+import 'package:slabhaul/features/map/widgets/hotspot_marker.dart';
+import 'package:slabhaul/features/map/widgets/hotspot_bottom_sheet.dart';
 import 'package:slabhaul/features/map/widgets/lake_selector.dart';
 import 'package:slabhaul/features/map/widgets/wind_overlay.dart';
+import 'package:slabhaul/features/map/widgets/wind_effects_layer.dart';
+import 'package:slabhaul/features/map/widgets/wind_forecast_slider.dart';
 
 /// Full-screen map showing fish attractor locations with clustering, filtering,
-/// and an optional wind overlay.
+/// wind effects visualization, and forecast slider.
 class AttractorMapScreen extends ConsumerStatefulWidget {
   const AttractorMapScreen({super.key});
 
@@ -25,6 +31,7 @@ class AttractorMapScreen extends ConsumerStatefulWidget {
 class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
     with TickerProviderStateMixin {
   late final MapController _mapController;
+  bool _showWindPanel = false;
 
   @override
   void initState() {
@@ -79,6 +86,10 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
     final selectedAttractor = ref.watch(selectedAttractorProvider);
     final lakesAsync = ref.watch(lakesProvider);
     final windEnabled = ref.watch(windEnabledProvider);
+    final effectsEnabled = ref.watch(windEffectsLayerEnabledProvider);
+    final hotspotsEnabled = ref.watch(hotspotsEnabledProvider);
+    final rankedHotspotsAsync = ref.watch(rankedHotspotsProvider);
+    final selectedHotspot = ref.watch(selectedHotspotProvider);
 
     // When the selected lake changes, animate the map to the lake centre.
     ref.listen<String?>(selectedLakeProvider, (previous, next) {
@@ -115,8 +126,12 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
               maxZoom: 18.0,
               minZoom: 5.0,
               onTap: (_, __) {
-                // Dismiss the bottom sheet on map tap.
+                // Dismiss the bottom sheets on map tap.
                 ref.read(selectedAttractorProvider.notifier).state = null;
+                ref.read(selectedHotspotProvider.notifier).state = null;
+                setState(() {
+                  _showWindPanel = false;
+                });
               },
             ),
             children: [
@@ -127,6 +142,10 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                 maxZoom: 18,
                 tileBuilder: _darkTileBuilder,
               ),
+
+              // Wind effects layer (bank colors, arrows, calm pockets)
+              // Rendered BEFORE markers so markers appear on top
+              const WindEffectsLayer(),
 
               // Attractor markers with clustering
               filteredAsync.when(
@@ -139,6 +158,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                       height: 36,
                       child: GestureDetector(
                         onTap: () {
+                          ref.read(selectedHotspotProvider.notifier).state = null;
                           ref.read(selectedAttractorProvider.notifier).state =
                               attractor;
                         },
@@ -155,14 +175,14 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                       builder: (context, clusterMarkers) {
                         return Container(
                           decoration: BoxDecoration(
-                            color: AppColors.teal.withValues(alpha: 0.85),
+                            color: AppColors.teal.withOpacity(0.85),
                             shape: BoxShape.circle,
                             border:
                                 Border.all(color: Colors.white, width: 2),
                             boxShadow: [
                               BoxShadow(
                                 color:
-                                    AppColors.teal.withValues(alpha: 0.4),
+                                    AppColors.teal.withOpacity(0.4),
                                 blurRadius: 6,
                                 spreadRadius: 1,
                               ),
@@ -185,6 +205,39 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                 loading: () => const MarkerLayer(markers: []),
                 error: (_, __) => const MarkerLayer(markers: []),
               ),
+
+              // Hotspot markers (shown when enabled)
+              if (hotspotsEnabled)
+                rankedHotspotsAsync.when(
+                  data: (ratings) {
+                    final markers = ratings.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final rating = entry.value;
+                      return Marker(
+                        point: LatLng(
+                          rating.hotspot.latitude,
+                          rating.hotspot.longitude,
+                        ),
+                        width: index < 3 ? 48 : 36,
+                        height: index < 3 ? 48 : 36,
+                        child: GestureDetector(
+                          onTap: () {
+                            ref.read(selectedAttractorProvider.notifier).state = null;
+                            ref.read(selectedHotspotProvider.notifier).state = rating;
+                          },
+                          child: HotspotMarker(
+                            rating: rating,
+                            rank: index + 1,
+                          ),
+                        ),
+                      );
+                    }).toList();
+
+                    return MarkerLayer(markers: markers);
+                  },
+                  loading: () => const MarkerLayer(markers: []),
+                  error: (_, __) => const MarkerLayer(markers: []),
+                ),
             ],
           ),
 
@@ -203,34 +256,115 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
             ),
           ),
 
-          // Wind overlay (conditionally shown)
-          const WindOverlay(),
+          // Wind overlay card (conditionally shown)
+          GestureDetector(
+            onTap: () {
+              if (windEnabled) {
+                setState(() {
+                  _showWindPanel = !_showWindPanel;
+                });
+              }
+            },
+            child: const WindOverlay(),
+          ),
 
-          // Attractor count badge
-          filteredAsync.when(
-            data: (attractors) => Positioned(
-              top: MediaQuery.of(context).padding.top + 100,
-              left: 12,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.88),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.cardBorder),
-                ),
-                child: Text(
-                  '${attractors.length} attractors',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+          // Wind forecast slider (shown when wind is enabled)
+          if (windEnabled)
+            Positioned(
+              bottom: selectedAttractor != null ? 220 : 90,
+              left: 0,
+              right: 70, // Leave room for the wind overlay
+              child: const WindForecastSlider(),
             ),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+
+          // Wind effects legend (shown when effects layer is enabled)
+          if (windEnabled && effectsEnabled)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 170,
+              right: 12,
+              child: const WindEffectsLegend(),
+            ),
+
+          // Extended wind analysis panel (shown on tap)
+          if (_showWindPanel && windEnabled)
+            Positioned(
+              bottom: 100,
+              left: 12,
+              right: 12,
+              child: const WindAnalysisPanel(),
+            ),
+
+          // Count badges
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 100,
+            left: 12,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Attractor count
+                filteredAsync.when(
+                  data: (attractors) => Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface.withOpacity(0.88),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.cardBorder),
+                    ),
+                    child: Text(
+                      '${attractors.length} attractors',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
+
+                // Hotspot count (when enabled)
+                if (hotspotsEnabled)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: rankedHotspotsAsync.when(
+                      data: (ratings) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.warning.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColors.warning.withOpacity(0.4),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.local_fire_department,
+                              size: 14,
+                              color: AppColors.warning,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${ratings.length} hotspots',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.warning,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, __) => const SizedBox.shrink(),
+                    ),
+                  ),
+              ],
+            ),
           ),
 
           // Loading indicator while attractors load
@@ -260,10 +394,10 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withValues(alpha: 0.15),
+                  color: AppColors.error.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: AppColors.error.withValues(alpha: 0.4),
+                    color: AppColors.error.withOpacity(0.4),
                   ),
                 ),
                 child: Row(
@@ -292,24 +426,98 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
               ),
             ),
 
-          // Bottom sheet
+          // Attractor bottom sheet
           if (selectedAttractor != null) const AttractorBottomSheet(),
+
+          // Hotspot bottom sheet
+          if (selectedHotspot != null) const HotspotBottomSheet(),
         ],
       ),
 
-      // FAB for wind overlay toggle
-      floatingActionButton: FloatingActionButton(
-        mini: true,
-        backgroundColor:
-            windEnabled ? AppColors.teal : AppColors.card,
-        onPressed: () {
-          ref.read(windEnabledProvider.notifier).state = !windEnabled;
-        },
-        tooltip: windEnabled ? 'Hide wind overlay' : 'Show wind overlay',
-        child: Icon(
-          Icons.air,
-          color: windEnabled ? Colors.white : AppColors.textSecondary,
-        ),
+      // FAB stack for map controls
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Best Areas button - navigate to ranked list
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: FloatingActionButton.small(
+              heroTag: 'best_areas',
+              backgroundColor: AppColors.success,
+              onPressed: () => context.push('/best-areas'),
+              tooltip: 'Best Areas',
+              child: const Icon(
+                Icons.local_fire_department,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+
+          // Hotspots toggle
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: FloatingActionButton(
+              mini: true,
+              heroTag: 'hotspots_toggle',
+              backgroundColor:
+                  hotspotsEnabled ? AppColors.warning : AppColors.card,
+              onPressed: () {
+                ref.read(hotspotsEnabledProvider.notifier).state = !hotspotsEnabled;
+              },
+              tooltip: hotspotsEnabled ? 'Hide hotspots' : 'Show hotspots',
+              child: Icon(
+                Icons.local_fire_department,
+                color: hotspotsEnabled ? Colors.white : AppColors.textSecondary,
+                size: 20,
+              ),
+            ),
+          ),
+
+          // Wind effects toggle (only shown when wind is enabled)
+          if (windEnabled)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: FloatingActionButton(
+                mini: true,
+                heroTag: 'wind_effects',
+                backgroundColor:
+                    effectsEnabled ? AppColors.tealDark : AppColors.card,
+                onPressed: () {
+                  ref.read(windEffectsLayerEnabledProvider.notifier).state = 
+                      !effectsEnabled;
+                },
+                tooltip: effectsEnabled 
+                    ? 'Hide bank effects' 
+                    : 'Show bank effects',
+                child: Icon(
+                  Icons.layers,
+                  color: effectsEnabled ? Colors.white : AppColors.textSecondary,
+                  size: 20,
+                ),
+              ),
+            ),
+          
+          // Main wind toggle
+          FloatingActionButton(
+            mini: true,
+            heroTag: 'wind_toggle',
+            backgroundColor:
+                windEnabled ? AppColors.teal : AppColors.card,
+            onPressed: () {
+              ref.read(windEnabledProvider.notifier).state = !windEnabled;
+              if (!windEnabled) {
+                // Reset time selection when enabling
+                ref.read(selectedWindTimeProvider.notifier).state = null;
+              }
+            },
+            tooltip: windEnabled ? 'Hide wind overlay' : 'Show wind overlay',
+            child: Icon(
+              Icons.air,
+              color: windEnabled ? Colors.white : AppColors.textSecondary,
+            ),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );

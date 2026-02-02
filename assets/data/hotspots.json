@@ -1,0 +1,368 @@
+{
+  "hotspots": [
+    {
+      "id": "horseshoe_cypress_flats",
+      "name": "North Cypress Flats",
+      "latitude": 34.945,
+      "longitude": -90.342,
+      "lake_id": "horseshoe_lake_ar",
+      "lake_name": "Horseshoe Lake",
+      "structure_type": "flat",
+      "description": "Shallow cypress flats ideal for spring spawn. Fish stage here as water warms into the 55-65°F range.",
+      "min_depth_ft": 2,
+      "max_depth_ft": 6,
+      "best_seasons": ["pre_spawn", "spawn"],
+      "techniques": ["slip_float", "tight_lining", "shooting_docks"],
+      "ideal_conditions": {
+        "min_water_temp_f": 55,
+        "max_water_temp_f": 68,
+        "water_level_trend": "stable",
+        "time_of_day": "early_morning"
+      },
+      "notes": "Look for active beds around cypress knees. Fish extremely shallow during active spawn.",
+      "confidence_score": 85
+    },
+    {
+      "id": "horseshoe_bridge_complex",
+      "name": "Highway 77 Bridge",
+      "latitude": 34.932,
+      "longitude": -90.348,
+      "lake_id": "horseshoe_lake_ar",
+      "lake_name": "Horseshoe Lake",
+      "structure_type": "bridge_piling",
+      "description": "Deep pilings provide year-round holding structure. Crappie suspend at various depths depending on season.",
+      "min_depth_ft": 8,
+      "max_depth_ft": 18,
+      "best_seasons": ["summer", "fall", "winter"],
+      "techniques": ["vertical_jigging", "spider_rigging", "tight_lining"],
+      "ideal_conditions": {
+        "min_water_temp_f": 45,
+        "max_water_temp_f": 78,
+        "max_wind_mph": 15
+      },
+      "notes": "Work pilings systematically with electronics. Fish often suspend 8-12ft regardless of bottom depth.",
+      "confidence_score": 90
+    },
+    {
+      "id": "horseshoe_channel_ledge",
+      "name": "Old River Channel",
+      "latitude": 34.928,
+      "longitude": -90.355,
+      "lake_id": "horseshoe_lake_ar",
+      "lake_name": "Horseshoe Lake",
+      "structure_type": "ledge",
+      "description": "The old river channel creates a defined ledge where crappie stage during transition periods.",
+      "min_depth_ft": 10,
+      "max_depth_ft": 18,
+      "best_seasons": ["post_spawn", "fall"],
+      "techniques": ["spider_rigging", "trolling", "vertical_jigging"],
+      "ideal_conditions": {
+        "min_water_temp_f": 65,
+        "max_water_temp_f": 80,
+        "pressure_trend": "falling"
+      },
+      "notes": "Follow the channel edge with spider rigs. Post-spawn fish stack up here before moving deep.",
+      "confidence_score": 80
+    },
+    {
+      "id": "horseshoe_brush_complex_south",
+      "name": "South Shore Brush Piles",
+      "latitude": 34.918,
+      "longitude": -90.362,
+      "lake_id": "horseshoe_lake_ar",
+      "lake_name": "Horseshoe Lake",
+      "structure_type": "brush_pile",
+      "description": "AGFC brush pile complex with multiple structures in 8-14ft. Consistent producer year-round.",
+      "min_depth_ft": 8,
+      "max_depth_ft": 14,
+      "best_seasons": ["summer", "fall", "winter"],
+      "techniques": ["vertical_jigging", "tight_lining"],
+      "ideal_conditions": {
+        "min_water_temp_f": 50,
+        "max_water_temp_f": 85,
+        "max_wind_mph": 20
+      },
+      "notes": "Multiple brush piles within casting distance. Work each one before moving.",
+      "confidence_score": 88
+    },
+    {
+      "id": "horseshoe_marina_docks",
+      "name": "Horseshoe Lake Marina",
+      "latitude": 34.930,
+      "longitude": -90.340,
+      "lake_id": "horseshoe_lake_ar",
+      "lake_name": "Horseshoe Lake",
+      "structure_type": "dock",
+      "description": "Marina docks with deep water access nearby. Crappie use dock shade and structure year-round.",
+      "min_depth_ft": 4,
+      "max_depth_ft": 12,
+      "best_seasons": ["summer", "fall"],
+      "techniques": ["shooting_docks", "vertical_jigging", "casting"],
+      "ideal_conditions": {
+        "min_water_temp_f": 70,
+        "max_water_temp_f": 90,
+        "time_of_day": "midday",
+        "min_cloud_cover": 0,
+        "max_cloud_cover": 30
+      },
+      "notes": "Best on sunny days when fish seek shade. Shoot small jigs under walkways.",
+      "confidence_score": 75
+    },
+
+    {
+      "id": "reelfoot_grassy_flats",
+      "name": "South End Grassy Flats",
+      "latitude": 36.340,
+      "longitude": -89.405,
+      "lake_id": "reelfoot_lake_tn",
+      "lake_name": "Reelfoot Lake",
+      "structure_type": "flat",
+      "description": "Legendary spawning grounds. Massive crappie move shallow when water hits 58-62°F.",
+      "min_depth_ft": 2,
+      "max_depth_ft": 5,
+      "best_seasons": ["pre_spawn", "spawn"],
+      "techniques": ["slip_float", "tight_lining", "casting"],
+      "ideal_conditions": {
+        "min_water_temp_f": 55,
+        "max_water_temp_f": 65,
+        "water_level_trend": "stable",
+        "time_of_day": "early_morning"
+      },
+      "notes": "Fish can be in 18 inches of water during peak spawn. Approach quietly.",
+      "confidence_score": 95
+    },
+    {
+      "id": "reelfoot_stumps_west",
+      "name": "West Basin Stump Fields",
+      "latitude": 36.395,
+      "longitude": -89.410,
+      "lake_id": "reelfoot_lake_tn",
+      "lake_name": "Reelfoot Lake",
+      "structure_type": "timber",
+      "description": "Vast stump fields from the 1811 earthquake. Fish relate to vertical structure year-round.",
+      "min_depth_ft": 3,
+      "max_depth_ft": 8,
+      "best_seasons": ["post_spawn", "summer", "fall"],
+      "techniques": ["tight_lining", "vertical_jigging", "slip_float"],
+      "ideal_conditions": {
+        "min_water_temp_f": 60,
+        "max_water_temp_f": 85
+      },
+      "notes": "Stay tight to stumps. Fish often suspend just off the wood.",
+      "confidence_score": 90
+    },
+    {
+      "id": "reelfoot_bayou_point",
+      "name": "Bayou du Chien Point",
+      "latitude": 36.415,
+      "longitude": -89.375,
+      "lake_id": "reelfoot_lake_tn",
+      "lake_name": "Reelfoot Lake",
+      "structure_type": "point",
+      "description": "Deep point where the bayou enters. Current and depth changes attract baitfish.",
+      "min_depth_ft": 5,
+      "max_depth_ft": 12,
+      "best_seasons": ["summer", "fall", "winter"],
+      "techniques": ["spider_rigging", "vertical_jigging", "trolling"],
+      "ideal_conditions": {
+        "min_water_temp_f": 48,
+        "max_water_temp_f": 75,
+        "water_level_trend": "rising"
+      },
+      "notes": "Rising water pushes fresh oxygen and baitfish. Fish stack on the point during fall.",
+      "confidence_score": 85
+    },
+    {
+      "id": "reelfoot_cypress_row",
+      "name": "North Cypress Row",
+      "latitude": 36.425,
+      "longitude": -89.395,
+      "lake_id": "reelfoot_lake_tn",
+      "lake_name": "Reelfoot Lake",
+      "structure_type": "timber",
+      "description": "Line of ancient cypress trees creating a travel corridor for crappie.",
+      "min_depth_ft": 4,
+      "max_depth_ft": 10,
+      "best_seasons": ["pre_spawn", "post_spawn", "fall"],
+      "techniques": ["slip_float", "tight_lining", "casting"],
+      "ideal_conditions": {
+        "min_water_temp_f": 52,
+        "max_water_temp_f": 72,
+        "pressure_trend": "falling"
+      },
+      "notes": "Fish the edges of cypress bases. Crappie use these as staging areas before and after spawn.",
+      "confidence_score": 88
+    },
+    {
+      "id": "reelfoot_air_park",
+      "name": "Air Park Boat Lane",
+      "latitude": 36.380,
+      "longitude": -89.365,
+      "lake_id": "reelfoot_lake_tn",
+      "lake_name": "Reelfoot Lake",
+      "structure_type": "creek_channel",
+      "description": "Dredged boat lane creates deeper channel through shallow flats. Winter concentration point.",
+      "min_depth_ft": 6,
+      "max_depth_ft": 12,
+      "best_seasons": ["winter", "fall"],
+      "techniques": ["vertical_jigging", "spider_rigging", "tight_lining"],
+      "ideal_conditions": {
+        "min_water_temp_f": 40,
+        "max_water_temp_f": 55,
+        "time_of_day": "midday"
+      },
+      "notes": "Winter crappie stack in the channel. Slow vertical presentation is key in cold water.",
+      "confidence_score": 82
+    },
+
+    {
+      "id": "kentucky_blood_river",
+      "name": "Blood River Mouth",
+      "latitude": 36.580,
+      "longitude": -88.230,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "creek_channel",
+      "description": "Major tributary creek channel. Fish stage here during seasonal transitions.",
+      "min_depth_ft": 15,
+      "max_depth_ft": 35,
+      "best_seasons": ["pre_spawn", "post_spawn", "fall"],
+      "techniques": ["spider_rigging", "trolling", "long_lining"],
+      "ideal_conditions": {
+        "min_water_temp_f": 50,
+        "max_water_temp_f": 70,
+        "water_level_trend": "stable"
+      },
+      "notes": "Follow the channel swing with spider rigs. Fish the 18-25ft depth zone during transitions.",
+      "confidence_score": 92
+    },
+    {
+      "id": "kentucky_paris_landing",
+      "name": "Paris Landing State Park",
+      "latitude": 36.520,
+      "longitude": -88.110,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "point",
+      "description": "Main lake point with adjacent marina and brush piles. Multi-season producer.",
+      "min_depth_ft": 8,
+      "max_depth_ft": 25,
+      "best_seasons": ["summer", "fall", "winter"],
+      "techniques": ["vertical_jigging", "spider_rigging", "casting"],
+      "ideal_conditions": {
+        "min_water_temp_f": 55,
+        "max_water_temp_f": 80,
+        "max_wind_mph": 18
+      },
+      "notes": "Work the point from 12-20ft. Brush piles on the flat hold fish year-round.",
+      "confidence_score": 85
+    },
+    {
+      "id": "kentucky_big_sandy_ledge",
+      "name": "Big Sandy Channel Ledge",
+      "latitude": 36.450,
+      "longitude": -88.050,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "ledge",
+      "description": "Sharp channel ledge dropping from 15 to 35ft. Summer thermocline often sets up here.",
+      "min_depth_ft": 15,
+      "max_depth_ft": 35,
+      "best_seasons": ["summer", "fall"],
+      "techniques": ["spider_rigging", "vertical_jigging", "trolling"],
+      "ideal_conditions": {
+        "min_water_temp_f": 70,
+        "max_water_temp_f": 85,
+        "time_of_day": "early_morning"
+      },
+      "notes": "Fish just above the thermocline. Early morning bite before fish move deep.",
+      "confidence_score": 88
+    },
+    {
+      "id": "kentucky_bridge_78",
+      "name": "Highway 78 Bridge",
+      "latitude": 36.680,
+      "longitude": -88.150,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "bridge_piling",
+      "description": "Main lake bridge with deep pilings. Night fishing under lights produces big slabs.",
+      "min_depth_ft": 20,
+      "max_depth_ft": 45,
+      "best_seasons": ["summer", "winter"],
+      "techniques": ["vertical_jigging", "tight_lining"],
+      "ideal_conditions": {
+        "min_water_temp_f": 55,
+        "max_water_temp_f": 85,
+        "time_of_day": "night"
+      },
+      "notes": "Night fishing is productive all summer. Fish suspend 15-25ft around lit pilings.",
+      "confidence_score": 80
+    },
+    {
+      "id": "kentucky_new_johnsonville",
+      "name": "New Johnsonville Flats",
+      "latitude": 36.025,
+      "longitude": -87.980,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "flat",
+      "description": "Extensive shallow flats protected from main lake wind. Prime spawning habitat.",
+      "min_depth_ft": 3,
+      "max_depth_ft": 10,
+      "best_seasons": ["pre_spawn", "spawn"],
+      "techniques": ["slip_float", "casting", "tight_lining"],
+      "ideal_conditions": {
+        "min_water_temp_f": 55,
+        "max_water_temp_f": 68,
+        "water_level_trend": "stable",
+        "max_wind_mph": 12,
+        "time_of_day": "early_morning"
+      },
+      "notes": "Protected from south wind. Fish push into 4-6ft during spawn.",
+      "confidence_score": 90
+    },
+    {
+      "id": "kentucky_brush_complex_12",
+      "name": "Mile Marker 12 Brush",
+      "latitude": 36.715,
+      "longitude": -88.095,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "brush_pile",
+      "description": "TWRA brush pile complex at consistent 18-22ft. Reliable year-round structure.",
+      "min_depth_ft": 18,
+      "max_depth_ft": 22,
+      "best_seasons": ["summer", "fall", "winter"],
+      "techniques": ["vertical_jigging", "spider_rigging"],
+      "ideal_conditions": {
+        "min_water_temp_f": 50,
+        "max_water_temp_f": 82,
+        "pressure_trend": "stable"
+      },
+      "notes": "Multiple piles within 200 yards. Work methodically with electronics.",
+      "confidence_score": 87
+    },
+    {
+      "id": "kentucky_ledbetter_bay",
+      "name": "Ledbetter Bay Stumps",
+      "latitude": 36.820,
+      "longitude": -88.280,
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "structure_type": "timber",
+      "description": "Submerged timber field in the upper bay. Fish hold tight to wood in 10-18ft.",
+      "min_depth_ft": 10,
+      "max_depth_ft": 18,
+      "best_seasons": ["fall", "winter", "pre_spawn"],
+      "techniques": ["tight_lining", "vertical_jigging", "slip_float"],
+      "ideal_conditions": {
+        "min_water_temp_f": 45,
+        "max_water_temp_f": 65,
+        "pressure_trend": "falling"
+      },
+      "notes": "Cold water concentration point. Fish pull tight to stumps when temps drop.",
+      "confidence_score": 83
+    }
+  ]
+}
