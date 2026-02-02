@@ -10,6 +10,8 @@ import 'package:slabhaul/features/weather/widgets/sun_moon_card.dart';
 import 'package:slabhaul/features/weather/widgets/hourly_forecast_strip.dart';
 import 'package:slabhaul/features/weather/widgets/seven_day_forecast.dart';
 import 'package:slabhaul/features/weather/widgets/lake_conditions_card.dart';
+import 'package:slabhaul/features/weather/widgets/thermocline_card.dart';
+import 'package:slabhaul/features/weather/providers/thermocline_providers.dart';
 
 class WeatherDashboardScreen extends ConsumerWidget {
   const WeatherDashboardScreen({super.key});
@@ -136,6 +138,20 @@ class WeatherDashboardScreen extends ConsumerWidget {
                     error: (err, _) => _ErrorSection(
                       message: 'Could not load lake conditions',
                       onRetry: () => ref.invalidate(lakeConditionsProvider),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Thermocline Predictor
+                  ref.watch(thermoclineDataProvider).when(
+                    data: (thermocline) => ThermoclineCard(
+                      data: thermocline,
+                      maxDepthFt: ref.watch(selectedWeatherLakeProvider).maxDepthFt ?? 35,
+                    ),
+                    loading: () => const _WeatherSkeleton(height: 340),
+                    error: (err, _) => _ErrorSection(
+                      message: 'Could not load thermocline prediction',
+                      onRetry: () => ref.invalidate(thermoclineDataProvider),
                     ),
                   ),
                   const SizedBox(height: 24),

@@ -8,11 +8,15 @@ class WeatherLakeCoords {
   final double lat;
   final double lon;
   final String name;
+  final double? maxDepthFt;
+  final double? areaAcres;
 
   const WeatherLakeCoords({
     required this.lat,
     required this.lon,
     required this.name,
+    this.maxDepthFt,
+    this.areaAcres,
   });
 }
 
@@ -23,6 +27,8 @@ final selectedWeatherLakeProvider = StateProvider<WeatherLakeCoords>((ref) {
     lat: 36.387,
     lon: -89.387,
     name: 'Reelfoot Lake',
+    maxDepthFt: 18, // Reelfoot is shallow - avg 5ft, max ~18ft
+    areaAcres: 15000,
   );
 });
 

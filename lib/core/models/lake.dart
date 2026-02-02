@@ -8,6 +8,8 @@ class Lake {
   final double? normalPoolElevation;
   final String? usgsGageId;
   final int attractorCount;
+  final double? maxDepthFt;
+  final double? areaAcres;
 
   const Lake({
     required this.id,
@@ -19,6 +21,8 @@ class Lake {
     this.normalPoolElevation,
     this.usgsGageId,
     this.attractorCount = 0,
+    this.maxDepthFt,
+    this.areaAcres,
   });
 
   factory Lake.fromJson(Map<String, dynamic> json) {
@@ -33,6 +37,8 @@ class Lake {
           (json['normal_pool_elevation'] as num?)?.toDouble(),
       usgsGageId: json['usgs_gage_id'] as String?,
       attractorCount: json['attractor_count'] as int? ?? 0,
+      maxDepthFt: (json['max_depth_ft'] as num?)?.toDouble(),
+      areaAcres: (json['area_acres'] as num?)?.toDouble(),
     );
   }
 
@@ -46,6 +52,8 @@ class Lake {
         'normal_pool_elevation': normalPoolElevation,
         'usgs_gage_id': usgsGageId,
         'attractor_count': attractorCount,
+        'max_depth_ft': maxDepthFt,
+        'area_acres': areaAcres,
       };
 
   String get displayName => '$name, $state';
