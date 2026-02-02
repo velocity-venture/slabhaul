@@ -152,6 +152,21 @@ class WeatherDashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
 
+                  // Dam Generation Status (for TVA lakes)
+                  if (ref.watch(hasGenerationTrackingProvider))
+                    ref.watch(lakeGenerationProvider).when(
+                      data: (genData) => genData != null
+                          ? GenerationStatusCard(data: genData)
+                          : const SizedBox.shrink(),
+                      loading: () => const _WeatherSkeleton(height: 280),
+                      error: (err, _) => _ErrorSection(
+                        message: 'Could not load generation data',
+                        onRetry: () => ref.invalidate(lakeGenerationProvider),
+                      ),
+                    ),
+                  if (ref.watch(hasGenerationTrackingProvider))
+                    const SizedBox(height: 12),
+
                   // Thermocline Predictor (hidden in tournament mode)
                   if (!isTournamentMode)
                     ref.watch(thermoclineDataProvider).when(
