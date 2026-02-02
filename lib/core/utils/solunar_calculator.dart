@@ -16,11 +16,11 @@ class SolunarCalculator {
     required double latitude,
     required double longitude,
   }) {
-    final moonPhase = MoonPhase.calculate(date);
+    final phase = moonPhase(date);
     
     // Simplified moon transit calculations
     // In production, use astronomical library for accurate times
-    final lunarDay = _getLunarDay(date);
+    final _ = _getLunarDay(date); // Used for transit calculation
     
     // Major periods occur when moon is overhead (~0h) and underfoot (~12h from transit)
     final moonTransit = _estimateMoonTransit(date, longitude);
@@ -32,11 +32,11 @@ class SolunarCalculator {
     final minorPeriod2Start = moonTransit.add(const Duration(hours: 6, minutes: 12));
     
     // Calculate activity rating based on moon phase
-    final phaseRating = _getPhaseRating(moonPhase);
+    final phaseRating = _getPhaseRating(phase);
     
     return SolunarForecast(
       date: date,
-      moonPhase: moonPhase,
+      moonPhase: phase,
       majorPeriods: [
         SolunarPeriod(
           start: majorPeriod1Start,

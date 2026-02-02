@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:slabhaul/core/models/lake.dart';
 import 'package:slabhaul/core/models/thermocline_data.dart';
 import 'package:slabhaul/core/services/thermocline_service.dart';
 import 'package:slabhaul/features/weather/providers/weather_providers.dart';
@@ -15,15 +16,25 @@ final thermoclineServiceProvider = Provider<ThermoclineService>((ref) {
 /// and generate fishing recommendations.
 final thermoclineDataProvider = FutureProvider<ThermoclineData>((ref) async {
   final weather = await ref.watch(weatherDataProvider.future);
-  final lake = await ref.watch(lakeConditionsProvider.future);
-  final selectedLake = ref.watch(selectedWeatherLakeProvider);
+  final conditions = await ref.watch(lakeConditionsProvider.future);
+  final coords = ref.watch(selectedWeatherLakeProvider);
+  
+  // Convert WeatherLakeCoords to Lake for thermocline service
+  final lake = Lake(
+    id: coords.name.toLowerCase().replaceAll(' ', '_'),
+    name: coords.name,
+    state: '', // Not needed for thermocline calculation
+    centerLat: coords.lat,
+    centerLon: coords.lon,
+    maxDepthFt: coords.maxDepthFt,
+    areaAcres: coords.areaAcres,
+  );
   
   final service = ref.read(thermoclineServiceProvider);
   
-  return service.predict(
+  return service.predictThermocline(
+    lake: lake,
     weather: weather,
-    lakeConditions: lake,
-    maxLakeDepthFt: selectedLake.maxDepthFt ?? 35.0,
-    lakeAreaAcres: selectedLake.areaAcres,
+    conditions: conditions,
   );
 });

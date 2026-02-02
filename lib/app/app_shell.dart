@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../core/utils/constants.dart';
 import '../features/settings/providers/tournament_mode_provider.dart';
 import '../features/settings/widgets/tournament_mode_toggle.dart';
 

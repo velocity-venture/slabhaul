@@ -15,6 +15,8 @@ import 'package:slabhaul/features/weather/providers/thermocline_providers.dart';
 import 'package:slabhaul/features/weather/widgets/solunar_card.dart';
 import 'package:slabhaul/features/weather/providers/solunar_providers.dart';
 import 'package:slabhaul/features/settings/providers/tournament_mode_provider.dart';
+import 'package:slabhaul/features/generation/providers/generation_lake_provider.dart';
+import 'package:slabhaul/features/generation/widgets/generation_status_card.dart';
 
 class WeatherDashboardScreen extends ConsumerWidget {
   const WeatherDashboardScreen({super.key});
