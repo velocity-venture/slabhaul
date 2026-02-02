@@ -27,6 +27,21 @@ class GenerationService {
     return _simulateGeneration(dam);
   }
 
+  /// Get extended 7-day history for detailed views
+  Future<GenerationData> getGenerationDataWithHistory(DamConfig dam) async {
+    // Try USGS data first if we have a gage ID
+    if (dam.usgsGageId != null) {
+      try {
+        return await _fetchUsgsDischargeExtended(dam, days: 7);
+      } catch (_) {
+        // Fall back to simulated data
+      }
+    }
+
+    // Use pattern-based simulation for TVA dams
+    return _simulateGenerationExtended(dam, days: 7);
+  }
+
   /// Fetch discharge data from USGS and infer generation status
   Future<GenerationData> _fetchUsgsDischarge(DamConfig dam) async {
     final url = Uri.parse(
@@ -44,10 +59,37 @@ class GenerationService {
       throw Exception('USGS request failed: ${response.statusCode}');
     }
 
-    return _parseUsgsResponse(json.decode(response.body), dam);
+    return _parseUsgsResponse(json.decode(response.body), dam, extended: false);
   }
 
-  GenerationData _parseUsgsResponse(Map<String, dynamic> data, DamConfig dam) {
+  /// Fetch extended 7-day discharge data from USGS
+  Future<GenerationData> _fetchUsgsDischargeExtended(
+    DamConfig dam, {
+    int days = 7,
+  }) async {
+    final url = Uri.parse(
+      '$_usgsBase?format=json'
+      '&sites=${dam.usgsGageId}'
+      '&parameterCd=00060' // Discharge (cfs)
+      '&period=P${days}D', // Extended period
+    );
+
+    final response = await http.get(url).timeout(
+      const Duration(seconds: 20),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('USGS request failed: ${response.statusCode}');
+    }
+
+    return _parseUsgsResponse(json.decode(response.body), dam, extended: true);
+  }
+
+  GenerationData _parseUsgsResponse(
+    Map<String, dynamic> data,
+    DamConfig dam, {
+    bool extended = false,
+  }) {
     final timeSeries = (data['value']?['timeSeries'] as List?) ?? [];
     if (timeSeries.isEmpty) {
       throw Exception('No time series data');
@@ -71,10 +113,18 @@ class GenerationService {
               ? discharge >= dam.generationThresholdCfs!
               : discharge > (dam.baseflowCfs ?? 0) * 2;
 
+          // Estimate generator count from discharge
+          final genCount = _estimateGeneratorCount(
+            discharge,
+            dam.baseflowCfs ?? 10000,
+            dam.generationThresholdCfs,
+          );
+
           readings.add(GenerationReading(
             timestamp: time,
             dischargeCfs: discharge,
             isGenerating: isGenerating,
+            generatorCount: genCount,
           ));
         }
       }
@@ -96,6 +146,23 @@ class GenerationService {
       dam.typicalPattern,
     );
 
+    // Calculate 7-day history if extended
+    GenerationHistory? history7Day;
+    DetectedPattern? detectedPattern;
+    if (extended && readings.isNotEmpty) {
+      history7Day = GenerationHistory.fromReadings(readings);
+      detectedPattern = DetectedPattern.analyze(readings);
+    }
+
+    // Estimate current generator count
+    final currentGenCount = currentDischarge != null
+        ? _estimateGeneratorCount(
+            currentDischarge,
+            dam.baseflowCfs ?? 10000,
+            dam.generationThresholdCfs,
+          )
+        : null;
+
     return GenerationData(
       damId: dam.id,
       damName: dam.name,
@@ -108,7 +175,27 @@ class GenerationService {
       recentReadings: readings,
       upcomingSchedule: _estimateSchedule(dam),
       typicalPattern: dam.typicalPattern,
+      history7Day: history7Day,
+      detectedPattern: detectedPattern,
+      currentGeneratorCount: currentGenCount,
     );
+  }
+
+  /// Estimate the number of generators running based on discharge
+  int? _estimateGeneratorCount(
+    double discharge,
+    double baseflow,
+    double? threshold,
+  ) {
+    // If not generating, return 0
+    if (threshold != null && discharge < threshold) return 0;
+    if (discharge <= baseflow * 1.5) return 0;
+
+    // Estimate based on discharge above baseflow
+    // Each generator adds roughly 5,000-10,000 cfs
+    final excessFlow = discharge - baseflow;
+    final estimatedGens = (excessFlow / 8000).round().clamp(1, 6);
+    return estimatedGens;
   }
 
   /// Determine generation status from discharge level
@@ -205,6 +292,11 @@ class GenerationService {
 
   /// Simulate generation data based on patterns (fallback when USGS unavailable)
   GenerationData _simulateGeneration(DamConfig dam) {
+    return _simulateGenerationExtended(dam, days: 2);
+  }
+
+  /// Simulate extended generation data for 7-day views
+  GenerationData _simulateGenerationExtended(DamConfig dam, {int days = 7}) {
     final now = DateTime.now();
     final pattern = dam.typicalPattern;
     final rng = Random(now.millisecondsSinceEpoch ~/ 300000); // Changes every 5 min
@@ -222,9 +314,11 @@ class GenerationService {
         ? baseflow * (2.5 + rng.nextDouble() * 1.5)
         : baseflow * (0.8 + rng.nextDouble() * 0.4);
 
-    // Generate historical readings (last 48 hours)
+    // Generate historical readings
     final readings = <GenerationReading>[];
-    for (var i = 48; i >= 0; i--) {
+    final hoursToGenerate = days * 24;
+
+    for (var i = hoursToGenerate; i >= 0; i--) {
       final time = now.subtract(Duration(hours: i));
       final hour = time.hour;
       final wasGenerating = pattern != null &&
@@ -238,12 +332,29 @@ class GenerationService {
           ? baseflow * (2.2 + Random(time.millisecondsSinceEpoch).nextDouble())
           : baseflow * (0.8 + Random(time.millisecondsSinceEpoch).nextDouble() * 0.4);
 
+      final genCount = wasGenerating
+          ? _estimateGeneratorCount(discharge, baseflow, dam.generationThresholdCfs)
+          : 0;
+
       readings.add(GenerationReading(
         timestamp: time,
         dischargeCfs: discharge,
         isGenerating: wasGenerating,
+        generatorCount: genCount,
       ));
     }
+
+    // Build extended data for 7-day views
+    GenerationHistory? history7Day;
+    DetectedPattern? detectedPattern;
+    if (days >= 7) {
+      history7Day = GenerationHistory.fromReadings(readings);
+      detectedPattern = DetectedPattern.analyze(readings);
+    }
+
+    final currentGenCount = isGenerating
+        ? _estimateGeneratorCount(currentDischarge, baseflow, dam.generationThresholdCfs)
+        : 0;
 
     return GenerationData(
       damId: dam.id,
@@ -261,6 +372,9 @@ class GenerationService {
       recentReadings: readings,
       upcomingSchedule: _estimateSchedule(dam),
       typicalPattern: pattern,
+      history7Day: history7Day,
+      detectedPattern: detectedPattern,
+      currentGeneratorCount: currentGenCount,
     );
   }
 }

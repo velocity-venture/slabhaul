@@ -9,8 +9,14 @@ import '../features/bait_recommendations/screens/bait_recommendations_screen.dar
 import '../features/hotspots/screens/best_areas_screen.dart';
 import '../features/lake_level/screens/lake_level_screen.dart';
 import '../features/clarity/screens/water_clarity_screen.dart';
+import '../features/generation/screens/generation_detail_screen.dart';
+import '../features/tides/screens/tides_screen.dart';
 import '../features/auth/screens/profile_screen.dart';
 import '../features/auth/screens/login_screen.dart';
+import '../features/trip_log/screens/trip_list_screen.dart';
+import '../features/trip_log/screens/active_trip_screen.dart';
+import '../features/trip_log/screens/trip_detail_screen.dart';
+import '../features/trip_log/screens/trip_insights_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -47,6 +53,42 @@ final goRouter = GoRouter(
       path: '/water-clarity',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const WaterClarityScreen(),
+    ),
+    // Dam Generation - detailed generation view with history
+    GoRoute(
+      path: '/generation',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const GenerationDetailScreen(),
+    ),
+    // Tides - detailed tide conditions for coastal waters
+    GoRoute(
+      path: '/tides',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const TidesScreen(),
+    ),
+    // Trip Log - catch tracking
+    GoRoute(
+      path: '/trips',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const TripListScreen(),
+    ),
+    GoRoute(
+      path: '/trip/active',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ActiveTripScreen(),
+    ),
+    GoRoute(
+      path: '/trip/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final tripId = state.pathParameters['id']!;
+        return TripDetailScreen(tripId: tripId);
+      },
+    ),
+    GoRoute(
+      path: '/insights',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const TripInsightsScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {

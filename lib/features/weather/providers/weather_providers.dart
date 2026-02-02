@@ -5,6 +5,7 @@ import 'package:slabhaul/core/utils/weather_utils.dart';
 
 /// Coordinates record for a selected weather lake.
 class WeatherLakeCoords {
+  final String? id;
   final double lat;
   final double lon;
   final String name;
@@ -12,6 +13,7 @@ class WeatherLakeCoords {
   final double? areaAcres;
 
   const WeatherLakeCoords({
+    this.id,
     required this.lat,
     required this.lon,
     required this.name,

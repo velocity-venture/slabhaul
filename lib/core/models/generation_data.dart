@@ -14,6 +14,9 @@ class GenerationData {
   final List<GenerationReading> recentReadings;
   final List<ScheduledGeneration> upcomingSchedule;
   final GenerationPattern? typicalPattern;
+  final GenerationHistory? history7Day;
+  final DetectedPattern? detectedPattern;
+  final int? currentGeneratorCount;
 
   const GenerationData({
     required this.damId,
@@ -27,6 +30,9 @@ class GenerationData {
     this.recentReadings = const [],
     this.upcomingSchedule = const [],
     this.typicalPattern,
+    this.history7Day,
+    this.detectedPattern,
+    this.currentGeneratorCount,
   });
 
   /// Is water currently being released at generation-level rates?
@@ -71,12 +77,251 @@ class GenerationReading {
   final DateTime timestamp;
   final double dischargeCfs;
   final bool isGenerating;
+  final int? generatorCount; // Estimated number of units running
 
   const GenerationReading({
     required this.timestamp,
     required this.dischargeCfs,
     required this.isGenerating,
+    this.generatorCount,
   });
+
+  /// Intensity level (0 = idle, 1 = low, 2 = moderate, 3+ = high)
+  int get intensityLevel {
+    if (!isGenerating) return 0;
+    if (generatorCount != null) {
+      return generatorCount!.clamp(0, 4);
+    }
+    // Estimate from discharge if generator count unknown
+    if (dischargeCfs < 20000) return 1;
+    if (dischargeCfs < 35000) return 2;
+    if (dischargeCfs < 50000) return 3;
+    return 4;
+  }
+}
+
+/// Historical generation data with analysis
+class GenerationHistory {
+  final List<GenerationReading> readings;
+  final int totalReadings;
+  final int generatingCount;
+  final double averageFlowCfs;
+  final double maxFlowCfs;
+  final double minFlowCfs;
+  final Duration totalGenerationTime;
+  final List<GenerationWindow> generationWindows;
+
+  const GenerationHistory({
+    required this.readings,
+    required this.totalReadings,
+    required this.generatingCount,
+    required this.averageFlowCfs,
+    required this.maxFlowCfs,
+    required this.minFlowCfs,
+    required this.totalGenerationTime,
+    this.generationWindows = const [],
+  });
+
+  /// Percentage of time generating
+  double get generatingPercent =>
+      totalReadings > 0 ? (generatingCount / totalReadings) * 100 : 0;
+
+  factory GenerationHistory.fromReadings(List<GenerationReading> readings) {
+    if (readings.isEmpty) {
+      return const GenerationHistory(
+        readings: [],
+        totalReadings: 0,
+        generatingCount: 0,
+        averageFlowCfs: 0,
+        maxFlowCfs: 0,
+        minFlowCfs: 0,
+        totalGenerationTime: Duration.zero,
+      );
+    }
+
+    final sorted = List<GenerationReading>.from(readings)
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    int genCount = 0;
+    double totalFlow = 0;
+    double maxFlow = 0;
+    double minFlow = double.infinity;
+
+    for (final r in sorted) {
+      if (r.isGenerating) genCount++;
+      totalFlow += r.dischargeCfs;
+      if (r.dischargeCfs > maxFlow) maxFlow = r.dischargeCfs;
+      if (r.dischargeCfs < minFlow) minFlow = r.dischargeCfs;
+    }
+
+    // Find generation windows
+    final windows = <GenerationWindow>[];
+    GenerationReading? windowStart;
+
+    for (var i = 0; i < sorted.length; i++) {
+      final r = sorted[i];
+      if (r.isGenerating && windowStart == null) {
+        windowStart = r;
+      } else if (!r.isGenerating && windowStart != null) {
+        windows.add(GenerationWindow(
+          start: windowStart.timestamp,
+          end: sorted[i - 1].timestamp,
+          peakFlowCfs: sorted
+              .sublist(
+                sorted.indexOf(windowStart),
+                i,
+              )
+              .map((x) => x.dischargeCfs)
+              .reduce((a, b) => a > b ? a : b),
+        ));
+        windowStart = null;
+      }
+    }
+
+    // Handle ongoing window
+    if (windowStart != null) {
+      windows.add(GenerationWindow(
+        start: windowStart.timestamp,
+        end: null, // Still ongoing
+        peakFlowCfs: sorted
+            .sublist(sorted.indexOf(windowStart))
+            .map((x) => x.dischargeCfs)
+            .reduce((a, b) => a > b ? a : b),
+      ));
+    }
+
+    // Calculate total generation time
+    var totalGenTime = Duration.zero;
+    for (final w in windows) {
+      totalGenTime += w.duration ?? Duration.zero;
+    }
+
+    return GenerationHistory(
+      readings: sorted,
+      totalReadings: sorted.length,
+      generatingCount: genCount,
+      averageFlowCfs: totalFlow / sorted.length,
+      maxFlowCfs: maxFlow,
+      minFlowCfs: minFlow == double.infinity ? 0 : minFlow,
+      totalGenerationTime: totalGenTime,
+      generationWindows: windows,
+    );
+  }
+}
+
+/// A continuous window of generation activity
+class GenerationWindow {
+  final DateTime start;
+  final DateTime? end; // null if ongoing
+  final double peakFlowCfs;
+
+  const GenerationWindow({
+    required this.start,
+    this.end,
+    required this.peakFlowCfs,
+  });
+
+  Duration? get duration => end?.difference(start);
+  bool get isOngoing => end == null;
+}
+
+/// Detected generation pattern from historical data
+class DetectedPattern {
+  final List<int> mostCommonHours;
+  final double weekdayFrequency;
+  final double weekendFrequency;
+  final String description;
+  final double confidence; // 0.0 to 1.0
+
+  const DetectedPattern({
+    required this.mostCommonHours,
+    required this.weekdayFrequency,
+    required this.weekendFrequency,
+    required this.description,
+    required this.confidence,
+  });
+
+  factory DetectedPattern.analyze(List<GenerationReading> readings) {
+    if (readings.isEmpty) {
+      return const DetectedPattern(
+        mostCommonHours: [],
+        weekdayFrequency: 0,
+        weekendFrequency: 0,
+        description: 'Insufficient data',
+        confidence: 0,
+      );
+    }
+
+    // Count generation by hour
+    final hourCounts = <int, int>{};
+    int weekdayGen = 0, weekdayTotal = 0;
+    int weekendGen = 0, weekendTotal = 0;
+
+    for (final r in readings) {
+      final hour = r.timestamp.hour;
+      final isWeekday = r.timestamp.weekday <= 5;
+
+      if (isWeekday) {
+        weekdayTotal++;
+        if (r.isGenerating) weekdayGen++;
+      } else {
+        weekendTotal++;
+        if (r.isGenerating) weekendGen++;
+      }
+
+      if (r.isGenerating) {
+        hourCounts[hour] = (hourCounts[hour] ?? 0) + 1;
+      }
+    }
+
+    // Find most common hours
+    final sortedHours = hourCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final topHours =
+        sortedHours.take(4).map((e) => e.key).toList()..sort();
+
+    final weekdayFreq =
+        weekdayTotal > 0 ? weekdayGen / weekdayTotal : 0.0;
+    final weekendFreq =
+        weekendTotal > 0 ? weekendGen / weekendTotal : 0.0;
+
+    // Generate description
+    String desc;
+    if (topHours.isEmpty) {
+      desc = 'Generation rarely occurs';
+    } else if (topHours.every((h) => h >= 6 && h <= 10)) {
+      desc = 'Primarily morning generation (${_formatHourRange(topHours)})';
+    } else if (topHours.every((h) => h >= 16 && h <= 21)) {
+      desc = 'Primarily evening generation (${_formatHourRange(topHours)})';
+    } else if (topHours.any((h) => h >= 6 && h <= 10) &&
+        topHours.any((h) => h >= 16 && h <= 21)) {
+      desc = 'Morning and evening peaks';
+    } else {
+      desc = 'Most active: ${_formatHourRange(topHours)}';
+    }
+
+    // Confidence based on data volume
+    final confidence = (readings.length / 168).clamp(0.0, 1.0); // 168 = 7 days hourly
+
+    return DetectedPattern(
+      mostCommonHours: topHours,
+      weekdayFrequency: weekdayFreq,
+      weekendFrequency: weekendFreq,
+      description: desc,
+      confidence: confidence,
+    );
+  }
+
+  static String _formatHourRange(List<int> hours) {
+    if (hours.isEmpty) return '';
+    final formatted = hours.map((h) {
+      if (h == 0) return '12 AM';
+      if (h < 12) return '$h AM';
+      if (h == 12) return '12 PM';
+      return '${h - 12} PM';
+    });
+    return formatted.join(', ');
+  }
 }
 
 /// A scheduled generation window

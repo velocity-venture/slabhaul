@@ -13,6 +13,11 @@ export 'package:slabhaul/core/services/generation_service.dart';
 // Providers
 export 'providers/generation_providers.dart';
 export 'providers/generation_lake_provider.dart';
+export 'providers/generation_detail_providers.dart';
+
+// Screens
+export 'screens/generation_detail_screen.dart';
 
 // Widgets
 export 'widgets/generation_status_card.dart';
+export 'widgets/generation_history_graph.dart';

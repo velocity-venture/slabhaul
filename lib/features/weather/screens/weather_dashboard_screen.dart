@@ -18,6 +18,8 @@ import 'package:slabhaul/features/weather/providers/solunar_providers.dart';
 import 'package:slabhaul/features/settings/providers/tournament_mode_provider.dart';
 import 'package:slabhaul/features/generation/providers/generation_lake_provider.dart';
 import 'package:slabhaul/features/generation/widgets/generation_status_card.dart';
+import 'package:slabhaul/features/tides/providers/tides_providers.dart';
+import 'package:slabhaul/features/tides/widgets/tide_card.dart';
 
 class WeatherDashboardScreen extends ConsumerWidget {
   const WeatherDashboardScreen({super.key});
@@ -191,11 +193,46 @@ class WeatherDashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Dam Generation Status (for TVA lakes)
+                  // Dam Generation Status (for TVA lakes) - tappable for details
                   if (ref.watch(hasGenerationTrackingProvider))
                     ref.watch(lakeGenerationProvider).when(
                       data: (genData) => genData != null
-                          ? GenerationStatusCard(data: genData)
+                          ? GestureDetector(
+                              onTap: () => context.push('/generation'),
+                              child: Stack(
+                                children: [
+                                  GenerationStatusCard(data: genData),
+                                  Positioned(
+                                    top: 12,
+                                    right: 12,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.teal.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Details',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: AppColors.teal,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4),
+                                          Icon(Icons.chevron_right,
+                                              size: 14, color: AppColors.teal),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                           : const SizedBox.shrink(),
                       loading: () => const _WeatherSkeleton(height: 280),
                       error: (err, _) => _ErrorSection(
@@ -205,6 +242,66 @@ class WeatherDashboardScreen extends ConsumerWidget {
                     ),
                   if (ref.watch(hasGenerationTrackingProvider))
                     const SizedBox(height: 12),
+
+                  // Tide Conditions (for tidal/coastal waters) - tappable for details
+                  ref.watch(selectedLakeTideDataProvider).when(
+                    data: (tideData) => tideData != null
+                        ? GestureDetector(
+                            onTap: () => context.push('/tides'),
+                            child: Stack(
+                              children: [
+                                TideCard(
+                                  conditions: tideData.conditions,
+                                  fishingWindows: tideData.fishingWindows,
+                                  hourlyPredictions: tideData.hourlyPredictions,
+                                ),
+                                Positioned(
+                                  top: 12,
+                                  right: 12,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.teal.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'Details',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: AppColors.teal,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Icon(Icons.chevron_right,
+                                            size: 14, color: AppColors.teal),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    loading: () => const SizedBox.shrink(), // Don't show skeleton for non-tidal lakes
+                    error: (err, _) => const SizedBox.shrink(), // Silently fail for non-tidal
+                  ),
+                  // Only add spacing if tidal data is present
+                  Builder(
+                    builder: (context) {
+                      final tideData = ref.watch(selectedLakeTideDataProvider);
+                      return tideData.maybeWhen(
+                        data: (data) => data != null 
+                            ? const SizedBox(height: 12) 
+                            : const SizedBox.shrink(),
+                        orElse: () => const SizedBox.shrink(),
+                      );
+                    },
+                  ),
 
                   // Thermocline Predictor (hidden in tournament mode)
                   if (!isTournamentMode)

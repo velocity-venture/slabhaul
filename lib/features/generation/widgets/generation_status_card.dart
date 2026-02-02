@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:slabhaul/core/models/generation_data.dart';
 import 'package:slabhaul/core/utils/constants.dart';
+import 'generation_history_graph.dart';
 
 /// Card showing current dam generation status with schedule and history.
 class GenerationStatusCard extends StatelessWidget {
@@ -195,7 +196,7 @@ class GenerationStatusCard extends StatelessWidget {
               const SizedBox(height: 14),
             ],
 
-            // Generation history chart
+            // Generation history chart (now with intensity colors)
             if (data.recentReadings.isNotEmpty) ...[
               const Text(
                 '48hr Generation History',
@@ -208,7 +209,7 @@ class GenerationStatusCard extends StatelessWidget {
               const SizedBox(height: 8),
               SizedBox(
                 height: 60,
-                child: _GenerationChart(
+                child: GenerationHistoryMini(
                   readings: data.recentReadings,
                   baseflow: data.baseflowCfs,
                 ),
@@ -410,60 +411,6 @@ class _StatBlock extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Generation history chart (simplified bar chart)
-// ---------------------------------------------------------------------------
-
-class _GenerationChart extends StatelessWidget {
-  final List<GenerationReading> readings;
-  final double? baseflow;
-
-  const _GenerationChart({
-    required this.readings,
-    this.baseflow,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (readings.isEmpty) return const SizedBox.shrink();
-
-    // Sample to ~48 bars (one per hour)
-    final sampled = <GenerationReading>[];
-    final step = (readings.length / 48).ceil().clamp(1, readings.length);
-    for (var i = 0; i < readings.length; i += step) {
-      sampled.add(readings[i]);
-    }
-
-    // Find max for scaling
-    final maxDischarge = readings
-        .map((r) => r.dischargeCfs)
-        .reduce((a, b) => a > b ? a : b);
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: sampled.map((reading) {
-        final heightPct = (reading.dischargeCfs / maxDischarge).clamp(0.1, 1.0);
-        final isGenerating = reading.isGenerating;
-
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.5),
-            child: Container(
-              height: 60 * heightPct,
-              decoration: BoxDecoration(
-                color: isGenerating
-                    ? AppColors.success.withValues(alpha: 0.8)
-                    : AppColors.card,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }
