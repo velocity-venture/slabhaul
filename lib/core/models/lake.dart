@@ -10,6 +10,10 @@ class Lake {
   final int attractorCount;
   final double? maxDepthFt;
   final double? areaAcres;
+  
+  /// Lake mixing type: 'monomictic', 'dimictic', 'polymictic'
+  /// Used for thermocline prediction accuracy
+  final String? mixingType;
 
   const Lake({
     required this.id,
@@ -23,6 +27,7 @@ class Lake {
     this.attractorCount = 0,
     this.maxDepthFt,
     this.areaAcres,
+    this.mixingType,
   });
 
   factory Lake.fromJson(Map<String, dynamic> json) {
@@ -39,6 +44,7 @@ class Lake {
       attractorCount: json['attractor_count'] as int? ?? 0,
       maxDepthFt: (json['max_depth_ft'] as num?)?.toDouble(),
       areaAcres: (json['area_acres'] as num?)?.toDouble(),
+      mixingType: json['mixing_type'] as String?,
     );
   }
 
@@ -54,7 +60,18 @@ class Lake {
         'attractor_count': attractorCount,
         'max_depth_ft': maxDepthFt,
         'area_acres': areaAcres,
+        'mixing_type': mixingType,
       };
 
   String get displayName => '$name, $state';
+  
+  /// Coordinates as a tuple for provider keys
+  (double, double) get coordinates => (centerLat, centerLon);
+  
+  /// Whether this lake has enough depth to potentially stratify
+  /// Lakes under 15ft rarely form stable thermoclines
+  bool get canStratify => (maxDepthFt ?? 30) >= 15;
+  
+  /// Alias for areaAcres for thermocline calculations
+  double? get surfaceAreaAcres => areaAcres;
 }
