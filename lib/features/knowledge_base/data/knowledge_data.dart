@@ -1,7 +1,7 @@
 import 'package:slabhaul/core/models/knowledge_article.dart';
 
 // ---------------------------------------------------------------------------
-// Seasonal Patterns — real crappie fishing data by season
+// Seasonal Patterns - real crappie fishing data by season
 // ---------------------------------------------------------------------------
 
 const List<SeasonalPattern> kSeasonalPatterns = [
@@ -22,7 +22,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'LiveScope vertical sniping',
       'Tight-line drop shotting',
     ],
-    baits: 'Compact tungsten jig heads (1/16-1/4 oz) tipped with small plastics or minnows. Downsize presentation — fish are lethargic in cold water.',
+    baits: 'Compact tungsten jig heads (1/16-1/4 oz) tipped with small plastics or minnows. Downsize presentation - fish are lethargic in cold water.',
     colors: [
       'Bone white',
       'Chartreuse',
@@ -31,7 +31,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Monkey milk',
     ],
     notes:
-        'Crappie school tightly in deep water during winter. Use electronics to mark suspended fish near channels and drops. Slow, subtle presentations are key — barely hop your jig or hold it still. Fish feed in short windows, often midday when water temps peak. Tungsten jigs sink faster and transmit more feel than lead in deep water.',
+        'Crappie school tightly in deep water during winter. Use electronics to mark suspended fish near channels and drops. Slow, subtle presentations are key - barely hop your jig or hold it still. Fish feed in short windows, often midday when water temps peak. Tungsten jigs sink faster and transmit more feel than lead in deep water.',
   ),
   SeasonalPattern(
     season: 'Pre-Spawn',
@@ -59,7 +59,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Threadfin shad',
     ],
     notes:
-        'Pre-spawn crappie stage on mid-depth structure before moving shallow. They follow creek channels and stop on points and brush along migration routes. Water temp drives timing — the first sustained push above 55\u00B0F triggers major movement. Focus on north-facing banks that warm first. Spider rigging multiple rods at varied depths is the most efficient way to find staging fish.',
+        'Pre-spawn crappie stage on mid-depth structure before moving shallow. They follow creek channels and stop on points and brush along migration routes. Water temp drives timing - the first sustained push above 55\u00B0F triggers major movement. Focus on north-facing banks that warm first. Spider rigging multiple rods at varied depths is the most efficient way to find staging fish.',
   ),
   SeasonalPattern(
     season: 'Spawn',
@@ -79,7 +79,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Shooting docks',
       'Sight fishing with polarized glasses',
     ],
-    baits: 'Tubes, hair jigs, and live minnows on light 1/32-1/16 oz heads. Finesse is critical — spawning fish are guarding beds and will hit out of aggression, but heavy presentations spook them.',
+    baits: 'Tubes, hair jigs, and live minnows on light 1/32-1/16 oz heads. Finesse is critical - spawning fish are guarding beds and will hit out of aggression, but heavy presentations spook them.',
     colors: [
       'Pink',
       'Chartreuse',
@@ -88,7 +88,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Black/chartreuse',
     ],
     notes:
-        'Males move shallow first to fan out beds, followed by females. Males guard the nest and are more aggressive — females stage just off beds in slightly deeper water. Target wood and brush in 2-5 ft with slow, hovering presentations. Quiet boat positioning is critical in shallow water. Fish early morning and late evening when boat traffic is minimal. This is trophy season — females are heaviest pre-deposit.',
+        'Males move shallow first to fan out beds, followed by females. Males guard the nest and are more aggressive - females stage just off beds in slightly deeper water. Target wood and brush in 2-5 ft with slow, hovering presentations. Quiet boat positioning is critical in shallow water. Fish early morning and late evening when boat traffic is minimal. This is trophy season - females are heaviest pre-deposit.',
   ),
   SeasonalPattern(
     season: 'Post-Spawn / Summer',
@@ -108,7 +108,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Long line trolling open water',
       'Crankbait trolling ledges',
     ],
-    baits: 'Small fry imitations 1-1.5 inch on light heads for dock shooting. Larger 2-3 inch profiles for trolling. Match the hatch — young-of-year shad and bluegill are primary forage.',
+    baits: 'Small fry imitations 1-1.5 inch on light heads for dock shooting. Larger 2-3 inch profiles for trolling. Match the hatch - young-of-year shad and bluegill are primary forage.',
     colors: [
       'Translucent/natural',
       'Green pumpkin',
@@ -117,7 +117,7 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Shad gray',
     ],
     notes:
-        'Post-spawn crappie scatter and become harder to pattern. Fish relate to the thermocline in stratified lakes — use electronics to find the depth where oxygen and temperature align. Dock shooting excels during summer as crappie seek shade. Night fishing under lights near bridges is productive when surface temps exceed 80\u00B0F. Trolling covers water efficiently to locate roaming schools.',
+        'Post-spawn crappie scatter and become harder to pattern. Fish relate to the thermocline in stratified lakes - use electronics to find the depth where oxygen and temperature align. Dock shooting excels during summer as crappie seek shade. Night fishing under lights near bridges is productive when surface temps exceed 80\u00B0F. Trolling covers water efficiently to locate roaming schools.',
   ),
   SeasonalPattern(
     season: 'Fall',
@@ -146,12 +146,12 @@ const List<SeasonalPattern> kSeasonalPatterns = [
       'Red/chartreuse',
     ],
     notes:
-        'Fall is the great equalizer — crappie feed aggressively as they follow shad into creek arms. Cooling water pushes baitfish into creeks and crappie follow. The fall turnover (when the thermocline breaks down) temporarily scatters fish, but they regroup quickly once water stabilizes. Key on baitfish — where you find shad schools, crappie are nearby. Wind-blown points that concentrate bait are prime targets.',
+        'Fall is the great equalizer - crappie feed aggressively as they follow shad into creek arms. Cooling water pushes baitfish into creeks and crappie follow. The fall turnover (when the thermocline breaks down) temporarily scatters fish, but they regroup quickly once water stabilizes. Key on baitfish - where you find shad schools, crappie are nearby. Wind-blown points that concentrate bait are prime targets.',
   ),
 ];
 
 // ---------------------------------------------------------------------------
-// Techniques — real crappie fishing methods with detailed data
+// Techniques - real crappie fishing methods with detailed data
 // ---------------------------------------------------------------------------
 
 const List<Technique> kTechniques = [
@@ -164,16 +164,16 @@ const List<Technique> kTechniques = [
     bestConditions:
         'Pre-spawn staging areas, creek channels, submerged brush lines. Best in 8-25 ft of water. Works in clear to moderately stained water. Ideal when fish are scattered along structure rather than holding tight to a single spot.',
     pros: [
-      'Covers a wide swath of water — most efficient technique',
+      'Covers a wide swath of water - most efficient technique',
       'Presents multiple baits at different depths simultaneously',
       'Precise depth control with the calculator',
       'Tournament-proven: dominates team crappie events',
-      'Low-effort once dialed in — let the boat do the work',
+      'Low-effort once dialed in - let the boat do the work',
     ],
     cons: [
       'Requires significant rod/holder investment',
       'Learning curve for managing 8 rods simultaneously',
-      'Limited to open water — cannot fish tight cover',
+      'Limited to open water - cannot fish tight cover',
       'Regulations vary by state (rod limits)',
       'Tangles can be frustrating in wind or current',
     ],
@@ -191,9 +191,9 @@ const List<Technique> kTechniques = [
     pros: [
       'Accesses fish that no other technique can reach',
       'Extremely effective in summer heat',
-      'One of the most fun techniques — highly visual and active',
+      'One of the most fun techniques - highly visual and active',
       'Light tackle means amazing fights on big crappie',
-      'Low cost — minimal gear required',
+      'Low cost - minimal gear required',
     ],
     cons: [
       'Steep learning curve for accurate shooting',
@@ -203,7 +203,7 @@ const List<Technique> kTechniques = [
       'Hand fatigue during long sessions',
     ],
     proTips:
-        'The key is a low, flat trajectory that skips the jig like a stone. Aim for the back wall or the darkest shadow under the dock. Let the jig pendulum-fall on slack line — crappie often hit on the initial drop. Work docks systematically: outside corners first, then walkway joints, then deepest shade. Fish fast and move on — dock crappie commit in the first 10 seconds or not at all.',
+        'The key is a low, flat trajectory that skips the jig like a stone. Aim for the back wall or the darkest shadow under the dock. Let the jig pendulum-fall on slack line - crappie often hit on the initial drop. Work docks systematically: outside corners first, then walkway joints, then deepest shade. Fish fast and move on - dock crappie commit in the first 10 seconds or not at all.',
   ),
   Technique(
     name: 'LiveScope Sniping',
@@ -214,21 +214,21 @@ const List<Technique> kTechniques = [
     bestConditions:
         'Any depth where fish can be marked on electronics. Most effective in deep water (15+ ft) where fish suspend off structure. Works year-round but dominates winter and summer vertical patterns. Clear water gives the best sonar returns.',
     pros: [
-      'See fish in real time — eliminates guesswork',
+      'See fish in real time - eliminates guesswork',
       'Extremely precise targeting of individual fish',
       'Works at any depth',
       'Can identify size before committing to a fish',
       'Game-changing for deep winter and suspended fish',
     ],
     cons: [
-      'Very expensive — $2,500-4,000+ for quality units',
+      'Very expensive - \$2,500-4,000+ for quality units',
       'Significant learning curve for reading the screen',
-      'Battery-intensive — requires lithium batteries',
+      'Battery-intensive - requires lithium batteries',
       'Some consider it unsportsmanlike',
       'Can lead to over-harvesting if not practiced responsibly',
     ],
     proTips:
-        'Watch your jig on screen and keep it 1-2 feet above fish until they rise to it. If a fish turns away, jiggle your bait to trigger a reaction strike. Crappie that are "looking up" on screen are feeding — target those first. Fish that are tight to the bottom or facing down are neutral and harder to trigger. Save waypoints of productive structure and revisit during similar conditions.',
+        'Watch your jig on screen and keep it 1-2 feet above fish until they rise to it. If a fish turns away, jiggle your bait to trigger a reaction strike. Crappie that are "looking up" on screen are feeding - target those first. Fish that are tight to the bottom or facing down are neutral and harder to trigger. Save waypoints of productive structure and revisit during similar conditions.',
   ),
   Technique(
     name: 'Long Line Trolling',
@@ -253,37 +253,37 @@ const List<Technique> kTechniques = [
       'Turning requires careful line management',
     ],
     proTips:
-        'Make wide, gradual turns to prevent tangles. Use different colored line or bead markers to quickly identify which rod is which length. The outside lines in a turn speed up and run shallower — adjust weights accordingly. Troll into the wind for better boat control and more natural bait presentation. Mark every catch on GPS and build a trolling route that connects productive waypoints.',
+        'Make wide, gradual turns to prevent tangles. Use different colored line or bead markers to quickly identify which rod is which length. The outside lines in a turn speed up and run shallower - adjust weights accordingly. Troll into the wind for better boat control and more natural bait presentation. Mark every catch on GPS and build a trolling route that connects productive waypoints.',
   ),
   Technique(
     name: 'Single Pole Jigging',
     description:
-        'The classic crappie fishing method — one rod, one jig, vertical presentation to specific cover. The angler positions the boat over or beside structure and drops or dips a jig into brush piles, stake beds, timber, and other hard targets.',
+        'The classic crappie fishing method - one rod, one jig, vertical presentation to specific cover. The angler positions the boat over or beside structure and drops or dips a jig into brush piles, stake beds, timber, and other hard targets.',
     setupTips:
         'Use a 10-16 ft jigging pole (telescopic or multi-piece) with a sensitive tip. Spool a small spincast or baitcast reel with 6-10 lb line. Rig a 1/32-1/8 oz jig head tipped with a tube, curly tail, or minnow. Lower the jig vertically into cover using the long rod for precise placement.',
     bestConditions:
         'Spawn and post-spawn when fish are tight to specific cover. Brush piles, stake beds, stumps, and laydowns in 3-15 ft. Calm conditions allow better boat control. Works in all water clarities but excels in stained water where fish hold tighter to cover.',
     pros: [
       'Most precise cover fishing technique',
-      'Simple setup — one rod, minimal gear',
+      'Simple setup - one rod, minimal gear',
       'Excellent for beginners',
       'Feel every bite on a sensitive pole',
       'Works in the tightest cover where other techniques fail',
     ],
     cons: [
-      'Covers water slowly — one spot at a time',
+      'Covers water slowly - one spot at a time',
       'Requires knowing where fish hold (structure knowledge)',
       'Long poles are cumbersome in wind',
       'Limited to fish directly below the rod tip',
       'Not tournament-efficient against spider riggers',
     ],
     proTips:
-        'Dip your jig into every part of the brush pile — top, middle, bottom, and edges. Crappie often suspend just above the cover canopy. If you feel your jig hit brush, hold it still for 5 seconds before moving — fish often watch your jig settle and then commit. Use your trolling motor to hover silently over the target. Mark productive brush piles in SlabHaul and build a milk run of proven spots.',
+        'Dip your jig into every part of the brush pile - top, middle, bottom, and edges. Crappie often suspend just above the cover canopy. If you feel your jig hit brush, hold it still for 5 seconds before moving - fish often watch your jig settle and then commit. Use your trolling motor to hover silently over the target. Mark productive brush piles in SlabHaul and build a milk run of proven spots.',
   ),
 ];
 
 // ---------------------------------------------------------------------------
-// Baits & Lures — real crappie baits ranked by effectiveness
+// Baits & Lures - real crappie baits ranked by effectiveness
 // ---------------------------------------------------------------------------
 
 const List<BaitLure> kBaitsAndLures = [
@@ -330,7 +330,7 @@ const List<BaitLure> kBaitsAndLures = [
       'Red/chartreuse',
     ],
     riggingMethods:
-        'Thread onto a 1/16-3/16 oz ball-head jig. The curly tail provides vibration and action on the fall and during a slow retrieve. Most durable soft plastic option — one grub can catch dozens of fish. Works on all retrieval methods: cast and retrieve, slow troll, vertical jig, and under a float. Add a small spinner blade above the jig head for extra flash in stained water.',
+        'Thread onto a 1/16-3/16 oz ball-head jig. The curly tail provides vibration and action on the fall and during a slow retrieve. Most durable soft plastic option - one grub can catch dozens of fish. Works on all retrieval methods: cast and retrieve, slow troll, vertical jig, and under a float. Add a small spinner blade above the jig head for extra flash in stained water.',
   ),
   BaitLure(
     type: 'Hair Jigs',
@@ -345,6 +345,6 @@ const List<BaitLure> kBaitsAndLures = [
       'Black',
     ],
     riggingMethods:
-        'Hair jigs are fished as-is — no trailer needed, though you can add a small plastic body for bulk. The marabou or craft hair undulates naturally in the water with minimal angler input. Best fished vertically with slow hops or under a slip float. The subtle action excels when crappie are finicky — winter cold fronts, high-pressure bluebird days, and heavily pressured waters. Tie direct to fluorocarbon for the most natural presentation.',
+        'Hair jigs are fished as-is - no trailer needed, though you can add a small plastic body for bulk. The marabou or craft hair undulates naturally in the water with minimal angler input. Best fished vertically with slow hops or under a slip float. The subtle action excels when crappie are finicky - winter cold fronts, high-pressure bluebird days, and heavily pressured waters. Tie direct to fluorocarbon for the most natural presentation.',
   ),
 ];
