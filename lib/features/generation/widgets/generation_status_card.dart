@@ -27,7 +27,7 @@ class GenerationStatusCard extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.15),
+                    color: statusColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -66,7 +66,7 @@ class GenerationStatusCard extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.15),
+                    color: statusColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -81,7 +81,7 @@ class GenerationStatusCard extends StatelessWidget {
                           boxShadow: status == GenerationStatus.generating
                               ? [
                                   BoxShadow(
-                                    color: statusColor.withOpacity(0.6),
+                                    color: statusColor.withValues(alpha: 0.6),
                                     blurRadius: 6,
                                     spreadRadius: 1,
                                   ),
@@ -220,10 +220,10 @@ class GenerationStatusCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.teal.withOpacity(0.1),
+                color: AppColors.teal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppColors.teal.withOpacity(0.2),
+                  color: AppColors.teal.withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
@@ -456,7 +456,7 @@ class _GenerationChart extends StatelessWidget {
               height: 60 * heightPct,
               decoration: BoxDecoration(
                 color: isGenerating
-                    ? AppColors.success.withOpacity(0.8)
+                    ? AppColors.success.withValues(alpha: 0.8)
                     : AppColors.card,
                 borderRadius: BorderRadius.circular(2),
               ),
