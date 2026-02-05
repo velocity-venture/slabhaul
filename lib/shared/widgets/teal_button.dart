@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/utils/constants.dart';
 
 class TealButton extends StatelessWidget {
   final String label;

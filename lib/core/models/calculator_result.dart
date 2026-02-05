@@ -1,5 +1,3 @@
-import 'dart:math';
-
 class CalculatorInput {
   final double sinkerWeightOz;
   final double lineOutFt;

@@ -5,11 +5,21 @@ import '../models/lake_conditions.dart';
 import '../utils/constants.dart';
 
 class LakeService {
+  static const _cacheTtl = Duration(minutes: 15);
+  static final Map<String, _LakeCacheEntry> _cache = {};
+
+  void clearCache() => _cache.clear();
+
   Future<LakeConditions> getLakeConditions(
     String lakeId,
     String usgsGageId, {
     double? normalPool,
   }) async {
+    final cached = _cache[lakeId];
+    if (cached != null && DateTime.now().difference(cached.timestamp) < _cacheTtl) {
+      return cached.data;
+    }
+
     try {
       final url = Uri.parse(
         '${ApiUrls.usgsWaterServices}'
@@ -22,12 +32,14 @@ class LakeService {
       );
 
       if (response.statusCode == 200) {
-        return _parseUsgs(
+        final result = _parseUsgs(
           json.decode(response.body),
           lakeId,
           usgsGageId,
           normalPool,
         );
+        _cache[lakeId] = _LakeCacheEntry(data: result, timestamp: DateTime.now());
+        return result;
       }
     } catch (_) {}
 
@@ -110,4 +122,10 @@ class LakeService {
       ),
     );
   }
+}
+
+class _LakeCacheEntry {
+  final LakeConditions data;
+  final DateTime timestamp;
+  const _LakeCacheEntry({required this.data, required this.timestamp});
 }

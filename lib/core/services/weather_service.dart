@@ -5,7 +5,16 @@ import '../utils/weather_utils.dart';
 import '../utils/constants.dart';
 
 class WeatherService {
+  static const _cacheTtl = Duration(minutes: 15);
+  static final Map<String, _CacheEntry<WeatherData>> _cache = {};
+
   Future<WeatherData> getWeather(double lat, double lon) async {
+    final key = '${lat.toStringAsFixed(2)}_${lon.toStringAsFixed(2)}';
+    final cached = _cache[key];
+    if (cached != null && DateTime.now().difference(cached.timestamp) < _cacheTtl) {
+      return cached.data;
+    }
+
     try {
       final url = Uri.parse(
         '${ApiUrls.openMeteoBase}'
@@ -25,7 +34,9 @@ class WeatherService {
       );
 
       if (response.statusCode == 200) {
-        return _parseWeather(json.decode(response.body));
+        final result = _parseWeather(json.decode(response.body));
+        _cache[key] = _CacheEntry(data: result, timestamp: DateTime.now());
+        return result;
       }
     } catch (_) {}
 
@@ -112,6 +123,8 @@ class WeatherService {
     );
   }
 
+  void clearCache() => _cache.clear();
+
   WeatherData _mockWeather() {
     final now = DateTime.now();
     return WeatherData(
@@ -151,4 +164,10 @@ class WeatherService {
       fetchedAt: now,
     );
   }
+}
+
+class _CacheEntry<T> {
+  final T data;
+  final DateTime timestamp;
+  const _CacheEntry({required this.data, required this.timestamp});
 }
