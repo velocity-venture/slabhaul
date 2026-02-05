@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slabhaul/core/models/generation_data.dart';
 import 'package:slabhaul/core/utils/constants.dart';
+import 'package:slabhaul/core/utils/time_ago.dart';
 import 'package:slabhaul/features/generation/providers/generation_detail_providers.dart';
 import 'package:slabhaul/shared/widgets/skeleton_loader.dart';
 import '../widgets/generation_history_graph.dart';
@@ -1131,7 +1132,7 @@ class _DataSourceCard extends StatelessWidget {
                 ),
                 if (lastUpdated != null)
                   Text(
-                    'Last updated: ${_formatUpdated(lastUpdated!)}',
+                    'Last updated: ${formatTimeAgo(lastUpdated!)}',
                     style: const TextStyle(
                       fontSize: 10,
                       color: AppColors.textMuted,
@@ -1143,14 +1144,6 @@ class _DataSourceCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatUpdated(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
   }
 }
 

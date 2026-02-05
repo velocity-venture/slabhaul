@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:slabhaul/core/models/lake_conditions.dart';
 import 'package:slabhaul/core/utils/constants.dart';
+import 'package:slabhaul/core/utils/time_ago.dart';
 import 'package:slabhaul/features/weather/widgets/water_level_chart.dart';
 
 class LakeConditionsCard extends StatelessWidget {
@@ -132,7 +133,7 @@ class LakeConditionsCard extends StatelessWidget {
             if (conditions.lastUpdated != null) ...[
               const SizedBox(height: 10),
               Text(
-                'Updated: ${_formatUpdated(conditions.lastUpdated!)}',
+                'Updated: ${formatTimeAgo(conditions.lastUpdated!)}',
                 style: const TextStyle(
                   color: AppColors.textMuted,
                   fontSize: 11,
@@ -167,14 +168,6 @@ class LakeConditionsCard extends StatelessWidget {
     }
   }
 
-  String _formatUpdated(DateTime dt) {
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
-  }
 }
 
 // ---------------------------------------------------------------------------

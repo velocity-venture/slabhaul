@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:slabhaul/core/models/generation_data.dart';
 import 'package:slabhaul/core/utils/constants.dart';
+import 'package:slabhaul/core/utils/time_ago.dart';
 import 'generation_history_graph.dart';
 
 /// Card showing current dam generation status with schedule and history.
@@ -253,7 +254,7 @@ class GenerationStatusCard extends StatelessWidget {
             if (data.lastUpdated != null) ...[
               const SizedBox(height: 10),
               Text(
-                'Updated: ${_formatUpdated(data.lastUpdated!)}',
+                'Updated: ${formatTimeAgo(data.lastUpdated!)}',
                 style: const TextStyle(
                   color: AppColors.textMuted,
                   fontSize: 11,
@@ -346,14 +347,6 @@ class GenerationStatusCard extends StatelessWidget {
     return '${d.inMinutes}m';
   }
 
-  String _formatUpdated(DateTime dt) {
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
-  }
 
   String _getFishingTip(GenerationStatus status) {
     switch (status) {

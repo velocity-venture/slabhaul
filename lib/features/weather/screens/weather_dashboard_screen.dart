@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:slabhaul/core/utils/constants.dart';
+import 'package:slabhaul/core/utils/time_ago.dart';
 import 'package:slabhaul/shared/widgets/skeleton_loader.dart';
 import 'package:slabhaul/features/weather/providers/weather_providers.dart';
 import 'package:slabhaul/features/weather/providers/lake_conditions_providers.dart';
@@ -70,7 +71,7 @@ class WeatherDashboardScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  // Location header
+                  // Location header with freshness indicator
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Row(
@@ -84,6 +85,17 @@ class WeatherDashboardScreen extends ConsumerWidget {
                             color: AppColors.textSecondary,
                             fontSize: 14,
                           ),
+                        ),
+                        const Spacer(),
+                        weatherAsync.maybeWhen(
+                          data: (weather) => Text(
+                            'Updated: ${formatTimeAgo(weather.fetchedAt)}',
+                            style: const TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 11,
+                            ),
+                          ),
+                          orElse: () => const SizedBox.shrink(),
                         ),
                       ],
                     ),
