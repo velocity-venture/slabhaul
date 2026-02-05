@@ -23,11 +23,11 @@ class ConditionsInputForm extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(Icons.tune, color: AppColors.teal, size: 20),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'Current Conditions',
                 style: TextStyle(
                   fontSize: 16,

@@ -95,7 +95,7 @@ class _BaitRecommendationsScreenState
               // Section Header
               Row(
                 children: [
-                  Icon(Icons.format_list_numbered,
+                  const Icon(Icons.format_list_numbered,
                       color: AppColors.teal, size: 18),
                   const SizedBox(width: 8),
                   const Text(
@@ -132,14 +132,14 @@ class _BaitRecommendationsScreenState
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(
                       Icons.info_outline,
                       size: 14,
                       color: AppColors.textMuted,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Recommendations based on water temperature, clarity, depth, '
@@ -216,7 +216,7 @@ class _ConditionsSummaryBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.thermostat, size: 14, color: AppColors.teal),
+            const Icon(Icons.thermostat, size: 14, color: AppColors.teal),
             const SizedBox(width: 4),
             Text(
               '${conditions.waterTempF?.round() ?? "--"}°F',
@@ -227,7 +227,7 @@ class _ConditionsSummaryBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Icon(Icons.water, size: 14, color: AppColors.teal),
+            const Icon(Icons.water, size: 14, color: AppColors.teal),
             const SizedBox(width: 4),
             Text(
               '${conditions.targetDepthFt.round()} ft',
@@ -238,7 +238,7 @@ class _ConditionsSummaryBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Icon(Icons.visibility, size: 14, color: AppColors.teal),
+            const Icon(Icons.visibility, size: 14, color: AppColors.teal),
             const SizedBox(width: 4),
             Text(
               conditions.clarity.displayName.split(' ').first,
@@ -249,7 +249,7 @@ class _ConditionsSummaryBar extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Text(
+            const Text(
               'Edit',
               style: TextStyle(
                 fontSize: 12,
@@ -258,7 +258,7 @@ class _ConditionsSummaryBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 4),
-            Icon(Icons.edit, size: 12, color: AppColors.teal),
+            const Icon(Icons.edit, size: 12, color: AppColors.teal),
           ],
         ),
       ),
@@ -290,7 +290,7 @@ class _SummaryCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.auto_awesome, color: AppColors.teal, size: 20),
+          const Icon(Icons.auto_awesome, color: AppColors.teal, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -325,11 +325,11 @@ class _GeneralTipsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(Icons.tips_and_updates, color: AppColors.warning, size: 18),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'Pro Tips',
                 style: TextStyle(
                   fontSize: 14,

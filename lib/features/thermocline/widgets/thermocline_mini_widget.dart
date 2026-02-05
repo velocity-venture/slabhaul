@@ -57,7 +57,7 @@ class ThermoclineMiniWidget extends StatelessWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(
@@ -132,7 +132,7 @@ class ThermoclineMiniWidget extends StatelessWidget {
             shape: BoxShape.circle,
             color: isFilled 
                 ? _getConfidenceColor()
-                : AppColors.textMuted.withOpacity(0.3),
+                : AppColors.textMuted.withValues(alpha: 0.3),
           ),
         );
       }),
@@ -163,7 +163,7 @@ class ThermoclineStatusPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

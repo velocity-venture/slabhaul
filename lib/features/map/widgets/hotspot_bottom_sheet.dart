@@ -368,11 +368,11 @@ class _TechniquesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        const Row(
           children: [
-            const Icon(Icons.phishing, color: AppColors.teal, size: 18),
-            const SizedBox(width: 8),
-            const Text(
+            Icon(Icons.phishing, color: AppColors.teal, size: 18),
+            SizedBox(width: 8),
+            Text(
               'Best Techniques',
               style: TextStyle(
                 fontSize: 14,
@@ -380,7 +380,7 @@ class _TechniquesSection extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
-            const Spacer(),
+            Spacer(),
             Text(
               'for current conditions',
               style: TextStyle(

@@ -78,7 +78,7 @@ class ThermoclineCard extends StatelessWidget {
             color: AppColors.teal.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.layers,
             color: AppColors.teal,
             size: 20,
@@ -89,7 +89,7 @@ class ThermoclineCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Thermocline Predictor',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -152,12 +152,12 @@ class ThermoclineCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.gps_fixed, color: AppColors.teal, size: 24),
+          const Icon(Icons.gps_fixed, color: AppColors.teal, size: 24),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Target Depth',
                 style: TextStyle(
                   color: AppColors.textSecondary,
@@ -166,7 +166,7 @@ class ThermoclineCard extends StatelessWidget {
               ),
               Text(
                 '${data.targetDepthMinFt.toStringAsFixed(0)}-${data.targetDepthMaxFt.toStringAsFixed(0)} ft',
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.teal,
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
@@ -207,7 +207,7 @@ class ThermoclineCard extends StatelessWidget {
     final percent = (data.confidence * 100).toInt();
     return Row(
       children: [
-        Text(
+        const Text(
           'Confidence: ',
           style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
@@ -227,7 +227,7 @@ class ThermoclineCard extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           '$percent%',
-          style: TextStyle(
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 13,
@@ -247,12 +247,12 @@ class ThermoclineCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lightbulb_outline, color: AppColors.warning, size: 18),
+          const Icon(Icons.lightbulb_outline, color: AppColors.warning, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               data.recommendation,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 13,
                 height: 1.4,
@@ -277,7 +277,7 @@ class ThermoclineCard extends StatelessWidget {
           ),
           child: Text(
             factor,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 11,
             ),
@@ -308,11 +308,11 @@ class _StatChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '$label: ',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
         ),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 12,
@@ -433,7 +433,7 @@ class _DepthDiagramPainter extends CustomPainter {
     // Fish icon in target zone
     final fishY = (targetTopY + targetBottomY) / 2;
     final fishPaint = TextPainter(
-      text: TextSpan(
+      text: const TextSpan(
         text: '🐟',
         style: TextStyle(fontSize: 16),
       ),
@@ -448,17 +448,17 @@ class _DepthDiagramPainter extends CustomPainter {
     );
     
     // Surface label
-    labelPaint.text = TextSpan(
+    labelPaint.text = const TextSpan(
       text: '0\'',
       style: TextStyle(color: AppColors.textMuted, fontSize: 10),
     );
     labelPaint.layout();
-    labelPaint.paint(canvas, Offset(0, 2));
+    labelPaint.paint(canvas, const Offset(0, 2));
     
     // Thermocline label
     labelPaint.text = TextSpan(
       text: '${thermoclineTopFt.toStringAsFixed(0)}\'',
-      style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
+      style: const TextStyle(color: AppColors.textSecondary, fontSize: 10),
     );
     labelPaint.layout();
     labelPaint.paint(canvas, Offset(0, thermoclineTopY - 5));
@@ -466,7 +466,7 @@ class _DepthDiagramPainter extends CustomPainter {
     // Bottom label
     labelPaint.text = TextSpan(
       text: '${maxDepthFt.toStringAsFixed(0)}\'',
-      style: TextStyle(color: AppColors.textMuted, fontSize: 10),
+      style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
     );
     labelPaint.layout();
     labelPaint.paint(canvas, Offset(0, size.height - 12));

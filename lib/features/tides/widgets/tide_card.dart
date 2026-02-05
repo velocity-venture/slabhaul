@@ -66,7 +66,7 @@ class TideCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.15),
+              color: AppColors.info.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(Icons.waves, color: AppColors.info, size: 20),
@@ -115,7 +115,7 @@ class TideCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -193,7 +193,7 @@ class TideCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: stateColor.withOpacity(0.15),
+              color: stateColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(stateIcon, color: stateColor, size: 28),
@@ -344,7 +344,7 @@ class TideCard extends StatelessWidget {
                 ? 0xFF3B82F6
                 : impact.overallRating == TideFishingRating.fair
                     ? 0xFFF59E0B
-                    : 0xFF6B7280).withOpacity(0.1),
+                    : 0xFF6B7280).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

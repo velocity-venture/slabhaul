@@ -26,7 +26,7 @@ class BaitsSection extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
+            const Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
             const SizedBox(height: 12),
             Text(
               'No baits match "$query"',

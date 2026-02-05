@@ -137,8 +137,8 @@ class _CompassPainter extends CustomPainter {
     canvas.drawLine(center, arrowTip, arrowPaint);
 
     // Arrowhead
-    final headLength = 10.0;
-    final headAngle = 0.5;
+    const headLength = 10.0;
+    const headAngle = 0.5;
     final left = Offset(
       arrowTip.dx - headLength * cos(arrowAngle - headAngle),
       arrowTip.dy - headLength * sin(arrowAngle - headAngle),
@@ -160,7 +160,7 @@ class _CompassPainter extends CustomPainter {
     );
 
     // Tail (short line in opposite direction)
-    final tailLength = 12.0;
+    const tailLength = 12.0;
     final tailEnd = Offset(
       center.dx - tailLength * cos(arrowAngle),
       center.dy - tailLength * sin(arrowAngle),

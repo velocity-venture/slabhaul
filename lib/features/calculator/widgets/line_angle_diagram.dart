@@ -108,13 +108,13 @@ class _LineAnglePainter extends CustomPainter {
 
     // Background water gradient.
     final bgPaint = Paint()
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFF0F172A),
-          const Color(0xFF0C1929),
-          const Color(0xFF0A1422),
+          Color(0xFF0F172A),
+          Color(0xFF0C1929),
+          Color(0xFF0A1422),
         ],
       ).createShader(Rect.fromLTWH(0, 0, w, h));
     canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
@@ -161,7 +161,7 @@ class _LineAnglePainter extends CustomPainter {
 
     // Scale line length to fit diagram (max line length fills ~70% of available space).
     final double availableDepth = h - surfaceY - 20;
-    final double maxLineOut = 100.0;
+    const double maxLineOut = 100.0;
     final double lineScale = availableDepth / (maxLineOut * 0.95);
     final double scaledLine = lineOutFt.clamp(10, 100) * lineScale;
 
@@ -234,7 +234,7 @@ class _LineAnglePainter extends CustomPainter {
 
     // Draw angle arc and label near the rod tip.
     if (angleDeg > 1) {
-      final arcRadius = 24.0;
+      const arcRadius = 24.0;
       final arcRect = Rect.fromCircle(
         center: Offset(rodTipX, rodTipY),
         radius: arcRadius,

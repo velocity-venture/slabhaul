@@ -20,7 +20,7 @@ class StreamflowGraph extends StatelessWidget {
       return Container(
         height: 180,
         decoration: BoxDecoration(
-          color: AppColors.card.withOpacity(0.5),
+          color: AppColors.card.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Center(
@@ -80,20 +80,20 @@ class StreamflowGraph extends StatelessWidget {
     if (isRising) {
       lineColor = AppColors.success;
       gradientColors = [
-        AppColors.success.withOpacity(0.3),
-        AppColors.success.withOpacity(0.0),
+        AppColors.success.withValues(alpha: 0.3),
+        AppColors.success.withValues(alpha: 0.0),
       ];
     } else if (isFalling) {
       lineColor = AppColors.warning;
       gradientColors = [
-        AppColors.warning.withOpacity(0.3),
-        AppColors.warning.withOpacity(0.0),
+        AppColors.warning.withValues(alpha: 0.3),
+        AppColors.warning.withValues(alpha: 0.0),
       ];
     } else {
       lineColor = AppColors.info;
       gradientColors = [
-        AppColors.info.withOpacity(0.3),
-        AppColors.info.withOpacity(0.0),
+        AppColors.info.withValues(alpha: 0.3),
+        AppColors.info.withValues(alpha: 0.0),
       ];
     }
 
@@ -101,7 +101,7 @@ class StreamflowGraph extends StatelessWidget {
       height: 180,
       padding: const EdgeInsets.only(right: 16, top: 16, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.card.withOpacity(0.5),
+        color: AppColors.card.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.cardBorder),
       ),
@@ -114,7 +114,7 @@ class StreamflowGraph extends StatelessWidget {
             drawVerticalLine: false,
             horizontalInterval: (maxY - minY) / 4,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: AppColors.cardBorder.withOpacity(0.5),
+              color: AppColors.cardBorder.withValues(alpha: 0.5),
               strokeWidth: 1,
               dashArray: [4, 4],
             ),
@@ -180,7 +180,7 @@ class StreamflowGraph extends StatelessWidget {
               if (historicalMedian != null)
                 HorizontalLine(
                   y: historicalMedian!,
-                  color: AppColors.textMuted.withOpacity(0.7),
+                  color: AppColors.textMuted.withValues(alpha: 0.7),
                   strokeWidth: 1.5,
                   dashArray: [6, 4],
                   label: HorizontalLineLabel(
@@ -233,7 +233,7 @@ class StreamflowGraph extends StatelessWidget {
       return '${(flow / 1000).toStringAsFixed(1)}K';
     }
     if (flow >= 1000) {
-      return '${flow.toStringAsFixed(0)}';
+      return flow.toStringAsFixed(0);
     }
     return flow.toStringAsFixed(0);
   }
@@ -292,9 +292,9 @@ class FlowTrendIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -314,7 +314,7 @@ class FlowTrendIndicator extends StatelessWidget {
             Text(
               '${changePercent! >= 0 ? '+' : ''}${changePercent!.toStringAsFixed(0)}%',
               style: TextStyle(
-                color: color.withOpacity(0.8),
+                color: color.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -391,8 +391,8 @@ class FlowSparkline extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    color.withOpacity(0.2),
-                    color.withOpacity(0.0),
+                    color.withValues(alpha: 0.2),
+                    color.withValues(alpha: 0.0),
                   ],
                 ),
               ),

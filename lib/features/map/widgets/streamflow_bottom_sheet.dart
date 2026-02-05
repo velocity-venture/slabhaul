@@ -96,7 +96,7 @@ class _Header extends ConsumerWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.info.withOpacity(0.2),
+            color: AppColors.info.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -255,7 +255,7 @@ class _CurrentConditions extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.15),
+                color: AppColors.success.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Row(
@@ -285,7 +285,7 @@ class _CurrentConditions extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.textMuted.withOpacity(0.15),
+                color: AppColors.textMuted.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(
@@ -453,7 +453,7 @@ class _StreamflowHistorySection extends ConsumerWidget {
               return Container(
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.card.withOpacity(0.5),
+                  color: AppColors.card.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -473,7 +473,7 @@ class _StreamflowHistorySection extends ConsumerWidget {
           loading: () => Container(
             height: 180,
             decoration: BoxDecoration(
-              color: AppColors.card.withOpacity(0.5),
+              color: AppColors.card.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Center(
@@ -483,7 +483,7 @@ class _StreamflowHistorySection extends ConsumerWidget {
           error: (_, __) => Container(
             height: 120,
             decoration: BoxDecoration(
-              color: AppColors.card.withOpacity(0.5),
+              color: AppColors.card.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Center(
@@ -531,7 +531,7 @@ class _FishingImpactSection extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: _impactColor(impact.overallImpact).withOpacity(0.15),
+                color: _impactColor(impact.overallImpact).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(

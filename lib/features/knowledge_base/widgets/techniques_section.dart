@@ -27,7 +27,7 @@ class TechniquesSection extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
+            const Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
             const SizedBox(height: 12),
             Text(
               'No techniques match "$query"',

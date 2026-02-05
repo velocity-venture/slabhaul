@@ -17,11 +17,11 @@ class TournamentModeToggle extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: isEnabled
-            ? AppColors.warning.withOpacity(0.1)
+            ? AppColors.warning.withValues(alpha: 0.1)
             : AppColors.card,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isEnabled ? AppColors.warning.withOpacity(0.4) : AppColors.cardBorder,
+          color: isEnabled ? AppColors.warning.withValues(alpha: 0.4) : AppColors.cardBorder,
         ),
       ),
       child: ListTile(
@@ -30,7 +30,7 @@ class TournamentModeToggle extends ConsumerWidget {
           height: 40,
           decoration: BoxDecoration(
             color: isEnabled
-                ? AppColors.warning.withOpacity(0.2)
+                ? AppColors.warning.withValues(alpha: 0.2)
                 : AppColors.surface,
             borderRadius: BorderRadius.circular(10),
           ),
@@ -62,8 +62,8 @@ class TournamentModeToggle extends ConsumerWidget {
           onChanged: (_) {
             ref.read(tournamentModeProvider.notifier).toggle();
           },
-          activeColor: AppColors.warning,
-          activeTrackColor: AppColors.warning.withOpacity(0.4),
+          activeThumbColor: AppColors.warning,
+          activeTrackColor: AppColors.warning.withValues(alpha: 0.4),
         ),
         onTap: () {
           ref.read(tournamentModeProvider.notifier).toggle();
@@ -96,10 +96,10 @@ class TournamentModeBadge extends ConsumerWidget {
         vertical: compact ? 3 : 5,
       ),
       decoration: BoxDecoration(
-        color: AppColors.warning.withOpacity(0.2),
+        color: AppColors.warning.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(compact ? 6 : 8),
         border: Border.all(
-          color: AppColors.warning.withOpacity(0.4),
+          color: AppColors.warning.withValues(alpha: 0.4),
         ),
       ),
       child: Row(
@@ -144,11 +144,11 @@ class TournamentModeInfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(Icons.info_outline, color: AppColors.info, size: 18),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'About Tournament Mode',
                 style: TextStyle(
                   fontSize: 13,
@@ -193,7 +193,7 @@ class TournamentModeInfoCard extends StatelessWidget {
       child: Row(
         children: [
           const SizedBox(width: 8),
-          Icon(Icons.remove, color: AppColors.warning, size: 12),
+          const Icon(Icons.remove, color: AppColors.warning, size: 12),
           const SizedBox(width: 6),
           Text(
             text,

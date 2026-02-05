@@ -76,10 +76,7 @@ class FishingConditionsNotifier extends StateNotifier<FishingConditionsState> {
   void setWeather(WeatherData weather) {
     // Also update water temp estimate from air temp if not set
     double? waterTemp = state.waterTempF;
-    if (waterTemp == null) {
-      // Rough estimate: water temp lags air by 5-10°F in warm months
-      waterTemp = weather.current.temperatureF - 5;
-    }
+    waterTemp ??= weather.current.temperatureF - 5;
     state = state.copyWith(
       weather: weather,
       waterTempF: waterTemp,

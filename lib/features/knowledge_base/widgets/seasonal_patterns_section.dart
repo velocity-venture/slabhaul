@@ -43,7 +43,7 @@ class SeasonalPatternsSection extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
+            const Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
             const SizedBox(height: 12),
             Text(
               'No seasonal patterns match "$query"',
@@ -245,7 +245,7 @@ class _SubSection extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,

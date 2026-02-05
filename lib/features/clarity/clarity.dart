@@ -5,6 +5,7 @@
 /// - Zone-based clarity mapping
 /// - Fishing recommendations based on clarity
 /// - Integration with bait recommendation engine
+library;
 
 export 'screens/water_clarity_screen.dart';
 export 'widgets/clarity_info_card.dart';

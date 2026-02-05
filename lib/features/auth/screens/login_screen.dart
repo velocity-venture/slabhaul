@@ -152,11 +152,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 24),
 
               // Divider
-              Row(
+              const Row(
                 children: [
-                  const Expanded(child: Divider(color: AppColors.cardBorder)),
+                  Expanded(child: Divider(color: AppColors.cardBorder)),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'or continue with',
                       style: TextStyle(
@@ -165,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ),
-                  const Expanded(child: Divider(color: AppColors.cardBorder)),
+                  Expanded(child: Divider(color: AppColors.cardBorder)),
                 ],
               ),
               const SizedBox(height: 24),
@@ -203,7 +203,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 'Guest mode: all features work, favorites require sign-in',
                 style: TextStyle(
                   color: AppColors.textMuted,

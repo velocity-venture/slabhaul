@@ -31,11 +31,11 @@ class CalculatorScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             // Animated line angle diagram.
             LineAngleDiagram(),
             SizedBox(height: 16),

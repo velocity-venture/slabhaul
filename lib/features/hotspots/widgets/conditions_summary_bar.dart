@@ -83,7 +83,7 @@ class ConditionsSummaryBar extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
             AppColors.card,
             AppColors.surface,
@@ -98,15 +98,15 @@ class ConditionsSummaryBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.auto_awesome,
                 size: 14,
                 color: AppColors.teal,
               ),
-              const SizedBox(width: 6),
-              const Text(
+              SizedBox(width: 6),
+              Text(
                 'Current Conditions',
                 style: TextStyle(
                   fontSize: 12,
@@ -114,7 +114,7 @@ class ConditionsSummaryBar extends StatelessWidget {
                   color: AppColors.textSecondary,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 'Rankings based on real-time data',
                 style: TextStyle(
@@ -260,7 +260,7 @@ class _ConditionChip extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -268,7 +268,7 @@ class _ConditionChip extends StatelessWidget {
         ),
         Text(
           sublabel,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 9,
             color: AppColors.textMuted,
           ),

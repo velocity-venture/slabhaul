@@ -153,7 +153,7 @@ class _InflowMarkerWidget extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.6),
+                  color: color.withValues(alpha: 0.6),
                   blurRadius: 12,
                   spreadRadius: 4,
                 ),
@@ -167,14 +167,14 @@ class _InflowMarkerWidget extends StatelessWidget {
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: color.withOpacity(0.85),
+            color: color.withValues(alpha: 0.85),
             border: Border.all(
               color: isSelected ? Colors.white : Colors.white70,
               width: isSelected ? 3 : 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -268,7 +268,7 @@ class _FlowDirectionLines extends StatelessWidget {
       final distance = math.sqrt(dx * dx + dy * dy);
       
       // Normalize and create short line (0.02 degrees ~ 1-2km)
-      final lineLength = 0.015;
+      const lineLength = 0.015;
       final endLat = condition.inflow.latitude + (dy / distance) * lineLength;
       final endLon = condition.inflow.longitude + (dx / distance) * lineLength;
       
@@ -280,7 +280,7 @@ class _FlowDirectionLines extends StatelessWidget {
 
       return Polyline(
         points: [start, end],
-        color: _flowColor(condition.currentFlowCfs, maxFlow).withOpacity(0.7),
+        color: _flowColor(condition.currentFlowCfs, maxFlow).withValues(alpha: 0.7),
         strokeWidth: strokeWidth,
         pattern: const StrokePattern.dotted(spacingFactor: 1.5),
       );
@@ -329,15 +329,15 @@ class InflowLayerLegend extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.92),
+        color: AppColors.surface.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.cardBorder),
       ),
-      child: Column(
+      child: const Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.water, size: 16, color: AppColors.info),
@@ -352,13 +352,13 @@ class InflowLayerLegend extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          _LegendItem(color: const Color(0xFF3B82F6), label: 'Low'),
-          _LegendItem(color: const Color(0xFF22C55E), label: 'Normal'),
-          _LegendItem(color: const Color(0xFFEAB308), label: 'High'),
-          _LegendItem(color: const Color(0xFFEC4899), label: 'Very High'),
-          const SizedBox(height: 6),
-          const Row(
+          SizedBox(height: 8),
+          _LegendItem(color: Color(0xFF3B82F6), label: 'Low'),
+          _LegendItem(color: Color(0xFF22C55E), label: 'Normal'),
+          _LegendItem(color: Color(0xFFEAB308), label: 'High'),
+          _LegendItem(color: Color(0xFFEC4899), label: 'Very High'),
+          SizedBox(height: 6),
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.circle, size: 8, color: AppColors.success),
@@ -428,12 +428,12 @@ class StreamflowOverlay extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.surface.withOpacity(0.92),
+          color: AppColors.surface.withValues(alpha: 0.92),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.cardBorder),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -477,7 +477,7 @@ class StreamflowOverlay extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.2),
+                      color: AppColors.success.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(

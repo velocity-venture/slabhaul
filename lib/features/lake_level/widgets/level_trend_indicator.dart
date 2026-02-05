@@ -69,7 +69,7 @@ class LevelTrendIndicator extends StatelessWidget {
                 if (changePerDay != null && change24h != null)
                   Text(
                     'Avg: ${changePerDay! >= 0 ? '+' : ''}${changePerDay!.toStringAsFixed(3)} ft/day',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textMuted,
                     ),

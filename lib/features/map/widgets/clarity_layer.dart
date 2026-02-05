@@ -84,17 +84,17 @@ class _ClarityPolygonsLayer extends ConsumerWidget {
     
     switch (level) {
       case ClarityLevel.crystal:
-        return Color(0xFF38BDF8).withValues(alpha: opacity); // Sky blue
+        return const Color(0xFF38BDF8).withValues(alpha: opacity); // Sky blue
       case ClarityLevel.clear:
-        return Color(0xFF3B82F6).withValues(alpha: opacity); // Blue
+        return const Color(0xFF3B82F6).withValues(alpha: opacity); // Blue
       case ClarityLevel.lightStain:
-        return Color(0xFF22C55E).withValues(alpha: opacity); // Green
+        return const Color(0xFF22C55E).withValues(alpha: opacity); // Green
       case ClarityLevel.stained:
-        return Color(0xFF84CC16).withValues(alpha: opacity); // Yellow-green
+        return const Color(0xFF84CC16).withValues(alpha: opacity); // Yellow-green
       case ClarityLevel.muddy:
-        return Color(0xFFA16207).withValues(alpha: opacity); // Brown
+        return const Color(0xFFA16207).withValues(alpha: opacity); // Brown
       case null:
-        return Color(0xFF9CA3AF).withValues(alpha: opacity); // Gray fallback
+        return const Color(0xFF9CA3AF).withValues(alpha: opacity); // Gray fallback
     }
   }
 
@@ -103,17 +103,17 @@ class _ClarityPolygonsLayer extends ConsumerWidget {
     
     switch (level) {
       case ClarityLevel.crystal:
-        return Color(0xFF0EA5E9).withValues(alpha: opacity);
+        return const Color(0xFF0EA5E9).withValues(alpha: opacity);
       case ClarityLevel.clear:
-        return Color(0xFF2563EB).withValues(alpha: opacity);
+        return const Color(0xFF2563EB).withValues(alpha: opacity);
       case ClarityLevel.lightStain:
-        return Color(0xFF16A34A).withValues(alpha: opacity);
+        return const Color(0xFF16A34A).withValues(alpha: opacity);
       case ClarityLevel.stained:
-        return Color(0xFF65A30D).withValues(alpha: opacity);
+        return const Color(0xFF65A30D).withValues(alpha: opacity);
       case ClarityLevel.muddy:
-        return Color(0xFF92400E).withValues(alpha: opacity);
+        return const Color(0xFF92400E).withValues(alpha: opacity);
       case null:
-        return Color(0xFF6B7280).withValues(alpha: opacity);
+        return const Color(0xFF6B7280).withValues(alpha: opacity);
     }
   }
 }

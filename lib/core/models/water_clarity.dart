@@ -14,6 +14,7 @@
 /// - Light Stain: 3-5 ft (normal TVA reservoir conditions)
 /// - Stained: 1-3 ft (after rain, spring runoff, windy periods)
 /// - Muddy: <1 ft (heavy rain, flood conditions, major inflow)
+library;
 
 // ---------------------------------------------------------------------------
 // Enums

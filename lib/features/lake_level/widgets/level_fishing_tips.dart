@@ -188,12 +188,12 @@ class LevelFishingTipsCompact extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.lightbulb_outline, 
+              Icon(Icons.lightbulb_outline, 
                   size: 14, color: AppColors.teal),
-              const SizedBox(width: 6),
-              const Text(
+              SizedBox(width: 6),
+              Text(
                 'Quick Tips',
                 style: TextStyle(
                   fontSize: 11,

@@ -171,7 +171,7 @@ class BestAreasScreen extends ConsumerWidget {
                       size: 48,
                     ),
                     const SizedBox(height: 16),
-                    Text(
+                    const Text(
                       'Failed to load hotspots',
                       style: TextStyle(
                         color: AppColors.textPrimary,

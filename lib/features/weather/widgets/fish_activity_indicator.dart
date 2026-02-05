@@ -102,9 +102,9 @@ class FishActivityIndicator extends StatelessWidget {
             backgroundColor: AppColors.card,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
-          Text(
+          const Text(
             '🐟',
-            style: const TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20),
           ),
         ],
       ),

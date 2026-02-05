@@ -1,4 +1,5 @@
 /// Streamflow and inflow data models for water flow analysis.
+library;
 
 /// Represents a USGS streamflow monitoring station.
 class StreamflowStation {

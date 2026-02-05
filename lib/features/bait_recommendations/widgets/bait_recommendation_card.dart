@@ -184,10 +184,10 @@ class BaitRecommendationCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   
                   // Recommended Colors
-                  _SectionHeader(
+                  const _SectionHeader(
                     icon: Icons.palette,
                     title: 'Recommended Colors',
-                    color: const Color(0xFF60A5FA),
+                    color: Color(0xFF60A5FA),
                   ),
                   const SizedBox(height: 6),
                   Wrap(
@@ -228,10 +228,10 @@ class BaitRecommendationCard extends StatelessWidget {
                   const SizedBox(height: 14),
                   
                   // Techniques
-                  _SectionHeader(
+                  const _SectionHeader(
                     icon: Icons.sports,
                     title: 'Techniques',
-                    color: const Color(0xFF34D399),
+                    color: Color(0xFF34D399),
                   ),
                   const SizedBox(height: 6),
                   ...recommendation.techniques.map(
@@ -275,15 +275,15 @@ class BaitRecommendationCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(
                               Icons.lightbulb_outline,
                               color: AppColors.teal,
                               size: 16,
                             ),
-                            const SizedBox(width: 6),
-                            const Text(
+                            SizedBox(width: 6),
+                            Text(
                               'Presentation Tips',
                               style: TextStyle(
                                 fontSize: 13,
@@ -314,10 +314,10 @@ class BaitRecommendationCard extends StatelessWidget {
                   // Why Recommended
                   if (recommendation.reasons.isNotEmpty) ...[
                     const SizedBox(height: 14),
-                    _SectionHeader(
+                    const _SectionHeader(
                       icon: Icons.check_circle_outline,
                       title: 'Why This Bait?',
-                      color: const Color(0xFF22C55E),
+                      color: Color(0xFF22C55E),
                     ),
                     const SizedBox(height: 6),
                     ...recommendation.reasons.map(

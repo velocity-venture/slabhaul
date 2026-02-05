@@ -113,7 +113,7 @@ class _ClarityHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.visibility,
                       size: 16,
                       color: AppColors.textSecondary,
@@ -608,13 +608,13 @@ class _ErrorCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.cardBorder),
       ),
-      child: Center(
+      child: const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline, size: 48, color: AppColors.error),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               'Unable to estimate clarity',
               style: TextStyle(color: AppColors.textSecondary),
             ),

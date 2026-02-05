@@ -123,7 +123,7 @@ class TidesScreen extends ConsumerWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.surface,
                 shape: BoxShape.circle,
               ),
@@ -134,9 +134,9 @@ class TidesScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Text(
+            const Text(
               'No Tidal Data',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class TidesScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.15),
+              color: AppColors.info.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.location_on, color: AppColors.info, size: 24),
@@ -251,7 +251,7 @@ class TidesScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.teal.withOpacity(0.15),
+              color: AppColors.teal.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -350,7 +350,7 @@ class TidesScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: stateColor.withOpacity(0.15),
+                  color: stateColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -469,16 +469,16 @@ class TidesScreen extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isActive ? color.withOpacity(0.15) : AppColors.background,
+        color: isActive ? color.withValues(alpha: 0.15) : AppColors.background,
         borderRadius: BorderRadius.circular(10),
-        border: isActive ? Border.all(color: color.withOpacity(0.3)) : null,
+        border: isActive ? Border.all(color: color.withValues(alpha: 0.3)) : null,
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -602,14 +602,14 @@ class TidesScreen extends ConsumerWidget {
   Widget _predictionRow(TidePrediction pred, bool isEven) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      color: isEven ? AppColors.background.withOpacity(0.5) : null,
+      color: isEven ? AppColors.background.withValues(alpha: 0.5) : null,
       child: Row(
         children: [
           Container(
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: (pred.isHigh ? AppColors.warning : AppColors.info).withOpacity(0.15),
+              color: (pred.isHigh ? AppColors.warning : AppColors.info).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -778,7 +778,7 @@ class TidesScreen extends ConsumerWidget {
           Text(
             'Data source: NOAA CO-OPS',
             style: TextStyle(
-              color: AppColors.textMuted.withOpacity(0.7),
+              color: AppColors.textMuted.withValues(alpha: 0.7),
               fontSize: 10,
             ),
           ),

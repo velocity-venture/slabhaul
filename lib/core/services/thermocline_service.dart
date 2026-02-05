@@ -286,23 +286,23 @@ class ThermoclineService {
   }) {
     switch (status) {
       case StratificationStatus.mixed:
-        return "Lake is mixed — crappie can be at any depth. "
-               "Focus on structure and cover.";
+        return 'Lake is mixed — crappie can be at any depth. '
+               'Focus on structure and cover.';
       
       case StratificationStatus.forming:
-        return "Thermocline forming. Try ${targetMin.round()}-${targetMax.round()}ft, "
-               "but check shallower structure too. Fish still transitioning.";
+        return 'Thermocline forming. Try ${targetMin.round()}-${targetMax.round()}ft, '
+               'but check shallower structure too. Fish still transitioning.';
       
       case StratificationStatus.stratified:
         final hot = (surfaceTemp ?? 0) > WaterTempThresholds.hotSurface
-            ? " Surface is hot — fish deeper."
-            : "";
-        return "Target ${targetMin.round()}-${targetMax.round()}ft over deep water.$hot "
-               "Suspended crappie will be near the thermocline.";
+            ? ' Surface is hot — fish deeper.'
+            : '';
+        return 'Target ${targetMin.round()}-${targetMax.round()}ft over deep water.$hot '
+               'Suspended crappie will be near the thermocline.';
       
       case StratificationStatus.breaking:
-        return "Fall turnover beginning. Patterns unpredictable — "
-               "try ${targetMin.round()}-${targetMax.round()}ft but check multiple depths.";
+        return 'Fall turnover beginning. Patterns unpredictable — '
+               'try ${targetMin.round()}-${targetMax.round()}ft but check multiple depths.';
     }
   }
   
@@ -315,21 +315,21 @@ class ThermoclineService {
   ) {
     return [
       if (conditions.waterTempF != null)
-        "Surface: ${conditions.waterTempF!.round()}°F",
-      "Wind: ${weather.current.windSpeedMph.round()} mph",
-      "Season: ${_seasonLabel(date.dayOfYear)}",
+        'Surface: ${conditions.waterTempF!.round()}°F',
+      'Wind: ${weather.current.windSpeedMph.round()} mph',
+      'Season: ${_seasonLabel(date.dayOfYear)}',
       if (lake.maxDepthFt != null)
-        "Max depth: ${lake.maxDepthFt!.round()}ft",
+        'Max depth: ${lake.maxDepthFt!.round()}ft',
     ];
   }
   
   /// Get season label from day of year
   String _seasonLabel(int dayOfYear) {
-    if (dayOfYear < SeasonBoundaries.formingStart) return "Winter";
-    if (dayOfYear < SeasonBoundaries.stratifiedStart) return "Spring";
-    if (dayOfYear < SeasonBoundaries.breakingStart) return "Summer";
-    if (dayOfYear < SeasonBoundaries.mixedStart) return "Fall";
-    return "Winter";
+    if (dayOfYear < SeasonBoundaries.formingStart) return 'Winter';
+    if (dayOfYear < SeasonBoundaries.stratifiedStart) return 'Spring';
+    if (dayOfYear < SeasonBoundaries.breakingStart) return 'Summer';
+    if (dayOfYear < SeasonBoundaries.mixedStart) return 'Fall';
+    return 'Winter';
   }
   
   /// Create result for a mixed (non-stratified) lake
@@ -343,9 +343,9 @@ class ThermoclineService {
       thermoclineTempF: conditions.waterTempF ?? 55,
       confidence: 0.9, // High confidence that it's mixed
       status: StratificationStatus.mixed,
-      recommendation: "Lake is mixed — crappie can be at any depth. "
-                      "Focus on structure and cover.",
-      factors: ["No thermocline present"],
+      recommendation: 'Lake is mixed — crappie can be at any depth. '
+                      'Focus on structure and cover.',
+      factors: ['No thermocline present'],
       generatedAt: DateTime.now(),
     );
   }

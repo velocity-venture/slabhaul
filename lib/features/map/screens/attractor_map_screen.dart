@@ -100,7 +100,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
     ref.listen<String?>(selectedLakeProvider, (previous, next) {
       if (next == null) {
         _animatedMove(
-          LatLng(MapDefaults.defaultLat, MapDefaults.defaultLon),
+          const LatLng(MapDefaults.defaultLat, MapDefaults.defaultLon),
           MapDefaults.defaultZoom,
         );
         return;
@@ -126,7 +126,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
             mapController: _mapController,
             options: MapOptions(
               initialCenter:
-                  LatLng(MapDefaults.defaultLat, MapDefaults.defaultLon),
+                  const LatLng(MapDefaults.defaultLat, MapDefaults.defaultLon),
               initialZoom: MapDefaults.defaultZoom,
               maxZoom: 18.0,
               minZoom: 5.0,
@@ -184,14 +184,14 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                       builder: (context, clusterMarkers) {
                         return Container(
                           decoration: BoxDecoration(
-                            color: AppColors.teal.withOpacity(0.85),
+                            color: AppColors.teal.withValues(alpha: 0.85),
                             shape: BoxShape.circle,
                             border:
                                 Border.all(color: Colors.white, width: 2),
                             boxShadow: [
                               BoxShadow(
                                 color:
-                                    AppColors.teal.withOpacity(0.4),
+                                    AppColors.teal.withValues(alpha: 0.4),
                                 blurRadius: 6,
                                 spreadRadius: 1,
                               ),
@@ -253,14 +253,14 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
           // ----- Overlays on top of the map -----
 
           // Lake selector + filter bar
-          SafeArea(
+          const SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 8),
-                const LakeSelector(),
-                const SizedBox(height: 6),
-                const AttractorFilterBar(),
+                SizedBox(height: 8),
+                LakeSelector(),
+                SizedBox(height: 6),
+                AttractorFilterBar(),
               ],
             ),
           ),
@@ -296,11 +296,11 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
 
           // Extended wind analysis panel (shown on tap)
           if (_showWindPanel && windEnabled)
-            Positioned(
+            const Positioned(
               bottom: 100,
               left: 12,
               right: 12,
-              child: const WindAnalysisPanel(),
+              child: WindAnalysisPanel(),
             ),
 
           // Count badges
@@ -316,7 +316,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppColors.surface.withOpacity(0.88),
+                      color: AppColors.surface.withValues(alpha: 0.88),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.cardBorder),
                     ),
@@ -342,10 +342,10 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                          color: AppColors.warning.withOpacity(0.15),
+                          color: AppColors.warning.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: AppColors.warning.withOpacity(0.4),
+                            color: AppColors.warning.withValues(alpha: 0.4),
                           ),
                         ),
                         child: Row(
@@ -403,10 +403,10 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.15),
+                  color: AppColors.error.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: AppColors.error.withOpacity(0.4),
+                    color: AppColors.error.withValues(alpha: 0.4),
                   ),
                 ),
                 child: Row(

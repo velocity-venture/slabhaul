@@ -5,6 +5,7 @@
 ///
 /// Author: SlabHaul Development Team
 /// License: Proprietary - Velocity Venture Holdings LLC
+library;
 
 import 'dart:math';
 

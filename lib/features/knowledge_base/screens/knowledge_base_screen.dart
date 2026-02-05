@@ -37,8 +37,8 @@ class _KnowledgeBaseScreenState extends ConsumerState<KnowledgeBaseScreen>
         child: Column(
           children: [
             // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -46,8 +46,8 @@ class _KnowledgeBaseScreenState extends ConsumerState<KnowledgeBaseScreen>
                     children: [
                       Icon(Icons.menu_book_rounded,
                           color: AppColors.teal, size: 28),
-                      const SizedBox(width: 10),
-                      const Text(
+                      SizedBox(width: 10),
+                      Text(
                         'Crappie Knowledge',
                         style: TextStyle(
                           fontSize: 22,
@@ -57,8 +57,8 @@ class _KnowledgeBaseScreenState extends ConsumerState<KnowledgeBaseScreen>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const KnowledgeSearchBar(),
+                  SizedBox(height: 12),
+                  KnowledgeSearchBar(),
                 ],
               ),
             ),

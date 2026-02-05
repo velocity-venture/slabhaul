@@ -8,6 +8,7 @@
 /// - Weather conditions (pressure, fronts)
 /// - Structure type
 /// - Regional forage variations
+library;
 
 // ---------------------------------------------------------------------------
 // Enums

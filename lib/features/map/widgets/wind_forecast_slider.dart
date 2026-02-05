@@ -46,12 +46,12 @@ class _WindForecastSliderState extends ConsumerState<WindForecastSlider> {
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.95),
+        color: AppColors.surface.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.cardBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -85,7 +85,7 @@ class _WindForecastSliderState extends ConsumerState<WindForecastSlider> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.teal.withOpacity(0.2),
+                      color: AppColors.teal.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text(
@@ -122,7 +122,7 @@ class _WindForecastSliderState extends ConsumerState<WindForecastSlider> {
               thumbColor: AppColors.teal,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-              overlayColor: AppColors.teal.withOpacity(0.2),
+              overlayColor: AppColors.teal.withValues(alpha: 0.2),
             ),
             child: Slider(
               value: _sliderValue.clamp(0, totalHours),
@@ -139,7 +139,7 @@ class _WindForecastSliderState extends ConsumerState<WindForecastSlider> {
           ),
           
           // Time labels
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -149,7 +149,7 @@ class _WindForecastSliderState extends ConsumerState<WindForecastSlider> {
                   color: AppColors.textMuted,
                 ),
               ),
-              const Text(
+              Text(
                 'Now',
                 style: TextStyle(
                   fontSize: 10,
@@ -288,8 +288,8 @@ class _WindGraphPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          AppColors.teal.withOpacity(0.3),
-          AppColors.teal.withOpacity(0.05),
+          AppColors.teal.withValues(alpha: 0.3),
+          AppColors.teal.withValues(alpha: 0.05),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -318,7 +318,7 @@ class _WindGraphPainter extends CustomPainter {
     // "Now" line (at 48 hours, which is 2 days in)
     final nowX = (48 / totalHours) * size.width;
     final nowPaint = Paint()
-      ..color = AppColors.warning.withOpacity(0.5)
+      ..color = AppColors.warning.withValues(alpha: 0.5)
       ..strokeWidth = 1;
 
     canvas.drawLine(
@@ -353,7 +353,7 @@ class WindForecastSliderCompact extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.92),
+        color: AppColors.surface.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.cardBorder),
       ),

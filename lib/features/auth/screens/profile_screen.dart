@@ -207,11 +207,11 @@ class _StatusCard extends StatelessWidget {
                     : AppColors.textMuted,
               ),
               Container(width: 1, height: 36, color: AppColors.cardBorder),
-              _StatItem(
+              const _StatItem(
                 label: 'Lakes',
                 value: '3',
                 icon: Icons.water,
-                color: const Color(0xFF60A5FA),
+                color: Color(0xFF60A5FA),
               ),
             ],
           ),

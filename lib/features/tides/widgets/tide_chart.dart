@@ -78,7 +78,7 @@ class TideChart extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.15),
+              color: AppColors.info.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(Icons.waves, color: AppColors.info, size: 20),
@@ -151,7 +151,7 @@ class TideChart extends StatelessWidget {
           width: 12,
           height: 12,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -251,13 +251,13 @@ class _TideChartPainter extends CustomPainter {
 
       canvas.drawRect(
         windowRect,
-        Paint()..color = color.withOpacity(0.15),
+        Paint()..color = color.withValues(alpha: 0.15),
       );
     }
 
     // Draw grid lines
     final gridPaint = Paint()
-      ..color = AppColors.cardBorder.withOpacity(0.3)
+      ..color = AppColors.cardBorder.withValues(alpha: 0.3)
       ..strokeWidth = 1;
 
     // Horizontal grid lines (height)
@@ -322,7 +322,7 @@ class _TideChartPainter extends CustomPainter {
 
     canvas.drawPath(
       fillPath,
-      Paint()..color = AppColors.info.withOpacity(0.2),
+      Paint()..color = AppColors.info.withValues(alpha: 0.2),
     );
 
     // Draw curve line
@@ -566,7 +566,7 @@ class _TideMiniChartPainter extends CustomPainter {
 
     canvas.drawPath(
       fillPath,
-      Paint()..color = AppColors.info.withOpacity(0.2),
+      Paint()..color = AppColors.info.withValues(alpha: 0.2),
     );
 
     // Line

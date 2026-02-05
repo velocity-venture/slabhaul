@@ -42,6 +42,7 @@
 /// 
 /// Author: SlabHaul Development Team
 /// License: Proprietary - Velocity Venture Holdings LLC
+library;
 
 import 'dart:math';
 
@@ -556,7 +557,7 @@ bool runAllTests() {
       boatSpeedMph: 0.0,
     );
     // Should be approximately 57 ft (60 * 0.95)
-    final expectedDepth = 60.0 * _kMaxDepthRatio;
+    const expectedDepth = 60.0 * _kMaxDepthRatio;
     return (depth - expectedDepth).abs() < 0.1;
   });
   

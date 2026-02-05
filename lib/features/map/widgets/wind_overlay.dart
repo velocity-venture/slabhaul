@@ -48,7 +48,7 @@ class WindOverlay extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.92),
+        color: AppColors.surface.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.cardBorder),
       ),
@@ -67,15 +67,15 @@ class WindOverlay extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.92),
+        color: AppColors.surface.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.cardBorder),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.cloud_off, color: AppColors.textMuted, size: 24),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(
             'Wind data unavailable',
             style: TextStyle(
@@ -106,7 +106,7 @@ class _WindCard extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 180),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.95),
+        color: AppColors.surface.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.cardBorder),
         boxShadow: const [
@@ -127,7 +127,7 @@ class _WindCard extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: _timeModeColor(timeMode).withOpacity(0.15),
+                color: _timeModeColor(timeMode).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Row(
@@ -190,7 +190,7 @@ class _WindCard extends StatelessWidget {
                         'gusts ${conditions.gustsMph.toStringAsFixed(0)} mph',
                         style: TextStyle(
                           fontSize: 11,
-                          color: AppColors.warning.withOpacity(0.9),
+                          color: AppColors.warning.withValues(alpha: 0.9),
                         ),
                       ),
                   ],
@@ -205,7 +205,7 @@ class _WindCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.card.withOpacity(0.5),
+                color: AppColors.card.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -343,7 +343,7 @@ class _AnimatedWindArrowState extends State<_AnimatedWindArrow>
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: _speedColor(widget.speedMph).withOpacity(0.15),
+              color: _speedColor(widget.speedMph).withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -413,9 +413,9 @@ class WindAnalysisPanel extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.teal.withOpacity(0.1),
+                  color: AppColors.teal.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.teal.withOpacity(0.3)),
+                  border: Border.all(color: AppColors.teal.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -476,7 +476,7 @@ class WindAnalysisPanel extends ConsumerWidget {
     return Row(
       children: [
         _buildStatBox(
-          '${conditions.speedMph.toStringAsFixed(1)}',
+          conditions.speedMph.toStringAsFixed(1),
           'mph',
           Icons.air,
         ),
@@ -488,7 +488,7 @@ class WindAnalysisPanel extends ConsumerWidget {
         ),
         const SizedBox(width: 12),
         _buildStatBox(
-          '${conditions.gustsMph.toStringAsFixed(0)}',
+          conditions.gustsMph.toStringAsFixed(0),
           'gusts',
           Icons.bolt,
         ),
@@ -500,7 +500,7 @@ class WindAnalysisPanel extends ConsumerWidget {
     return Row(
       children: [
         _buildStatBox(
-          '${waves.heightFt.toStringAsFixed(1)}',
+          waves.heightFt.toStringAsFixed(1),
           'ft waves',
           Icons.waves,
         ),
@@ -509,7 +509,7 @@ class WindAnalysisPanel extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: _impactColor(waves.fishingImpact).withOpacity(0.15),
+              color: _impactColor(waves.fishingImpact).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -532,7 +532,7 @@ class WindAnalysisPanel extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         decoration: BoxDecoration(
-          color: AppColors.card.withOpacity(0.5),
+          color: AppColors.card.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -565,9 +565,9 @@ class WindAnalysisPanel extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [

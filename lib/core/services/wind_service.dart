@@ -82,8 +82,8 @@ class WindService {
 
   WindForecast _mockWindForecast(double lat, double lon) {
     final now = DateTime.now();
-    final baseDirection = 210; // SSW
-    final baseSpeed = 8.5;
+    const baseDirection = 210; // SSW
+    const baseSpeed = 8.5;
 
     return WindForecast(
       current: WindConditions(

@@ -67,7 +67,7 @@ class BaitRecommendationMini extends ConsumerWidget {
                 ),
                 const Spacer(),
                 if (onTap != null)
-                  Icon(
+                  const Icon(
                     Icons.arrow_forward_ios,
                     size: 12,
                     color: AppColors.textMuted,
@@ -171,7 +171,7 @@ class _EmptyState extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(
+            const Icon(
               Icons.lightbulb_outline,
               color: AppColors.textMuted,
               size: 32,
@@ -200,9 +200,9 @@ class _EmptyState extends StatelessWidget {
                 color: AppColors.teal.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'Set Conditions',
                     style: TextStyle(

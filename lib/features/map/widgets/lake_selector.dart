@@ -63,12 +63,12 @@ class LakeSelector extends ConsumerWidget {
           ),
         ),
       ),
-      error: (e, _) => SizedBox(
+      error: (e, _) => const SizedBox(
         height: 44,
         child: Center(
           child: Text(
             'Failed to load lakes',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               color: AppColors.textMuted,
             ),

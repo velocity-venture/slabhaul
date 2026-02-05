@@ -174,15 +174,15 @@ class LakeLevelScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => Padding(
-          padding: const EdgeInsets.all(16),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              const SkeletonCard(height: 120),
-              const SizedBox(height: 16),
-              const SkeletonCard(height: 80),
-              const SizedBox(height: 16),
-              const SkeletonCard(height: 280),
+              SkeletonCard(height: 120),
+              SizedBox(height: 16),
+              SkeletonCard(height: 80),
+              SizedBox(height: 16),
+              SkeletonCard(height: 280),
             ],
           ),
         ),

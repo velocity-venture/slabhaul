@@ -68,7 +68,7 @@ class ThermoclineCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -167,9 +167,9 @@ class ThermoclineCard extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.teal.withOpacity(0.1),
+        color: AppColors.teal.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.teal.withOpacity(0.3)),
+        border: Border.all(color: AppColors.teal.withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,7 +265,7 @@ class _ThermoclineDiagramPainter extends CustomPainter {
     );
     
     final targetPaint = Paint()
-      ..color = AppColors.teal.withOpacity(0.4)
+      ..color = AppColors.teal.withValues(alpha: 0.4)
       ..style = PaintingStyle.fill;
     canvas.drawRect(targetRect, targetPaint);
     
@@ -289,7 +289,7 @@ class _ThermoclineDiagramPainter extends CustomPainter {
     );
     
     // Draw depth labels
-    final textStyle = TextStyle(
+    const textStyle = TextStyle(
       color: AppColors.textSecondary,
       fontSize: 10,
     );
@@ -298,9 +298,9 @@ class _ThermoclineDiagramPainter extends CustomPainter {
     );
     
     // Surface label
-    textPainter.text = TextSpan(text: '0 ft', style: textStyle);
+    textPainter.text = const TextSpan(text: '0 ft', style: textStyle);
     textPainter.layout();
-    textPainter.paint(canvas, Offset(5, 0));
+    textPainter.paint(canvas, const Offset(5, 0));
     
     // Target zone label
     textPainter.text = TextSpan(

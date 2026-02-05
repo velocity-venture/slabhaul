@@ -19,6 +19,7 @@
 /// final result = ref.watch(baitRecommendationsProvider);
 /// final topPick = result?.topPick;
 /// ```
+library;
 
 // Models
 export '../../core/models/bait_recommendation.dart';

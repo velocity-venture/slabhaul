@@ -104,9 +104,9 @@ class CurrentConditionsCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
+                const Text(
                   'Wind',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textMuted,
                     fontSize: 13,
                   ),
