@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../models/generation_data.dart';
+import '../utils/app_logger.dart';
 
 /// Service to fetch dam generation schedules and discharge data.
 ///
@@ -18,8 +19,8 @@ class GenerationService {
     if (dam.usgsGageId != null) {
       try {
         return await _fetchUsgsDischarge(dam);
-      } catch (_) {
-        // Fall back to simulated data
+      } catch (e, st) {
+        AppLogger.error('GenerationService', 'getGenerationData(${dam.id})', e, st);
       }
     }
 
@@ -33,8 +34,8 @@ class GenerationService {
     if (dam.usgsGageId != null) {
       try {
         return await _fetchUsgsDischargeExtended(dam, days: 7);
-      } catch (_) {
-        // Fall back to simulated data
+      } catch (e, st) {
+        AppLogger.error('GenerationService', 'getGenerationDataWithHistory(${dam.id})', e, st);
       }
     }
 

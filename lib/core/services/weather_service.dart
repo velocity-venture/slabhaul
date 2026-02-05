@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/weather_data.dart';
 import '../utils/weather_utils.dart';
 import '../utils/constants.dart';
+import '../utils/app_logger.dart';
 
 class WeatherService {
   static const _cacheTtl = Duration(minutes: 15);
@@ -38,7 +39,9 @@ class WeatherService {
         _cache[key] = _CacheEntry(data: result, timestamp: DateTime.now());
         return result;
       }
-    } catch (_) {}
+    } catch (e, st) {
+      AppLogger.error('WeatherService', 'getWeather($lat, $lon)', e, st);
+    }
 
     return _mockWeather();
   }

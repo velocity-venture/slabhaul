@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app/routes.dart';
 import 'app/theme.dart';
 import 'core/services/supabase_service.dart';
+import 'core/utils/app_logger.dart';
 import 'features/settings/providers/tournament_mode_provider.dart';
 
 Future<void> main() async {
@@ -13,7 +14,9 @@ Future<void> main() async {
   // Load environment variables (fail gracefully)
   try {
     await dotenv.load(fileName: '.env');
-  } catch (_) {}
+  } catch (e) {
+    AppLogger.warn('main', 'Could not load .env file: $e');
+  }
 
   // Initialize Supabase (falls back to local data if unavailable)
   await SupabaseService.initialize();

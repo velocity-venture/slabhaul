@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/streamflow_data.dart';
+import '../utils/app_logger.dart';
 
 /// Service for fetching streamflow data from USGS Water Services API.
 /// 
@@ -35,8 +36,8 @@ class StreamflowService {
           .toList();
       _cachedInflows = inflows;
       return inflows;
-    } catch (e) {
-      // Return empty list on error (file might not exist yet)
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', 'loadInflowPoints', e, st);
       return [];
     }
   }
@@ -69,8 +70,8 @@ class StreamflowService {
       if (response.statusCode == 200) {
         return _parseInstantaneousValues(json.decode(response.body));
       }
-    } catch (e) {
-      // Silently fail - will return empty map
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', 'getCurrentReadings', e, st);
     }
 
     return {};
@@ -98,8 +99,8 @@ class StreamflowService {
       if (response.statusCode == 200) {
         return _parseTimeSeriesValues(json.decode(response.body), siteId);
       }
-    } catch (e) {
-      // Silently fail
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', 'getHistory($siteId)', e, st);
     }
 
     return [];
@@ -131,7 +132,8 @@ class StreamflowService {
         historicalMedianCfs: stats?['median'],
         historicalPercentile: stats?['percentile'],
       );
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', 'getConditions($siteId)', e, st);
       return null;
     }
   }
@@ -238,8 +240,8 @@ class StreamflowService {
           qualifier: discharge['qualifier']?.toString(),
         );
       }
-    } catch (e) {
-      // Parse error - return what we have
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', '_parseInstantaneousValues', e, st);
     }
 
     return results;
@@ -311,8 +313,8 @@ class StreamflowService {
         // Sort by time
         readings.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       }
-    } catch (e) {
-      // Parse error
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', '_parseTimeSeriesValues($targetSiteId)', e, st);
     }
 
     return readings;
@@ -331,8 +333,8 @@ class StreamflowService {
       if (response.statusCode == 200) {
         return _parseSiteInfo(response.body, siteId);
       }
-    } catch (e) {
-      // Fallback: create minimal station info
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', '_getSiteInfo($siteId)', e, st);
       return StreamflowStation(
         siteId: siteId,
         name: 'USGS $siteId',
@@ -394,7 +396,8 @@ class StreamflowService {
             ? double.tryParse(dataLine[drainIdx]) 
             : null,
       );
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', '_parseSiteInfo', e, st);
       return null;
     }
   }
@@ -457,8 +460,8 @@ class StreamflowService {
           }
         }
       }
-    } catch (e) {
-      // Stats not available
+    } catch (e, st) {
+      AppLogger.error('StreamflowService', '_getHistoricalStats($siteId)', e, st);
     }
 
     return null;

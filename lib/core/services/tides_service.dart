@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/tides_data.dart';
+import '../utils/app_logger.dart';
 
 /// Service for fetching tide data from NOAA CO-OPS API.
 /// 
@@ -54,8 +55,8 @@ class TidesService {
       }
 
       return [];
-    } catch (e) {
-      // Return empty list on error (file might not exist yet)
+    } catch (e, st) {
+      AppLogger.error('TidesService', 'loadTidalWaters', e, st);
       return [];
     }
   }
@@ -71,7 +72,8 @@ class TidesService {
     final waters = await loadTidalWaters();
     try {
       return waters.firstWhere((w) => w.lakeId == lakeId);
-    } catch (e) {
+    } catch (_) {
+      AppLogger.warn('TidesService', 'No tidal water found for lake: $lakeId');
       return null;
     }
   }
@@ -118,8 +120,8 @@ class TidesService {
               .toList();
         }
       }
-    } catch (e) {
-      // Silently fail - return empty list
+    } catch (e, st) {
+      AppLogger.error('TidesService', 'getPredictions($stationId)', e, st);
     }
 
     return [];
@@ -169,8 +171,8 @@ class TidesService {
           }).toList();
         }
       }
-    } catch (e) {
-      // Silently fail
+    } catch (e, st) {
+      AppLogger.error('TidesService', 'getHourlyPredictions($stationId)', e, st);
     }
 
     return [];
@@ -219,8 +221,8 @@ class TidesService {
           }).toList();
         }
       }
-    } catch (e) {
-      // Silently fail
+    } catch (e, st) {
+      AppLogger.error('TidesService', 'getWaterLevels($stationId)', e, st);
     }
 
     return [];
@@ -263,7 +265,8 @@ class TidesService {
         history: history,
         fetchedAt: DateTime.now(),
       );
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('TidesService', 'getConditions($stationId)', e, st);
       return null;
     }
   }

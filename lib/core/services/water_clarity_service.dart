@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/water_clarity.dart';
 import '../models/weather_data.dart';
+import '../utils/app_logger.dart';
 
 /// Water Clarity Estimation Service
 /// 
@@ -131,8 +132,8 @@ class WaterClarityService {
           .toList();
       
       return _cachedProfiles!;
-    } catch (e) {
-      // Return empty list if data not available yet
+    } catch (e, st) {
+      AppLogger.error('WaterClarityService', 'loadLakeProfiles', e, st);
       return [];
     }
   }
@@ -143,6 +144,7 @@ class WaterClarityService {
     try {
       return profiles.firstWhere((p) => p.lakeId == lakeId);
     } catch (_) {
+      AppLogger.warn('WaterClarityService', 'No profile found for lake: $lakeId');
       return null;
     }
   }

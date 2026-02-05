@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/attractor.dart';
 import '../models/lake.dart';
+import '../utils/app_logger.dart';
 import 'supabase_service.dart';
 
 class AttractorService {
@@ -19,7 +20,9 @@ class AttractorService {
         _cachedLakes =
             (data as List).map((e) => Lake.fromJson(e)).toList();
         return _cachedLakes!;
-      } catch (_) {}
+      } catch (e, st) {
+        AppLogger.error('AttractorService', 'getLakes (Supabase)', e, st);
+      }
     }
 
     // Fall back to local JSON
@@ -44,7 +47,9 @@ class AttractorService {
         _cachedAttractors =
             (data as List).map((e) => Attractor.fromJson(e)).toList();
         return _cachedAttractors!;
-      } catch (_) {}
+      } catch (e, st) {
+        AppLogger.error('AttractorService', 'getAttractors (Supabase)', e, st);
+      }
     }
 
     // Fall back to local JSON

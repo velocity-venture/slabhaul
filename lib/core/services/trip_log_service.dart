@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/trip_log.dart';
+import '../utils/app_logger.dart';
 
 /// Service for managing trip log data using SharedPreferences
 /// 
@@ -40,8 +41,8 @@ class TripLogService {
       // Sort by date, newest first
       trips.sort((a, b) => b.startedAt.compareTo(a.startedAt));
       return trips;
-    } catch (e) {
-      // If parsing fails, return empty list
+    } catch (e, st) {
+      AppLogger.error('TripLogService', 'getAllTrips (JSON parse)', e, st);
       return [];
     }
   }
@@ -52,6 +53,7 @@ class TripLogService {
     try {
       return trips.firstWhere((t) => t.id == tripId);
     } catch (_) {
+      AppLogger.warn('TripLogService', 'Trip not found: $tripId');
       return null;
     }
   }
@@ -234,7 +236,8 @@ class TripLogService {
 
     try {
       return CatchRecord.fromJson(json.decode(jsonString));
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.error('TripLogService', 'getLastCatch (JSON parse)', e, st);
       return null;
     }
   }
@@ -364,8 +367,8 @@ class TripLogService {
         final trip = FishingTrip.fromJson(tripJson as Map<String, dynamic>);
         await saveTrip(trip);
         imported++;
-      } catch (_) {
-        // Skip invalid trips
+      } catch (e, st) {
+        AppLogger.error('TripLogService', 'importFromJson (trip parse)', e, st);
       }
     }
     

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 import '../models/wind_data.dart';
 import '../utils/constants.dart';
+import '../utils/app_logger.dart';
 
 /// Service for fetching wind data and calculating wind effects on lakes.
 class WindService {
@@ -44,7 +45,9 @@ class WindService {
         _cache[cacheKey] = (forecast, DateTime.now());
         return forecast;
       }
-    } catch (_) {}
+    } catch (e, st) {
+      AppLogger.error('WindService', 'getWindForecast($lat, $lon)', e, st);
+    }
 
     return _mockWindForecast(lat, lon);
   }

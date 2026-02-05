@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/fishing_hotspot.dart';
+import '../utils/app_logger.dart';
 import 'supabase_service.dart';
 
 /// Service for loading and scoring fishing hotspots based on current conditions.
@@ -26,7 +27,9 @@ class HotspotService {
         _cachedHotspots =
             (data as List).map((e) => FishingHotspot.fromJson(e)).toList();
         return _cachedHotspots!;
-      } catch (_) {}
+      } catch (e, st) {
+        AppLogger.error('HotspotService', 'getHotspots (Supabase)', e, st);
+      }
     }
 
     // Fall back to local JSON

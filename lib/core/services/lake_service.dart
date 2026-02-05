@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../models/lake_conditions.dart';
 import '../utils/constants.dart';
+import '../utils/app_logger.dart';
 
 class LakeService {
   static const _cacheTtl = Duration(minutes: 15);
@@ -41,7 +42,9 @@ class LakeService {
         _cache[lakeId] = _LakeCacheEntry(data: result, timestamp: DateTime.now());
         return result;
       }
-    } catch (_) {}
+    } catch (e, st) {
+      AppLogger.error('LakeService', 'getLakeConditions($lakeId)', e, st);
+    }
 
     return _mockConditions(lakeId, usgsGageId, normalPool);
   }
