@@ -26,7 +26,7 @@ CREATE TABLE public.lakes (
 -- ATTRACTORS TABLE
 -- ============================================================================
 CREATE TABLE public.attractors (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::TEXT,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
   name TEXT NOT NULL,
   latitude DOUBLE PRECISION NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
@@ -66,7 +66,7 @@ CREATE INDEX idx_attractors_type ON public.attractors(type);
 -- USER FAVORITES (future use)
 -- ============================================================================
 CREATE TABLE public.user_favorites (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   attractor_id TEXT REFERENCES public.attractors(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -77,7 +77,7 @@ CREATE TABLE public.user_favorites (
 -- CALCULATOR PRESETS (future use)
 -- ============================================================================
 CREATE TABLE public.calculator_presets (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   sinker_weight_oz DOUBLE PRECISION NOT NULL,

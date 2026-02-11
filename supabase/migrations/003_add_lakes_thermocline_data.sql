@@ -1,29 +1,29 @@
 -- SlabHaul Migration 003: Add Lakes with Thermocline Metadata
 -- Adds popular crappie lakes across the South with depth/area data for thermocline predictions
 
+-- Add new columns first (must exist before UPDATE references them)
+ALTER TABLE public.lakes ADD COLUMN IF NOT EXISTS max_depth_ft DECIMAL(5,1);
+ALTER TABLE public.lakes ADD COLUMN IF NOT EXISTS area_acres DECIMAL(10,2);
+ALTER TABLE public.lakes ADD COLUMN IF NOT EXISTS mixing_type TEXT;
+
 -- Update existing lakes with thermocline-relevant metadata
-UPDATE public.lakes SET 
+UPDATE public.lakes SET
   max_depth_ft = 18,
   area_acres = 15000,
   mixing_type = 'polymictic'
 WHERE id = 'reelfoot_lake_tn';
 
-UPDATE public.lakes SET 
+UPDATE public.lakes SET
   max_depth_ft = 15,
   area_acres = 2400,
   mixing_type = 'polymictic'
 WHERE id = 'horseshoe_lake_ar';
 
-UPDATE public.lakes SET 
+UPDATE public.lakes SET
   max_depth_ft = 75,
   area_acres = 160300,
   mixing_type = 'monomictic'
 WHERE id = 'kentucky_lake_tn';
-
--- Add new columns if not present
-ALTER TABLE public.lakes ADD COLUMN IF NOT EXISTS max_depth_ft DECIMAL(5,1);
-ALTER TABLE public.lakes ADD COLUMN IF NOT EXISTS area_acres DECIMAL(10,2);
-ALTER TABLE public.lakes ADD COLUMN IF NOT EXISTS mixing_type TEXT;
 
 -- ============================================================================
 -- TENNESSEE / KENTUCKY TVA LAKES
