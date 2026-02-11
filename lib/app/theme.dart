@@ -5,6 +5,8 @@ final ThemeData slabHaulDarkTheme = ThemeData(
   brightness: Brightness.dark,
   scaffoldBackgroundColor: AppColors.background,
   primaryColor: AppColors.teal,
+  materialTapTargetSize: MaterialTapTargetSize.padded,
+  visualDensity: VisualDensity.standard,
   colorScheme: const ColorScheme.dark(
     primary: AppColors.teal,
     secondary: AppColors.tealLight,
@@ -19,6 +21,7 @@ final ThemeData slabHaulDarkTheme = ThemeData(
     backgroundColor: AppColors.surface,
     foregroundColor: AppColors.textPrimary,
     elevation: 0,
+    scrolledUnderElevation: 0,
   ),
   cardTheme: CardThemeData(
     color: AppColors.surface,
@@ -33,7 +36,9 @@ final ThemeData slabHaulDarkTheme = ThemeData(
     selectedItemColor: AppColors.teal,
     unselectedItemColor: AppColors.textMuted,
     type: BottomNavigationBarType.fixed,
-    elevation: 8,
+    elevation: 0,
+    selectedLabelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+    unselectedLabelStyle: TextStyle(fontSize: 11),
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,

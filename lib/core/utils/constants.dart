@@ -97,6 +97,38 @@ class LineTypes {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Glass Card Decoration
+// ---------------------------------------------------------------------------
+class GlassDecoration {
+  static BoxDecoration card({double opacity = 0.6, double radius = 12}) {
+    return BoxDecoration(
+      color: AppColors.surface.withValues(alpha: opacity),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: AppColors.cardBorder.withValues(alpha: 0.3),
+      ),
+    );
+  }
+
+  static BoxDecoration elevated({double radius = 16}) {
+    return BoxDecoration(
+      color: AppColors.surface.withValues(alpha: 0.8),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: AppColors.teal.withValues(alpha: 0.15),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.teal.withValues(alpha: 0.08),
+          blurRadius: 24,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+}
+
 Color attractorColor(String type) {
   switch (type) {
     case 'brush_pile':

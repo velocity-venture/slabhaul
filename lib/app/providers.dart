@@ -7,6 +7,8 @@ import '../core/services/wind_service.dart';
 import '../core/services/hotspot_service.dart';
 import '../core/services/streamflow_service.dart';
 import '../core/services/water_clarity_service.dart';
+import '../core/services/smart_trip_planner.dart';
+import '../core/services/bait_recommendation_service.dart';
 
 final attractorServiceProvider = Provider<AttractorService>((ref) {
   return AttractorService();
@@ -38,4 +40,13 @@ final streamflowServiceProviderImpl = Provider<StreamflowService>((ref) {
 
 final waterClarityServiceProviderImpl = Provider<WaterClarityService>((ref) {
   return WaterClarityService();
+});
+
+final smartTripPlannerProvider = Provider<SmartTripPlanner>((ref) {
+  return SmartTripPlanner();
+});
+
+final baitRecommendationServiceProvider =
+    Provider<BaitRecommendationService>((ref) {
+  return BaitRecommendationService();
 });
