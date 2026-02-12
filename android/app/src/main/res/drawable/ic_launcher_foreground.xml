@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Fish hook icon - SlabHaul -->
+
+    <!-- Hook eye (ring at top) -->
+    <path
+        android:fillColor="#4DD0E1"
+        android:fillType="evenOdd"
+        android:pathData="M56,16 C61,16 65,20 65,25 C65,30 61,34 56,34 C51,34 47,30 47,25 C47,20 51,16 56,16 Z M56,20 C58.8,20 61,22.2 61,25 C61,27.8 58.8,30 56,30 C53.2,30 51,27.8 51,25 C51,22.2 53.2,20 56,20 Z"/>
+
+    <!-- Hook shank -->
+    <path
+        android:fillColor="#4DD0E1"
+        android:pathData="M52,32 L60,32 L60,60 L52,60 Z"/>
+
+    <!-- Hook bend (J-curve) -->
+    <path
+        android:fillColor="#4DD0E1"
+        android:pathData="M60,58 C60,58 62,78 48,86 C36,92 22,86 18,74 C14,62 20,50 32,46 L36,52 C28,55 22,62 24,72 C26,80 34,86 44,82 C52,78 52,68 52,58 Z"/>
+
+    <!-- Barb -->
+    <path
+        android:fillColor="#4DD0E1"
+        android:pathData="M32,46 L24,38 L32,40 Z"/>
+</vector>

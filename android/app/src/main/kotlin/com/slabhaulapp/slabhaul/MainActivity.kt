@@ -1,4 +1,4 @@
-package com.example.slabhaul
+package com.slabhaulapp.slabhaul
 
 import io.flutter.embedding.android.FlutterActivity
 
