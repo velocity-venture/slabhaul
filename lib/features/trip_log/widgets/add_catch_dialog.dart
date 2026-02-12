@@ -42,15 +42,56 @@ class _AddCatchDialogState extends ConsumerState<AddCatchDialog> {
   final _baitColorController = TextEditingController();
   final _notesController = TextEditingController();
   bool _released = true;
+  bool _weightIsEstimated = false;
+  bool _userEditedWeight = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _lengthController.addListener(_onLengthChanged);
+    _weightController.addListener(_onWeightManualEdit);
+  }
 
   @override
   void dispose() {
+    _lengthController.removeListener(_onLengthChanged);
+    _weightController.removeListener(_onWeightManualEdit);
     _lengthController.dispose();
     _weightController.dispose();
     _baitNameController.dispose();
     _baitColorController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+
+  void _onLengthChanged() {
+    if (_userEditedWeight) return;
+    final length = double.tryParse(_lengthController.text);
+    if (length != null && length > 0) {
+      final estimated = _selectedSpecies.estimateWeightLbs(length);
+      if (estimated != null) {
+        _weightController.removeListener(_onWeightManualEdit);
+        _weightController.text = estimated.toStringAsFixed(2);
+        _weightController.addListener(_onWeightManualEdit);
+        setState(() => _weightIsEstimated = true);
+        return;
+      }
+    }
+    if (_weightIsEstimated) {
+      _weightController.removeListener(_onWeightManualEdit);
+      _weightController.clear();
+      _weightController.addListener(_onWeightManualEdit);
+      setState(() => _weightIsEstimated = false);
+    }
+  }
+
+  void _onWeightManualEdit() {
+    if (_weightIsEstimated) {
+      setState(() {
+        _weightIsEstimated = false;
+        _userEditedWeight = true;
+      });
+    }
   }
 
   void _applyLastCatch(CatchRecord lastCatch) {
@@ -158,7 +199,13 @@ class _AddCatchDialogState extends ConsumerState<AddCatchDialog> {
             const SizedBox(height: 8),
             _SpeciesSelector(
               selected: _selectedSpecies,
-              onChanged: (species) => setState(() => _selectedSpecies = species),
+              onChanged: (species) {
+                setState(() {
+                  _selectedSpecies = species;
+                  _userEditedWeight = false;
+                });
+                _onLengthChanged();
+              },
             ),
 
             const SizedBox(height: 16),
@@ -178,7 +225,9 @@ class _AddCatchDialogState extends ConsumerState<AddCatchDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _InputField(
-                    label: 'Weight (lbs)',
+                    label: _weightIsEstimated
+                        ? 'Weight (lbs) \u2022 Est.'
+                        : 'Weight (lbs)',
                     controller: _weightController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),

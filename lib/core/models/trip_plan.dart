@@ -1,7 +1,7 @@
-/// Smart Trip Plan — AI-generated fishing strategy
-///
-/// Combines weather, solunar, thermocline, and bait data into
-/// a single actionable plan with confidence scoring.
+// Smart Trip Plan — AI-generated fishing strategy
+//
+// Combines weather, solunar, thermocline, and bait data into
+// a single actionable plan with confidence scoring.
 
 enum TripRating { excellent, good, fair, poor }
 

@@ -74,7 +74,7 @@ class SmartTripPlannerScreen extends ConsumerWidget {
                 color: AppColors.error,
               ),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 'Unable to generate trip plan',
                 style: TextStyle(
                   fontSize: 16,
@@ -84,7 +84,7 @@ class SmartTripPlannerScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 error.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.textMuted,
                 ),
@@ -215,7 +215,7 @@ class _OverallRatingCard extends StatelessWidget {
                       ),
                       Text(
                         '${plan.overallScore.round()}%',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.textSecondary,
                         ),

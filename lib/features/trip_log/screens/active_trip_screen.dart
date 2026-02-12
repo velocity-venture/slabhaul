@@ -3,10 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/models/trip_log.dart';
+import '../../../core/models/tournament.dart';
+import '../../../core/models/livewell.dart';
 import '../../../core/utils/constants.dart';
+import '../../../core/providers/tournament_providers.dart';
+import '../../../core/providers/livewell_providers.dart';
 import '../providers/trip_log_providers.dart';
 import '../widgets/add_catch_dialog.dart';
 import '../widgets/start_trip_dialog.dart';
+import '../widgets/tournament_bag_widget.dart';
 
 class ActiveTripScreen extends ConsumerWidget {
   const ActiveTripScreen({super.key});
@@ -137,6 +142,8 @@ class _ActiveTripView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timerAsync = ref.watch(tripTimerProvider);
+    final isTournament = ref.watch(isTournamentActiveProvider);
+    final livewellAlert = ref.watch(livewellAlertProvider);
 
     return Column(
       children: [
@@ -147,11 +154,28 @@ class _ActiveTripView extends ConsumerWidget {
           onEndTrip: () => _confirmEndTrip(context, ref),
         ),
 
+        // Tournament bag (when tournament is active)
+        if (isTournament)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: TournamentBagWidget(),
+          ),
+
+        // Livewell alert (when conditions are being tracked)
+        if (livewellAlert != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: _LivewellAlertCard(alert: livewellAlert),
+          ),
+
         // Catches list
         Expanded(
           child: trip.catches.isEmpty
               ? _EmptyCatchesState()
-              : _CatchesList(catches: trip.catches.reversed.toList()),
+              : _CatchesList(
+                  catches: trip.catches.reversed.toList(),
+                  isTournament: isTournament,
+                ),
         ),
       ],
     );
@@ -188,7 +212,7 @@ class _ActiveTripView extends ConsumerWidget {
   }
 }
 
-class _TripHeader extends StatelessWidget {
+class _TripHeader extends ConsumerWidget {
   final FishingTrip trip;
   final Duration duration;
   final VoidCallback onEndTrip;
@@ -200,7 +224,7 @@ class _TripHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final timeFormat = DateFormat('h:mm a');
 
     return Container(
@@ -312,8 +336,47 @@ class _TripHeader extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 8),
+          // Trip tools row
+          Row(
+            children: [
+              _TripToolChip(
+                icon: Icons.emoji_events,
+                label: 'Tournament',
+                onTap: () => _showTournamentSetup(context),
+              ),
+              const SizedBox(width: 8),
+              _TripToolChip(
+                icon: Icons.water_drop,
+                label: 'Livewell',
+                onTap: () => _showLivewellSetup(context),
+              ),
+            ],
+          ),
         ],
       ),
+    );
+  }
+
+  void _showTournamentSetup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => const _TournamentSetupSheet(),
+    );
+  }
+
+  void _showLivewellSetup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => const _LivewellSetupSheet(),
     );
   }
 
@@ -408,8 +471,9 @@ class _EmptyCatchesState extends StatelessWidget {
 
 class _CatchesList extends ConsumerWidget {
   final List<CatchRecord> catches;
+  final bool isTournament;
 
-  const _CatchesList({required this.catches});
+  const _CatchesList({required this.catches, this.isTournament = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -448,16 +512,60 @@ class _CatchesList extends ConsumerWidget {
       builder: (context) => const AddCatchDialog(),
     );
 
-    if (result != null) {
-      await ref.read(activeTripNotifierProvider.notifier).addCatch(
-            species: result.species,
-            lengthInches: result.lengthInches,
-            weightLbs: result.weightLbs,
-            depthFt: result.depthFt,
-            bait: result.bait,
-            notes: result.notes,
-            released: result.released,
+    if (result == null) return;
+
+    // Log to trip
+    await ref.read(activeTripNotifierProvider.notifier).addCatch(
+          species: result.species,
+          lengthInches: result.lengthInches,
+          weightLbs: result.weightLbs,
+          depthFt: result.depthFt,
+          bait: result.bait,
+          notes: result.notes,
+          released: result.released,
+        );
+
+    // Tournament bag integration
+    if (isTournament &&
+        result.weightLbs != null &&
+        result.lengthInches != null) {
+      final bagNotifier = ref.read(tournamentBagProvider.notifier);
+      final bag = ref.read(tournamentBagProvider);
+
+      if (!bag.isFull) {
+        bagNotifier.addFish(
+          weightLbs: result.weightLbs!,
+          lengthInches: result.lengthInches!,
+          species: result.species,
+        );
+      } else {
+        // Check for cull opportunity
+        final cullResult = bagNotifier.cullSmallest(
+          weightLbs: result.weightLbs!,
+          lengthInches: result.lengthInches!,
+          species: result.species,
+        );
+        if (cullResult != null && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.success.withValues(alpha: 0.9),
+              content: Text(
+                'Culled ${cullResult.removedFish.weightLbs.toStringAsFixed(2)} lbs  '
+                '+${cullResult.weightGain.toStringAsFixed(2)} lbs gained!',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              duration: const Duration(seconds: 3),
+            ),
           );
+        }
+      }
+
+      // Update livewell fish count if tracking
+      final conditions = ref.read(livewellConditionsProvider);
+      if (conditions != null) {
+        ref.read(livewellConditionsProvider.notifier).state =
+            conditions.copyWith(fishCount: conditions.fishCount + 1);
+      }
     }
   }
 
@@ -613,6 +721,491 @@ class _CatchCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Trip Tool Chip (header action buttons)
+// ---------------------------------------------------------------------------
+
+class _TripToolChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _TripToolChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: AppColors.textMuted),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tournament Setup Sheet
+// ---------------------------------------------------------------------------
+
+class _TournamentSetupSheet extends ConsumerStatefulWidget {
+  const _TournamentSetupSheet();
+
+  @override
+  ConsumerState<_TournamentSetupSheet> createState() =>
+      _TournamentSetupSheetState();
+}
+
+class _TournamentSetupSheetState
+    extends ConsumerState<_TournamentSetupSheet> {
+  int _bagLimit = 7;
+  double _minLength = 9.0;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = ref.read(tournamentConfigProvider);
+    if (existing != null) {
+      _bagLimit = existing.bagLimit;
+      _minLength = existing.minLengthInches;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = ref.watch(isTournamentActiveProvider);
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.textMuted.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Tournament Mode',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Track your bag, cull the smallest fish, and optimize your total weight.',
+            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+          ),
+          const SizedBox(height: 20),
+
+          // Bag limit
+          Row(
+            children: [
+              const Text('Bag Limit',
+                  style:
+                      TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+              const Spacer(),
+              Text('$_bagLimit fish',
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.tealLight)),
+            ],
+          ),
+          Slider(
+            value: _bagLimit.toDouble(),
+            min: 3,
+            max: 15,
+            divisions: 12,
+            onChanged: (v) => setState(() => _bagLimit = v.round()),
+          ),
+
+          // Min length
+          Row(
+            children: [
+              const Text('Min Length',
+                  style:
+                      TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+              const Spacer(),
+              Text('${_minLength.toStringAsFixed(1)}"',
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.tealLight)),
+            ],
+          ),
+          Slider(
+            value: _minLength,
+            min: 7.0,
+            max: 15.0,
+            divisions: 16,
+            onChanged: (v) => setState(() => _minLength = v),
+          ),
+
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (isActive)
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      ref.read(tournamentConfigProvider.notifier).state = null;
+                      ref.read(tournamentBagProvider.notifier).reset();
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.error),
+                    ),
+                    child: const Text('End Tournament',
+                        style: TextStyle(color: AppColors.error)),
+                  ),
+                ),
+              if (isActive) const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final config = TournamentConfig(
+                      bagLimit: _bagLimit,
+                      minLengthInches: _minLength,
+                    );
+                    ref.read(tournamentConfigProvider.notifier).state = config;
+                    ref.read(tournamentBagProvider.notifier).configure(config);
+                    Navigator.pop(context);
+                  },
+                  child: Text(isActive ? 'Update' : 'Start Tournament'),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 8),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Livewell Setup Sheet
+// ---------------------------------------------------------------------------
+
+class _LivewellSetupSheet extends ConsumerStatefulWidget {
+  const _LivewellSetupSheet();
+
+  @override
+  ConsumerState<_LivewellSetupSheet> createState() =>
+      _LivewellSetupSheetState();
+}
+
+class _LivewellSetupSheetState extends ConsumerState<_LivewellSetupSheet> {
+  int _fishCount = 0;
+  double _waterTempF = 72;
+  bool _hasAerator = false;
+  bool _hasRecirculator = false;
+  bool _isInsulated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = ref.read(livewellConditionsProvider);
+    if (existing != null) {
+      _fishCount = existing.fishCount;
+      _waterTempF = existing.waterTempF;
+      _hasAerator = existing.hasAerator;
+      _hasRecirculator = existing.hasRecirculator;
+      _isInsulated = existing.isInsulated;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isTracking = ref.watch(livewellConditionsProvider) != null;
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.textMuted.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Livewell Monitor',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Track conditions to keep your crappie alive and healthy.',
+            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+          ),
+          const SizedBox(height: 20),
+
+          // Fish count
+          Row(
+            children: [
+              const Text('Fish in Livewell',
+                  style:
+                      TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+              const Spacer(),
+              Text('$_fishCount',
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.tealLight)),
+            ],
+          ),
+          Slider(
+            value: _fishCount.toDouble(),
+            min: 0,
+            max: 30,
+            divisions: 30,
+            onChanged: (v) => setState(() => _fishCount = v.round()),
+          ),
+
+          // Water temp
+          Row(
+            children: [
+              const Text('Livewell Water Temp',
+                  style:
+                      TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+              const Spacer(),
+              Text('${_waterTempF.round()}F',
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.tealLight)),
+            ],
+          ),
+          Slider(
+            value: _waterTempF,
+            min: 40,
+            max: 100,
+            divisions: 60,
+            onChanged: (v) => setState(() => _waterTempF = v),
+          ),
+
+          // Equipment toggles
+          const SizedBox(height: 4),
+          _EquipmentToggle(
+            label: 'Aerator Running',
+            value: _hasAerator,
+            onChanged: (v) => setState(() => _hasAerator = v),
+          ),
+          _EquipmentToggle(
+            label: 'Recirculating Pump',
+            value: _hasRecirculator,
+            onChanged: (v) => setState(() => _hasRecirculator = v),
+          ),
+          _EquipmentToggle(
+            label: 'Insulated Livewell',
+            value: _isInsulated,
+            onChanged: (v) => setState(() => _isInsulated = v),
+          ),
+
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (isTracking)
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      ref.read(livewellConditionsProvider.notifier).state =
+                          null;
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.error),
+                    ),
+                    child: const Text('Stop Tracking',
+                        style: TextStyle(color: AppColors.error)),
+                  ),
+                ),
+              if (isTracking) const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref.read(livewellConditionsProvider.notifier).state =
+                        LivewellConditions(
+                      waterTempF: _waterTempF,
+                      airTempF: _waterTempF + 10, // rough estimate
+                      fishCount: _fishCount,
+                      hasAerator: _hasAerator,
+                      hasRecirculator: _hasRecirculator,
+                      isInsulated: _isInsulated,
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: Text(isTracking ? 'Update' : 'Start Monitoring'),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 8),
+        ],
+      ),
+    );
+  }
+}
+
+class _EquipmentToggle extends StatelessWidget {
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const _EquipmentToggle({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                  fontSize: 13, color: AppColors.textSecondary),
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeTrackColor: AppColors.teal.withValues(alpha: 0.5),
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              return states.contains(WidgetState.selected)
+                  ? AppColors.teal
+                  : AppColors.textMuted;
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Livewell Alert Card
+// ---------------------------------------------------------------------------
+
+class _LivewellAlertCard extends StatelessWidget {
+  final LivewellAlert alert;
+
+  const _LivewellAlertCard({required this.alert});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color statusColor;
+    final IconData statusIcon;
+    switch (alert.status) {
+      case LivewellStatus.safe:
+        statusColor = AppColors.success;
+        statusIcon = Icons.check_circle;
+      case LivewellStatus.caution:
+        statusColor = AppColors.warning;
+        statusIcon = Icons.warning;
+      case LivewellStatus.danger:
+        statusColor = AppColors.error;
+        statusIcon = Icons.error;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(statusIcon, size: 18, color: statusColor),
+              const SizedBox(width: 8),
+              Text(
+                'Livewell: ${alert.status.displayName}',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: statusColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            alert.message,
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          if (alert.recommendation.isNotEmpty &&
+              alert.status != LivewellStatus.safe) ...[
+            const SizedBox(height: 4),
+            Text(
+              alert.recommendation,
+              style: TextStyle(
+                fontSize: 10,
+                color: statusColor.withValues(alpha: 0.8),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

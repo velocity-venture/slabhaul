@@ -11,6 +11,8 @@ import 'package:slabhaul/shared/widgets/glass_container.dart';
 import 'package:slabhaul/shared/widgets/skeleton_loader.dart';
 import 'package:slabhaul/features/weather/providers/weather_providers.dart';
 import 'package:slabhaul/features/weather/providers/lake_conditions_providers.dart';
+import 'package:slabhaul/features/map/providers/map_providers.dart';
+import 'package:slabhaul/core/models/lake.dart';
 import 'package:slabhaul/features/weather/widgets/current_conditions_card.dart';
 import 'package:slabhaul/features/weather/widgets/barometric_trend_card.dart';
 import 'package:slabhaul/features/weather/widgets/sun_moon_card.dart';
@@ -26,6 +28,8 @@ import 'package:slabhaul/features/generation/providers/generation_lake_provider.
 import 'package:slabhaul/features/generation/widgets/generation_status_card.dart';
 import 'package:slabhaul/features/tides/providers/tides_providers.dart';
 import 'package:slabhaul/features/tides/widgets/tide_card.dart';
+import 'package:slabhaul/core/providers/technique_providers.dart';
+import 'package:slabhaul/core/services/technique_recommendation_service.dart';
 
 class WeatherDashboardScreen extends ConsumerStatefulWidget {
   const WeatherDashboardScreen({super.key});
@@ -110,32 +114,55 @@ class _WeatherDashboardScreenState
                     opacity: 0.20,
                     child: Row(
                       children: [
-                        const Icon(Icons.location_on,
-                            color: AppColors.teal, size: 18),
-                        const SizedBox(width: 6),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                lake.name,
-                                style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              weatherAsync.maybeWhen(
-                                data: (weather) => Text(
-                                  'Updated ${formatTimeAgo(weather.fetchedAt)}',
-                                  style: const TextStyle(
-                                    color: AppColors.textMuted,
-                                    fontSize: 11,
+                          child: GestureDetector(
+                            onTap: () => _openWeatherLakePicker(context, ref),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.location_on,
+                                    color: AppColors.teal, size: 18),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              lake.name,
+                                              style: const TextStyle(
+                                                color: AppColors.textPrimary,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: AppColors.textMuted,
+                                              size: 18),
+                                        ],
+                                      ),
+                                      weatherAsync.maybeWhen(
+                                        data: (weather) => Text(
+                                          'Updated ${formatTimeAgo(weather.fetchedAt)}',
+                                          style: const TextStyle(
+                                            color: AppColors.textMuted,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                        orElse: () => const SizedBox.shrink(),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                orElse: () => const SizedBox.shrink(),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         IconButton(
@@ -300,6 +327,18 @@ class _WeatherDashboardScreenState
                         padding: const EdgeInsets.all(4),
                         child: SolunarCard(
                             forecast: ref.watch(solunarForecastProvider)),
+                      ),
+                    ),
+
+                    // Technique Recommendations
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: _TechniqueRecommendationsCard(ref: ref),
                       ),
                     ),
 
@@ -597,6 +636,39 @@ class _WeatherDashboardScreenState
             },
           ),
         ],
+      ),
+    );
+  }
+
+  void _openWeatherLakePicker(BuildContext context, WidgetRef ref) {
+    final lakesAsync = ref.read(lakesProvider);
+    final lakes = lakesAsync.valueOrNull;
+    if (lakes == null || lakes.isEmpty) return;
+
+    final currentLake = ref.read(selectedWeatherLakeProvider);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _WeatherLakePickerSheet(
+        lakes: lakes,
+        selectedLakeName: currentLake.name,
+        onSelected: (lake) {
+          ref.read(selectedWeatherLakeProvider.notifier).state =
+              WeatherLakeCoords(
+            id: lake.id,
+            lat: lake.centerLat,
+            lon: lake.centerLon,
+            name: lake.name,
+            maxDepthFt: lake.maxDepthFt,
+            areaAcres: lake.areaAcres,
+          );
+          Navigator.of(context).pop();
+        },
       ),
     );
   }
@@ -1052,6 +1124,350 @@ class _QuickAccessCard extends StatelessWidget {
               Icons.chevron_right,
               size: 18,
               color: AppColors.textMuted,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Technique Recommendations Card
+// ---------------------------------------------------------------------------
+
+class _TechniqueRecommendationsCard extends StatelessWidget {
+  final WidgetRef ref;
+
+  const _TechniqueRecommendationsCard({required this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    final recAsync = ref.watch(techniqueRecommendationsProvider);
+
+    return recAsync.when(
+      data: (recommendations) {
+        if (recommendations.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 4),
+              child: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: AppColors.warning.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: const Icon(Icons.tips_and_updates,
+                        size: 16, color: AppColors.warning),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Recommended Techniques',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            for (final rec in recommendations)
+              _TechniqueRow(rec: rec),
+            const SizedBox(height: 6),
+          ],
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Center(
+          child: SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.teal,
+            ),
+          ),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
+
+class _TechniqueRow extends StatelessWidget {
+  final TechniqueRecommendation rec;
+
+  const _TechniqueRow({required this.rec});
+
+  @override
+  Widget build(BuildContext context) {
+    final scorePct = (rec.score * 100).round();
+    final Color scoreColor;
+    if (rec.score >= 0.7) {
+      scoreColor = AppColors.success;
+    } else if (rec.score >= 0.5) {
+      scoreColor = AppColors.warning;
+    } else {
+      scoreColor = AppColors.textMuted;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.card.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: AppColors.cardBorder.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: icon, name, score
+            Row(
+              children: [
+                Icon(rec.profile.icon, size: 20, color: AppColors.tealLight),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    rec.profile.displayName,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: scoreColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '$scorePct%',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: scoreColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Top reason
+            if (rec.reasons.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                rec.reasons.first,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+            // Top tip
+            if (rec.tips.isNotEmpty) ...[
+              const SizedBox(height: 3),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.lightbulb_outline,
+                      size: 12, color: AppColors.warning),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      rec.tips.first,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textMuted,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Weather Lake Picker Sheet (searchable)
+// ---------------------------------------------------------------------------
+
+class _WeatherLakePickerSheet extends StatefulWidget {
+  final List<Lake> lakes;
+  final String selectedLakeName;
+  final ValueChanged<Lake> onSelected;
+
+  const _WeatherLakePickerSheet({
+    required this.lakes,
+    required this.selectedLakeName,
+    required this.onSelected,
+  });
+
+  @override
+  State<_WeatherLakePickerSheet> createState() =>
+      _WeatherLakePickerSheetState();
+}
+
+class _WeatherLakePickerSheetState extends State<_WeatherLakePickerSheet> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Lake> get _filtered {
+    if (_query.isEmpty) return widget.lakes;
+    final q = _query.toLowerCase();
+    return widget.lakes
+        .where((l) =>
+            l.name.toLowerCase().contains(q) ||
+            l.state.toLowerCase().contains(q))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final filtered = _filtered;
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.65,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 10, bottom: 6),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.textMuted.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Select Lake',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: TextField(
+                controller: _searchController,
+                autofocus: false,
+                style: const TextStyle(
+                    color: AppColors.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Search by lake or state...',
+                  hintStyle: const TextStyle(
+                      color: AppColors.textMuted, fontSize: 14),
+                  prefixIcon: const Icon(Icons.search,
+                      color: AppColors.textMuted, size: 20),
+                  suffixIcon: _query.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear,
+                              color: AppColors.textMuted, size: 18),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _query = '');
+                          },
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: AppColors.card,
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 10),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: AppColors.cardBorder),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: AppColors.cardBorder),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: AppColors.teal),
+                  ),
+                ),
+                onChanged: (value) => setState(() => _query = value),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Flexible(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: 16),
+                itemCount: filtered.length,
+                itemBuilder: (context, index) {
+                  final lake = filtered[index];
+                  final isSelected = lake.name == widget.selectedLakeName;
+                  return ListTile(
+                    dense: true,
+                    leading: Icon(
+                      isSelected
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_off,
+                      color: isSelected
+                          ? AppColors.teal
+                          : AppColors.textMuted,
+                      size: 20,
+                    ),
+                    title: Text(
+                      lake.name,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w400,
+                        color: isSelected
+                            ? AppColors.teal
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${lake.state} \u2022 ${lake.attractorCount} attractors',
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.textMuted),
+                    ),
+                    onTap: () => widget.onSelected(lake),
+                  );
+                },
+              ),
             ),
           ],
         ),

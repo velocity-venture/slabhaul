@@ -582,9 +582,15 @@ class BaitRecommendationService {
     double? solunarRating,
     bool? isFallingPressure,
     bool? isRisingPressure,
+    int? month,
+    String? tempTrend,
   }) {
-    // Determine season from water temperature
-    final season = _determineSeason(waterTempF);
+    // Determine season from water temperature + trend disambiguation
+    final season = _determineSeason(
+      waterTempF,
+      tempTrend: tempTrend ?? 'stable',
+      month: month,
+    );
     
     // Determine time of day
     final timeOfDay = _determineTimeOfDay(
@@ -668,19 +674,23 @@ class BaitRecommendationService {
     // Determine pressure trend from hourly data
     bool isFalling = false;
     bool isRising = false;
-    
+
     if (weather.hourly.length >= 6) {
       final currentPressure = weather.current.pressureMb;
       final recentPressure = weather.hourly[5].pressureMb;
       final diff = currentPressure - recentPressure;
-      
+
       if (diff < -3) {
         isFalling = true;
       } else if (diff > 3) {
         isRising = true;
       }
     }
-    
+
+    // Compute temperature trend from hourly air temps for season
+    // disambiguation (spring vs fall in the 55-68 F range)
+    final tempTrend = _computeTempTrend(weather.hourly);
+
     return getRecommendations(
       waterTempF: waterTempF,
       clarity: clarity,
@@ -694,6 +704,8 @@ class BaitRecommendationService {
       solunarRating: solunarRating,
       isFallingPressure: isFalling,
       isRisingPressure: isRising,
+      tempTrend: tempTrend,
+      month: DateTime.now().month,
     );
   }
   
@@ -1061,23 +1073,78 @@ class BaitRecommendationService {
   // Helper Methods
   // ---------------------------------------------------------------------------
   
-  CrappieSeason _determineSeason(double waterTempF) {
-    // Use water temperature as primary season indicator
-    // Note: Fall is tricky - temps dropping from summer
-    // This simplified version uses temp ranges
-    
-    if (waterTempF < 50) return CrappieSeason.winter;
-    if (waterTempF < 60) return CrappieSeason.preSpawn;
-    if (waterTempF < 68) return CrappieSeason.spawn;
-    if (waterTempF < 75) return CrappieSeason.postSpawn;
-    
-    // Summer/Fall determination would need trend data
-    // For now, use calendar month as hint
-    final month = DateTime.now().month;
-    if (month >= 9 && month <= 11) {
-      return CrappieSeason.fall;
+  /// Compute temperature trend from hourly forecast data.
+  ///
+  /// Compares the average air temperature of the most recent 12 hours to the
+  /// preceding 12-24 hour window. Returns 'warming', 'cooling', or 'stable'.
+  /// When fewer than 12 hours of data are available, falls back to a 6-hour
+  /// delta. With fewer than 6 hours, returns 'stable'.
+  String _computeTempTrend(List<HourlyForecast> hourly) {
+    if (hourly.length >= 24) {
+      double recentSum = 0;
+      double olderSum = 0;
+      for (int i = 0; i < 12; i++) {
+        recentSum += hourly[i].temperatureF;
+        olderSum += hourly[i + 12].temperatureF;
+      }
+      final delta = (recentSum / 12) - (olderSum / 12);
+      if (delta > 2.0) return 'warming';
+      if (delta < -2.0) return 'cooling';
+      return 'stable';
     }
-    
+    if (hourly.length >= 6) {
+      final delta = hourly[0].temperatureF - hourly[5].temperatureF;
+      if (delta > 3.0) return 'warming';
+      if (delta < -3.0) return 'cooling';
+      return 'stable';
+    }
+    return 'stable';
+  }
+
+  /// Determine the crappie behavioral season from water temperature, with
+  /// temperature trend disambiguation for the ambiguous 55-68 F range.
+  ///
+  /// The 55-68 F range maps to both spring (pre-spawn / spawn) and fall
+  /// transition depending on whether temperatures are warming or cooling.
+  /// [tempTrend] should be 'warming', 'cooling', or 'stable'.
+  /// [month] is used as a calendar tiebreaker when trend is neutral.
+  CrappieSeason _determineSeason(
+    double waterTempF, {
+    String tempTrend = 'stable',
+    int? month,
+  }) {
+    if (waterTempF < 50) return CrappieSeason.winter;
+
+    // Ambiguous range: 55-68 F could be spring (warming) or fall (cooling)
+    if (waterTempF >= 55 && waterTempF < 68) {
+      if (tempTrend == 'warming') {
+        // Spring progression: warming into spawn range
+        return waterTempF < 60 ? CrappieSeason.preSpawn : CrappieSeason.spawn;
+      }
+      if (tempTrend == 'cooling') {
+        // Fall transition: cooling out of summer
+        return CrappieSeason.fall;
+      }
+      // Trend is stable/unknown — use calendar month as tiebreaker
+      final m = month ?? DateTime.now().month;
+      if (m >= 8 && m <= 12) return CrappieSeason.fall;
+      // Jan-Jul with stable trend: assume spring progression
+      return waterTempF < 60 ? CrappieSeason.preSpawn : CrappieSeason.spawn;
+    }
+
+    // Below the ambiguous band but above winter
+    if (waterTempF >= 50 && waterTempF < 55) {
+      // 50-55 F: could be late winter warming or late fall cooling
+      if (tempTrend == 'cooling') return CrappieSeason.fall;
+      return CrappieSeason.preSpawn;
+    }
+
+    if (waterTempF < 75) return CrappieSeason.postSpawn;
+
+    // 75 F+: summer or fall depending on trend and calendar
+    if (tempTrend == 'cooling') return CrappieSeason.fall;
+    final m = month ?? DateTime.now().month;
+    if (m >= 9 && m <= 11) return CrappieSeason.fall;
     return CrappieSeason.summer;
   }
   

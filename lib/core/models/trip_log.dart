@@ -3,6 +3,8 @@
 // Track fishing trips, catches, and patterns over time.
 // Crappie-focused but supports other species.
 
+import 'dart:math' show pow;
+
 import 'package:flutter/foundation.dart';
 
 // ---------------------------------------------------------------------------
@@ -85,6 +87,22 @@ extension FishSpeciesX on FishSpecies {
 
   bool get isCrappie =>
       this == FishSpecies.whiteCrappie || this == FishSpecies.blackCrappie;
+
+  /// Estimates weight in pounds from length in inches using species-specific
+  /// length-weight regression formulas. Returns null for unsupported species.
+  double? estimateWeightLbs(double lengthInches) {
+    if (lengthInches <= 0) return null;
+    switch (this) {
+      case FishSpecies.whiteCrappie:
+        // W(oz) = length^3.198 * 0.000213
+        return (pow(lengthInches, 3.198) * 0.000213) / 16.0;
+      case FishSpecies.blackCrappie:
+        // W(oz) = length^3.332 * 0.000143
+        return (pow(lengthInches, 3.332) * 0.000143) / 16.0;
+      default:
+        return null;
+    }
+  }
 }
 
 /// Moon phases for pattern tracking

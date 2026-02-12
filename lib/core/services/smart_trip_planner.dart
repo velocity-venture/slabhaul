@@ -45,7 +45,7 @@ class SmartTripPlanner {
     final tempScore = _scoreTemperature(waterTempF);
     final pressureScore = _scorePressureAdvanced(baroAnalysis);
     final solunarScore = _scoreSolunar(solunarForecast, now);
-    final windScore = _scoreWind(current.windSpeedMph);
+    final windScore = _scoreWind(current.windSpeedMph, current.windDirectionDeg);
     final clarityScore = _scoreClarity(waterClarityFt);
 
     // Weighted overall score
@@ -57,7 +57,12 @@ class SmartTripPlanner {
         100;
 
     final rating = _toRating(overall);
-    final season = _determineSeason(waterTempF);
+    final tempTrend = _computeTempTrend(weather.hourly);
+    final season = _determineSeason(
+      waterTempF,
+      tempTrend: tempTrend,
+      month: now.month,
+    );
 
     final effectiveSunrise = sunrise ?? _defaultSunrise(now);
     final effectiveSunset = sunset ?? _defaultSunset(now);
@@ -254,18 +259,42 @@ class SmartTripPlanner {
     return min(1.0, phaseScore * 0.7 + periodBonus + 0.1);
   }
 
-  double _scoreWind(double windMph) {
-    // Light chop (5-10 mph) is ideal:
+  double _scoreWind(double windMph, int windDirectionDeg) {
+    // Speed scoring — light chop (5-10 mph) is ideal:
     // - Breaks surface glare (less spooky)
     // - Oxygenates water
     // - Positions bait along windblown banks
     // - Provides current for spider rigging
-    if (windMph >= 5 && windMph <= 10) return 1.0;
-    if (windMph > 10 && windMph <= 15) return 0.75;
-    if (windMph > 0 && windMph < 5) return 0.7; // Calm — finesse required
-    if (windMph > 15 && windMph <= 20) return 0.4; // Tough boat control
-    if (windMph == 0) return 0.6; // Dead calm — ultra spooky
-    return 0.15; // >20 mph — dangerous
+    double speedScore;
+    if (windMph >= 5 && windMph <= 10) {
+      speedScore = 1.0;
+    } else if (windMph > 10 && windMph <= 15) {
+      speedScore = 0.75;
+    } else if (windMph > 0 && windMph < 5) {
+      speedScore = 0.7;
+    } else if (windMph > 15 && windMph <= 20) {
+      speedScore = 0.4;
+    } else if (windMph == 0) {
+      speedScore = 0.6;
+    } else {
+      speedScore = 0.15;
+    }
+
+    final dirModifier = _windDirectionModifier(windDirectionDeg);
+    return (speedScore * 0.75 + dirModifier * 0.25).clamp(0.0, 1.0);
+  }
+
+  /// Wind direction modifier for crappie fishing intelligence.
+  /// S/SW winds = warm air, stable conditions, best feeding.
+  /// N/NW winds = cold front passage, worst feeding.
+  double _windDirectionModifier(int deg) {
+    if (deg >= 180 && deg < 250) return 0.95; // S to SW — best
+    if (deg >= 250 && deg < 300) return 0.80; // W to WNW — good
+    if (deg >= 135 && deg < 180) return 0.75; // SE — fair
+    if (deg >= 90 && deg < 135) return 0.55; // E to ESE — pre-frontal
+    if (deg >= 45 && deg < 90) return 0.45; // NE — cold/unstable
+    if (deg >= 300 || deg < 45) return 0.35; // NW to N — cold front
+    return 0.60;
   }
 
   double _scoreClarity(double? clarityFt) {
@@ -763,13 +792,79 @@ class SmartTripPlanner {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  String _determineSeason(double waterTempF) {
+  /// Compute temperature trend from hourly forecast data.
+  ///
+  /// Compares the average air temperature of the most recent 12 hours to the
+  /// preceding 12-24 hour window. Returns 'warming', 'cooling', or 'stable'.
+  /// When fewer than 12 hours of data are available, falls back to a 6-hour
+  /// delta. With fewer than 6 hours, returns 'stable'.
+  String _computeTempTrend(List<HourlyForecast> hourly) {
+    if (hourly.length >= 24) {
+      // Compare average of hours 0-11 (recent) vs 12-23 (older)
+      double recentSum = 0;
+      double olderSum = 0;
+      for (int i = 0; i < 12; i++) {
+        recentSum += hourly[i].temperatureF;
+        olderSum += hourly[i + 12].temperatureF;
+      }
+      final delta = (recentSum / 12) - (olderSum / 12);
+      if (delta > 2.0) return 'warming';
+      if (delta < -2.0) return 'cooling';
+      return 'stable';
+    }
+    if (hourly.length >= 6) {
+      final delta = hourly[0].temperatureF - hourly[5].temperatureF;
+      if (delta > 3.0) return 'warming';
+      if (delta < -3.0) return 'cooling';
+      return 'stable';
+    }
+    return 'stable';
+  }
+
+  /// Determine the crappie behavioral season from water temperature, with
+  /// temperature trend disambiguation for the ambiguous 55-68 F range.
+  ///
+  /// The 55-68 F range maps to both spring (pre-spawn / spawn) and fall
+  /// transition depending on whether temperatures are warming or cooling.
+  /// [tempTrend] should be 'warming', 'cooling', or 'stable'.
+  /// [month] is used as a calendar tiebreaker when trend is neutral.
+  String _determineSeason(
+    double waterTempF, {
+    String tempTrend = 'stable',
+    int? month,
+  }) {
     if (waterTempF < 50) return 'Winter';
-    if (waterTempF < 60) return 'Pre-Spawn';
-    if (waterTempF < 68) return 'Spawn';
+
+    // Ambiguous range: 55-68 F could be spring (warming) or fall (cooling)
+    if (waterTempF >= 55 && waterTempF < 68) {
+      if (tempTrend == 'warming') {
+        // Spring progression: warming into spawn range
+        return waterTempF < 60 ? 'Pre-Spawn' : 'Spawn';
+      }
+      if (tempTrend == 'cooling') {
+        // Fall transition: cooling out of summer
+        return 'Fall';
+      }
+      // Trend is stable/unknown — use calendar month as tiebreaker
+      final m = month ?? DateTime.now().month;
+      if (m >= 8 && m <= 12) return 'Fall';
+      // Jan-Jul with stable trend: assume spring progression
+      return waterTempF < 60 ? 'Pre-Spawn' : 'Spawn';
+    }
+
+    // Below the ambiguous band but above winter
+    if (waterTempF >= 50 && waterTempF < 55) {
+      // 50-55 F: could be late winter warming or late fall cooling
+      if (tempTrend == 'cooling') return 'Fall';
+      return 'Pre-Spawn';
+    }
+
     if (waterTempF < 75) return 'Post-Spawn';
-    final month = DateTime.now().month;
-    if (month >= 9 && month <= 11) return 'Fall';
+
+    // 75 F+: summer or fall depending on trend and calendar
+    if (tempTrend == 'cooling') return 'Fall';
+    final m = month ?? DateTime.now().month;
+    if (m >= 9 && m <= 11) return 'Fall';
     return 'Summer';
   }
 
