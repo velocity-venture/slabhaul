@@ -23,6 +23,10 @@ ios/Flutter/Flutter.podspec
 # Environment
 .env
 
+# Android signing
+android/key.properties
+android/keystore/
+
 # macOS
 .DS_Store
 *.dSYM.zip

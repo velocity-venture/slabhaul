@@ -17,6 +17,7 @@ import '../features/trip_log/screens/trip_list_screen.dart';
 import '../features/trip_log/screens/active_trip_screen.dart';
 import '../features/trip_log/screens/trip_detail_screen.dart';
 import '../features/trip_log/screens/trip_insights_screen.dart';
+import '../features/trip_planner/screens/smart_trip_planner_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -65,6 +66,15 @@ final goRouter = GoRouter(
       path: '/tides',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const TidesScreen(),
+    ),
+    // Smart Trip Planner - AI fishing recommendations
+    GoRoute(
+      path: '/trip-planner',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final lakeName = state.uri.queryParameters['lake'];
+        return SmartTripPlannerScreen(lakeName: lakeName);
+      },
     ),
     // Trip Log - catch tracking
     GoRoute(
