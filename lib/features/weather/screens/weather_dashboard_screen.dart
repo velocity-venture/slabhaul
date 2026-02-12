@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:slabhaul/core/utils/constants.dart';
+import 'package:slabhaul/core/utils/solunar_calculator.dart';
 import 'package:slabhaul/core/utils/time_ago.dart';
+import 'package:slabhaul/core/utils/weather_utils.dart';
+import 'package:slabhaul/shared/widgets/glass_container.dart';
 import 'package:slabhaul/shared/widgets/skeleton_loader.dart';
 import 'package:slabhaul/features/weather/providers/weather_providers.dart';
 import 'package:slabhaul/features/weather/providers/lake_conditions_providers.dart';
@@ -22,251 +27,339 @@ import 'package:slabhaul/features/generation/widgets/generation_status_card.dart
 import 'package:slabhaul/features/tides/providers/tides_providers.dart';
 import 'package:slabhaul/features/tides/widgets/tide_card.dart';
 
-class WeatherDashboardScreen extends ConsumerWidget {
+class WeatherDashboardScreen extends ConsumerStatefulWidget {
   const WeatherDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WeatherDashboardScreen> createState() =>
+      _WeatherDashboardScreenState();
+}
+
+class _WeatherDashboardScreenState
+    extends ConsumerState<WeatherDashboardScreen> {
+  @override
+  Widget build(BuildContext context) {
     final weatherAsync = ref.watch(weatherDataProvider);
     final lakeAsync = ref.watch(lakeConditionsProvider);
     final isTournamentMode = ref.watch(tournamentModeProvider);
+    final lake = ref.watch(selectedWeatherLakeProvider);
+    final solunar = ref.watch(solunarForecastProvider);
+    final nextPeriod = ref.watch(nextSolunarPeriodProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: RefreshIndicator(
-        color: AppColors.teal,
-        backgroundColor: AppColors.surface,
-        onRefresh: () async {
-          ref.invalidate(weatherDataProvider);
-          ref.invalidate(lakeConditionsProvider);
-          // Wait for the refresh to complete before dismissing indicator.
-          await ref.read(weatherDataProvider.future);
-        },
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              backgroundColor: AppColors.surface,
-              title: const Text(
-                'Weather Dashboard',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          // --- 1. Map backdrop ---
+          Positioned.fill(
+            child: FlutterMap(
+              options: MapOptions(
+                initialCenter: LatLng(lake.lat, lake.lon),
+                initialZoom: 11.0,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.none,
                 ),
               ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.refresh, color: AppColors.teal),
-                  onPressed: () {
-                    ref.invalidate(weatherDataProvider);
-                    ref.invalidate(lakeConditionsProvider);
-                  },
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.slabhaul.app',
+                  maxZoom: 18,
+                  tileBuilder: _darkTileBuilder,
                 ),
               ],
             ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  // Location header with freshness indicator
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+          ),
+
+          // --- 2. Gradient overlays for readability ---
+          Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.65),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.70),
+                    ],
+                    stops: const [0.0, 0.25, 0.70, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // --- 3. Floating glass header + compact cards ---
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 4),
+                  // Glass header bar
+                  GlassContainer(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    borderRadius: 14,
+                    opacity: 0.20,
                     child: Row(
                       children: [
                         const Icon(Icons.location_on,
                             color: AppColors.teal, size: 18),
                         const SizedBox(width: 6),
-                        Text(
-                          ref.watch(selectedWeatherLakeProvider).name,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 14,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                lake.name,
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              weatherAsync.maybeWhen(
+                                data: (weather) => Text(
+                                  'Updated ${formatTimeAgo(weather.fetchedAt)}',
+                                  style: const TextStyle(
+                                    color: AppColors.textMuted,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                orElse: () => const SizedBox.shrink(),
+                              ),
+                            ],
                           ),
                         ),
-                        const Spacer(),
-                        weatherAsync.maybeWhen(
-                          data: (weather) => Text(
-                            'Updated: ${formatTimeAgo(weather.fetchedAt)}',
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 11,
-                            ),
-                          ),
-                          orElse: () => const SizedBox.shrink(),
+                        IconButton(
+                          icon: const Icon(Icons.psychology,
+                              color: AppColors.warning, size: 22),
+                          onPressed: () => context.push('/trip-planner'),
+                          tooltip: 'Smart Trip Planner',
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(6),
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          icon: const Icon(Icons.refresh,
+                              color: AppColors.teal, size: 22),
+                          onPressed: () {
+                            ref.invalidate(weatherDataProvider);
+                            ref.invalidate(lakeConditionsProvider);
+                          },
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(6),
                         ),
                       ],
                     ),
                   ),
 
-                  // Current Conditions
-                  weatherAsync.when(
-                    data: (weather) =>
-                        CurrentConditionsCard(weather: weather.current),
-                    loading: () => const _WeatherSkeleton(),
-                    error: (err, _) => _ErrorSection(
-                      message: 'Could not load current conditions',
-                      onRetry: () => ref.invalidate(weatherDataProvider),
+                  const SizedBox(height: 8),
+
+                  // Two compact summary cards side-by-side
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _CompactConditionsCard(
+                          weatherAsync: weatherAsync,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _CompactSolunarCard(
+                          solunar: solunar,
+                          nextPeriod: nextPeriod,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // --- 4. DraggableScrollableSheet ---
+          DraggableScrollableSheet(
+            initialChildSize: 0.12,
+            minChildSize: 0.12,
+            maxChildSize: 0.92,
+            snap: true,
+            snapSizes: const [0.12, 0.45, 0.92],
+            builder: (context, scrollController) {
+              return GlassContainer(
+                borderRadius: 24,
+                opacity: 0.25,
+                blurSigma: 18,
+                child: ListView(
+                  controller: scrollController,
+                  padding: EdgeInsets.zero,
+                  children: [
+                    // Drag handle pill
+                    Center(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 10, bottom: 8),
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.textMuted.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
 
-                  // Barometric Trend
-                  weatherAsync.when(
-                    data: (weather) =>
-                        BarometricTrendCard(hourly: weather.hourly),
-                    loading: () => const _WeatherSkeleton(),
-                    error: (err, _) => const SizedBox.shrink(),
-                  ),
-                  const SizedBox(height: 12),
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: Text(
+                        'Details',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
 
-                  // Sun & Moon
-                  weatherAsync.when(
-                    data: (weather) {
-                      if (weather.daily.isEmpty) return const SizedBox.shrink();
-                      return SunMoonCard(today: weather.daily.first);
-                    },
-                    loading: () => const _WeatherSkeleton(height: 100),
-                    error: (err, _) => const SizedBox.shrink(),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 4),
 
-                  // Solunar Fishing Activity
-                  SolunarCard(forecast: ref.watch(solunarForecastProvider)),
-                  const SizedBox(height: 12),
-
-                  // Hourly Forecast Strip
-                  weatherAsync.when(
-                    data: (weather) =>
-                        HourlyForecastStrip(hourly: weather.hourly),
-                    loading: () => const _HourlyStripSkeleton(),
-                    error: (err, _) => const SizedBox.shrink(),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Seven Day Forecast
-                  weatherAsync.when(
-                    data: (weather) =>
-                        SevenDayForecast(daily: weather.daily),
-                    loading: () => const _WeatherSkeleton(height: 300),
-                    error: (err, _) => const SizedBox.shrink(),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Quick Access Cards
-                  _QuickAccessSection(ref: ref),
-                  const SizedBox(height: 12),
-
-                  // Lake Conditions (tappable to detailed view)
-                  lakeAsync.when(
-                    data: (conditions) => GestureDetector(
-                      onTap: () => context.push('/lake-level'),
-                      child: Stack(
-                        children: [
-                          LakeConditionsCard(conditions: conditions),
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.teal.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Details',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColors.teal,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Icon(Icons.chevron_right,
-                                      size: 14, color: AppColors.teal),
-                                ],
-                              ),
-                            ),
+                    // -- All existing cards, each glass-wrapped --
+                    // Current Conditions
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: weatherAsync.when(
+                          data: (weather) => CurrentConditionsCard(
+                              weather: weather.current),
+                          loading: () => const _WeatherSkeleton(),
+                          error: (err, _) => _ErrorSection(
+                            message: 'Could not load current conditions',
+                            onRetry: () =>
+                                ref.invalidate(weatherDataProvider),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                    loading: () => const _WeatherSkeleton(height: 260),
-                    error: (err, _) => _ErrorSection(
-                      message: 'Could not load lake conditions',
-                      onRetry: () => ref.invalidate(lakeConditionsProvider),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
 
-                  // Dam Generation Status (for TVA lakes) - tappable for details
-                  if (ref.watch(hasGenerationTrackingProvider))
-                    ref.watch(lakeGenerationProvider).when(
-                      data: (genData) => genData != null
-                          ? GestureDetector(
-                              onTap: () => context.push('/generation'),
-                              child: Stack(
-                                children: [
-                                  GenerationStatusCard(data: genData),
-                                  Positioned(
-                                    top: 12,
-                                    right: 12,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.teal.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: const Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'Details',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: AppColors.teal,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          SizedBox(width: 4),
-                                          Icon(Icons.chevron_right,
-                                              size: 14, color: AppColors.teal),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                      loading: () => const _WeatherSkeleton(height: 280),
-                      error: (err, _) => _ErrorSection(
-                        message: 'Could not load generation data',
-                        onRetry: () => ref.invalidate(lakeGenerationProvider),
+                    // Barometric Trend
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: weatherAsync.when(
+                          data: (weather) =>
+                              BarometricTrendCard(hourly: weather.hourly),
+                          loading: () => const _WeatherSkeleton(),
+                          error: (err, _) => const SizedBox.shrink(),
+                        ),
                       ),
                     ),
-                  if (ref.watch(hasGenerationTrackingProvider))
-                    const SizedBox(height: 12),
 
-                  // Tide Conditions (for tidal/coastal waters) - tappable for details
-                  ref.watch(selectedLakeTideDataProvider).when(
-                    data: (tideData) => tideData != null
-                        ? GestureDetector(
-                            onTap: () => context.push('/tides'),
+                    // Sun & Moon
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: weatherAsync.when(
+                          data: (weather) {
+                            if (weather.daily.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            return SunMoonCard(today: weather.daily.first);
+                          },
+                          loading: () =>
+                              const _WeatherSkeleton(height: 100),
+                          error: (err, _) => const SizedBox.shrink(),
+                        ),
+                      ),
+                    ),
+
+                    // Solunar Fishing Activity
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: SolunarCard(
+                            forecast: ref.watch(solunarForecastProvider)),
+                      ),
+                    ),
+
+                    // Hourly Forecast Strip
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: weatherAsync.when(
+                          data: (weather) =>
+                              HourlyForecastStrip(hourly: weather.hourly),
+                          loading: () => const _HourlyStripSkeleton(),
+                          error: (err, _) => const SizedBox.shrink(),
+                        ),
+                      ),
+                    ),
+
+                    // Seven Day Forecast
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: weatherAsync.when(
+                          data: (weather) =>
+                              SevenDayForecast(daily: weather.daily),
+                          loading: () =>
+                              const _WeatherSkeleton(height: 300),
+                          error: (err, _) => const SizedBox.shrink(),
+                        ),
+                      ),
+                    ),
+
+                    // Quick Access Cards
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: _QuickAccessSection(ref: ref),
+                    ),
+
+                    // Lake Conditions
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      child: GlassContainer(
+                        borderRadius: 14,
+                        opacity: 0.18,
+                        padding: const EdgeInsets.all(4),
+                        child: lakeAsync.when(
+                          data: (conditions) => GestureDetector(
+                            onTap: () => context.push('/lake-level'),
                             child: Stack(
                               children: [
-                                TideCard(
-                                  conditions: tideData.conditions,
-                                  fishingWindows: tideData.fishingWindows,
-                                  hourlyPredictions: tideData.hourlyPredictions,
-                                ),
+                                LakeConditionsCard(
+                                    conditions: conditions),
                                 Positioned(
                                   top: 12,
                                   right: 12,
@@ -274,8 +367,10 @@ class WeatherDashboardScreen extends ConsumerWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: AppColors.teal.withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(4),
+                                      color: AppColors.teal
+                                          .withValues(alpha: 0.15),
+                                      borderRadius:
+                                          BorderRadius.circular(4),
                                     ),
                                     child: const Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -290,54 +385,388 @@ class WeatherDashboardScreen extends ConsumerWidget {
                                         ),
                                         SizedBox(width: 4),
                                         Icon(Icons.chevron_right,
-                                            size: 14, color: AppColors.teal),
+                                            size: 14,
+                                            color: AppColors.teal),
                                       ],
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                          )
-                        : const SizedBox.shrink(),
-                    loading: () => const SizedBox.shrink(), // Don't show skeleton for non-tidal lakes
-                    error: (err, _) => const SizedBox.shrink(), // Silently fail for non-tidal
-                  ),
-                  // Only add spacing if tidal data is present
-                  Builder(
-                    builder: (context) {
-                      final tideData = ref.watch(selectedLakeTideDataProvider);
-                      return tideData.maybeWhen(
-                        data: (data) => data != null 
-                            ? const SizedBox(height: 12) 
-                            : const SizedBox.shrink(),
-                        orElse: () => const SizedBox.shrink(),
-                      );
-                    },
-                  ),
+                          ),
+                          loading: () =>
+                              const _WeatherSkeleton(height: 260),
+                          error: (err, _) => _ErrorSection(
+                            message: 'Could not load lake conditions',
+                            onRetry: () =>
+                                ref.invalidate(lakeConditionsProvider),
+                          ),
+                        ),
+                      ),
+                    ),
 
-                  // Thermocline Predictor (hidden in tournament mode)
-                  if (!isTournamentMode)
-                    ref.watch(thermoclineDataProvider).when(
-                      data: (thermocline) => ThermoclineCard(
-                        data: thermocline,
-                        maxDepthFt: ref.watch(selectedWeatherLakeProvider).maxDepthFt ?? 35,
+                    // Dam Generation Status
+                    if (ref.watch(hasGenerationTrackingProvider))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        child: GlassContainer(
+                          borderRadius: 14,
+                          opacity: 0.18,
+                          padding: const EdgeInsets.all(4),
+                          child: ref.watch(lakeGenerationProvider).when(
+                            data: (genData) => genData != null
+                                ? GestureDetector(
+                                    onTap: () =>
+                                        context.push('/generation'),
+                                    child: Stack(
+                                      children: [
+                                        GenerationStatusCard(
+                                            data: genData),
+                                        Positioned(
+                                          top: 12,
+                                          right: 12,
+                                          child: Container(
+                                            padding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.teal
+                                                  .withValues(alpha: 0.15),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: const Row(
+                                              mainAxisSize:
+                                                  MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Details',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: AppColors.teal,
+                                                    fontWeight:
+                                                        FontWeight.w500,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 4),
+                                                Icon(Icons.chevron_right,
+                                                    size: 14,
+                                                    color: AppColors.teal),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                            loading: () =>
+                                const _WeatherSkeleton(height: 280),
+                            error: (err, _) => _ErrorSection(
+                              message:
+                                  'Could not load generation data',
+                              onRetry: () => ref
+                                  .invalidate(lakeGenerationProvider),
+                            ),
+                          ),
+                        ),
                       ),
-                      loading: () => const _WeatherSkeleton(height: 340),
-                      error: (err, _) => _ErrorSection(
-                        message: 'Could not load thermocline prediction',
-                        onRetry: () => ref.invalidate(thermoclineDataProvider),
+
+                    // Tide Conditions
+                    Builder(
+                      builder: (context) {
+                        return ref
+                            .watch(selectedLakeTideDataProvider)
+                            .when(
+                          data: (tideData) => tideData != null
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  child: GlassContainer(
+                                    borderRadius: 14,
+                                    opacity: 0.18,
+                                    padding: const EdgeInsets.all(4),
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          context.push('/tides'),
+                                      child: Stack(
+                                        children: [
+                                          TideCard(
+                                            conditions:
+                                                tideData.conditions,
+                                            fishingWindows:
+                                                tideData.fishingWindows,
+                                            hourlyPredictions:
+                                                tideData
+                                                    .hourlyPredictions,
+                                          ),
+                                          Positioned(
+                                            top: 12,
+                                            right: 12,
+                                            child: Container(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.teal
+                                                    .withValues(
+                                                        alpha: 0.15),
+                                                borderRadius:
+                                                    BorderRadius
+                                                        .circular(4),
+                                              ),
+                                              child: const Row(
+                                                mainAxisSize:
+                                                    MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    'Details',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color:
+                                                          AppColors.teal,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 4),
+                                                  Icon(
+                                                      Icons
+                                                          .chevron_right,
+                                                      size: 14,
+                                                      color:
+                                                          AppColors.teal),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                          loading: () => const SizedBox.shrink(),
+                          error: (err, _) => const SizedBox.shrink(),
+                        );
+                      },
+                    ),
+
+                    // Thermocline Predictor
+                    if (!isTournamentMode)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        child: GlassContainer(
+                          borderRadius: 14,
+                          opacity: 0.18,
+                          padding: const EdgeInsets.all(4),
+                          child: ref.watch(thermoclineDataProvider).when(
+                            data: (thermocline) => ThermoclineCard(
+                              data: thermocline,
+                              maxDepthFt: ref
+                                      .watch(selectedWeatherLakeProvider)
+                                      .maxDepthFt ??
+                                  35,
+                            ),
+                            loading: () =>
+                                const _WeatherSkeleton(height: 340),
+                            error: (err, _) => _ErrorSection(
+                              message:
+                                  'Could not load thermocline prediction',
+                              onRetry: () => ref
+                                  .invalidate(thermoclineDataProvider),
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        child: _TournamentModeNotice(),
                       ),
-                    )
-                  else
-                    const _TournamentModeNotice(),
-                  const SizedBox(height: 24),
-                ]),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _darkTileBuilder(
+    BuildContext context,
+    Widget tileWidget,
+    TileImage tile,
+  ) {
+    return ColorFiltered(
+      colorFilter: const ColorFilter.matrix(<double>[
+        0.40, 0, 0, 0, 0, //
+        0, 0.40, 0, 0, 0, //
+        0, 0, 0.50, 0, 0, //
+        0, 0, 0, 1, 0, //
+      ]),
+      child: tileWidget,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Compact Conditions Card (temp, icon, wind)
+// ---------------------------------------------------------------------------
+
+class _CompactConditionsCard extends StatelessWidget {
+  final AsyncValue weatherAsync;
+
+  const _CompactConditionsCard({required this.weatherAsync});
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassContainer(
+      borderRadius: 14,
+      opacity: 0.22,
+      padding: const EdgeInsets.all(12),
+      child: weatherAsync.when(
+        data: (weather) {
+          final current = weather.current;
+          return Row(
+            children: [
+              Icon(
+                weatherIcon(current.weatherCode),
+                color: AppColors.tealLight,
+                size: 28,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${current.temperatureF.round()}°F',
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text(
+                      '${current.windSpeedMph.round()} mph wind',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+        loading: () => const SizedBox(
+          height: 48,
+          child: Center(
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.teal,
               ),
             ),
-          ],
+          ),
+        ),
+        error: (_, __) => const SizedBox(
+          height: 48,
+          child: Center(
+            child: Icon(Icons.cloud_off,
+                color: AppColors.textMuted, size: 22),
+          ),
         ),
       ),
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Compact Solunar Card (moon, rating %, next major window)
+// ---------------------------------------------------------------------------
+
+class _CompactSolunarCard extends StatelessWidget {
+  final SolunarForecast solunar;
+  final SolunarPeriod? nextPeriod;
+
+  const _CompactSolunarCard({
+    required this.solunar,
+    this.nextPeriod,
+  });
+
+  IconData _moonIcon(double phase) {
+    if (phase < 0.03 || phase > 0.97) return Icons.dark_mode;
+    if (phase < 0.25) return Icons.nightlight_round;
+    if (phase < 0.50) return Icons.brightness_2;
+    if (phase < 0.53) return Icons.brightness_7;
+    return Icons.brightness_3;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ratingPct = (solunar.overallRating * 100).round();
+    final nextLabel = nextPeriod != null
+        ? '${nextPeriod!.label} ${_formatTime(nextPeriod!.start)}'
+        : 'No upcoming';
+
+    return GlassContainer(
+      borderRadius: 14,
+      opacity: 0.22,
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          Icon(
+            _moonIcon(solunar.moonPhase),
+            color: AppColors.warning,
+            size: 26,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$ratingPct% ${solunar.ratingLabel}',
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  nextLabel,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTime(DateTime dt) {
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final period = dt.hour < 12 ? 'am' : 'pm';
+    final min = dt.minute.toString().padLeft(2, '0');
+    return '$hour:$min$period';
   }
 }
 
@@ -405,7 +834,8 @@ class _ErrorSection extends StatelessWidget {
               const SizedBox(height: 14),
               OutlinedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh, size: 16, color: AppColors.teal),
+                icon: const Icon(Icons.refresh,
+                    size: 16, color: AppColors.teal),
                 label: const Text('Retry',
                     style: TextStyle(color: AppColors.teal)),
                 style: OutlinedButton.styleFrom(
@@ -421,7 +851,7 @@ class _ErrorSection extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Tournament Mode Notice (shown when AI features are hidden)
+// Tournament Mode Notice
 // ---------------------------------------------------------------------------
 
 class _TournamentModeNotice extends StatelessWidget {
@@ -484,7 +914,7 @@ class _TournamentModeNotice extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Quick Access Section - Cards for navigating to detailed features
+// Quick Access Section
 // ---------------------------------------------------------------------------
 
 class _QuickAccessSection extends StatelessWidget {

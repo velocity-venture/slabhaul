@@ -18,8 +18,10 @@ import 'package:slabhaul/features/map/widgets/lake_selector.dart';
 import 'package:slabhaul/features/map/widgets/wind_overlay.dart';
 import 'package:slabhaul/features/map/widgets/wind_effects_layer.dart';
 import 'package:slabhaul/features/map/widgets/wind_forecast_slider.dart';
+import 'package:slabhaul/features/map/widgets/clarity_override_bar.dart';
 import 'package:slabhaul/features/map/widgets/inflow_layer.dart';
 import 'package:slabhaul/features/map/widgets/streamflow_bottom_sheet.dart';
+import 'package:slabhaul/features/map/providers/clarity_override_provider.dart';
 
 /// Full-screen map showing fish attractor locations with clustering, filtering,
 /// wind effects visualization, and forecast slider.
@@ -95,6 +97,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
     final selectedHotspot = ref.watch(selectedHotspotProvider);
     final streamflowEnabled = ref.watch(streamflowEnabledProvider);
     final selectedInflow = ref.watch(selectedInflowProvider);
+    final effectiveClarity = ref.watch(effectiveClarityProvider).valueOrNull;
 
     // When the selected lake changes, animate the map to the lake centre.
     ref.listen<String?>(selectedLakeProvider, (previous, next) {
@@ -171,7 +174,10 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                           ref.read(selectedAttractorProvider.notifier).state =
                               attractor;
                         },
-                        child: AttractorMarker(type: attractor.type),
+                        child: AttractorMarker(
+                          type: attractor.type,
+                          clarityLevel: effectiveClarity,
+                        ),
                       ),
                     );
                   }).toList();
@@ -263,6 +269,14 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                 AttractorFilterBar(),
               ],
             ),
+          ),
+
+          // Clarity override bar (below filter bar)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 90,
+            left: 12,
+            right: 12,
+            child: const ClarityOverrideBar(),
           ),
 
           // Wind overlay card (conditionally shown)
