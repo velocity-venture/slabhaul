@@ -1,9 +1,12 @@
 -- SlabHaul Initial Schema
 -- Run in Supabase SQL Editor
 
--- Enable extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS postgis;
+-- Enable extensions (install in dedicated schema to avoid exposing system tables via API)
+CREATE SCHEMA IF NOT EXISTS extensions;
+GRANT USAGE ON SCHEMA extensions TO public, anon, authenticated, service_role;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA extensions;
 
 -- ============================================================================
 -- LAKES TABLE
@@ -45,10 +48,13 @@ CREATE TABLE public.attractors (
 );
 
 -- Auto-populate geometry from lat/lon
-CREATE OR REPLACE FUNCTION set_attractor_geom()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.set_attractor_geom()
+RETURNS TRIGGER
+SECURITY INVOKER
+SET search_path = ''
+AS $$
 BEGIN
-  NEW.geom := ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326);
+  NEW.geom := extensions.st_setsrid(extensions.st_makepoint(NEW.longitude, NEW.latitude), 4326);
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
