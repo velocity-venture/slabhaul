@@ -25,7 +25,7 @@ class CurrentConditionsCard extends StatelessWidget {
               children: [
                 Icon(
                   weatherIcon(weather.weatherCode),
-                  color: AppColors.teal,
+                  color: AppColors.amberLight,
                   size: 28,
                 ),
                 const SizedBox(width: 10),

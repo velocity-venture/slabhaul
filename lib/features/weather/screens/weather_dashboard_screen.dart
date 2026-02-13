@@ -77,21 +77,11 @@ class _WeatherDashboardScreenState
           ),
 
           // --- 2. Gradient overlays for readability ---
-          Positioned.fill(
+          const Positioned.fill(
             child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.65),
-                      Colors.transparent,
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.70),
-                    ],
-                    stops: const [0.0, 0.25, 0.70, 1.0],
-                  ),
+                  gradient: AppGradients.sunsetOverlay,
                 ),
               ),
             ),
@@ -111,7 +101,8 @@ class _WeatherDashboardScreenState
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 10),
                     borderRadius: 14,
-                    opacity: 0.20,
+                    opacity: 0.28,
+                    tintColor: AppColors.glassTint,
                     child: Row(
                       children: [
                         Expanded(
@@ -222,8 +213,9 @@ class _WeatherDashboardScreenState
             builder: (context, scrollController) {
               return GlassContainer(
                 borderRadius: 24,
-                opacity: 0.25,
-                blurSigma: 18,
+                opacity: 0.32,
+                blurSigma: 22,
+                tintColor: AppColors.glassTint,
                 child: ListView(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -235,7 +227,7 @@ class _WeatherDashboardScreenState
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppColors.textMuted.withValues(alpha: 0.5),
+                          color: AppColors.amber.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -261,9 +253,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: weatherAsync.when(
                           data: (weather) => CurrentConditionsCard(
@@ -282,9 +272,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: weatherAsync.when(
                           data: (weather) =>
@@ -299,9 +287,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: weatherAsync.when(
                           data: (weather) {
@@ -321,9 +307,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: SolunarCard(
                             forecast: ref.watch(solunarForecastProvider)),
@@ -334,9 +318,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: _TechniqueRecommendationsCard(ref: ref),
                       ),
@@ -346,9 +328,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: weatherAsync.when(
                           data: (weather) =>
@@ -363,9 +343,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: weatherAsync.when(
                           data: (weather) =>
@@ -388,9 +366,7 @@ class _WeatherDashboardScreenState
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
-                      child: GlassContainer(
-                        borderRadius: 14,
-                        opacity: 0.18,
+                      child: GlassContainer.standard(
                         padding: const EdgeInsets.all(4),
                         child: lakeAsync.when(
                           data: (conditions) => GestureDetector(
@@ -449,9 +425,7 @@ class _WeatherDashboardScreenState
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 4),
-                        child: GlassContainer(
-                          borderRadius: 14,
-                          opacity: 0.18,
+                        child: GlassContainer.standard(
                           padding: const EdgeInsets.all(4),
                           child: ref.watch(lakeGenerationProvider).when(
                             data: (genData) => genData != null
@@ -523,9 +497,7 @@ class _WeatherDashboardScreenState
                               ? Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
-                                  child: GlassContainer(
-                                    borderRadius: 14,
-                                    opacity: 0.18,
+                                  child: GlassContainer.standard(
                                     padding: const EdgeInsets.all(4),
                                     child: GestureDetector(
                                       onTap: () =>
@@ -599,9 +571,7 @@ class _WeatherDashboardScreenState
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 4),
-                        child: GlassContainer(
-                          borderRadius: 14,
-                          opacity: 0.18,
+                        child: GlassContainer.standard(
                           padding: const EdgeInsets.all(4),
                           child: ref.watch(thermoclineDataProvider).when(
                             data: (thermocline) => ThermoclineCard(
@@ -712,7 +682,7 @@ class _CompactConditionsCard extends StatelessWidget {
             children: [
               Icon(
                 weatherIcon(current.weatherCode),
-                color: AppColors.tealLight,
+                color: AppColors.amberLight,
                 size: 28,
               ),
               const SizedBox(width: 8),
@@ -1079,12 +1049,15 @@ class _QuickAccessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: GlassContainer.compact(
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.cardBorder),
+        backgroundGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withValues(alpha: 0.08),
+            AppColors.surface.withValues(alpha: 0.12),
+          ],
         ),
         child: Row(
           children: [

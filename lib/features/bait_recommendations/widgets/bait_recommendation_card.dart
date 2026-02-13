@@ -8,14 +8,14 @@ class BaitRecommendationCard extends StatelessWidget {
   final BaitRecommendation recommendation;
   final bool isExpanded;
   final VoidCallback? onTap;
-  
+
   const BaitRecommendationCard({
     super.key,
     required this.recommendation,
     this.isExpanded = false,
     this.onTap,
   });
-  
+
   Color get _rankColor {
     switch (recommendation.rank) {
       case 1:
@@ -28,7 +28,7 @@ class BaitRecommendationCard extends StatelessWidget {
         return AppColors.textMuted;
     }
   }
-  
+
   String get _rankLabel {
     switch (recommendation.rank) {
       case 1:
@@ -41,7 +41,7 @@ class BaitRecommendationCard extends StatelessWidget {
         return '#${recommendation.rank}';
     }
   }
-  
+
   IconData get _categoryIcon {
     switch (recommendation.bait.category) {
       case BaitCategory.tubeJig:
@@ -61,38 +61,43 @@ class BaitRecommendationCard extends StatelessWidget {
     }
   }
 
+  Gradient? get _cardGradient {
+    if (recommendation.rank == 1) return AppGradients.rankGold;
+    if (recommendation.rank <= 3) return AppGradients.tealWash;
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isTopPick = recommendation.rank == 1;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      color: recommendation.rank == 1 
+      color: isTopPick
           ? AppColors.card.withValues(alpha: 0.95)
           : AppColors.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: recommendation.rank == 1 
-              ? _rankColor.withValues(alpha: 0.5) 
-              : AppColors.cardBorder,
-          width: recommendation.rank == 1 ? 2 : 1,
+          color: isTopPick
+              ? _rankColor.withValues(alpha: 0.5)
+              : recommendation.rank <= 3
+                  ? AppColors.teal.withValues(alpha: 0.3)
+                  : AppColors.cardBorder,
+          width: isTopPick ? 2 : 1,
         ),
       ),
+      elevation: isTopPick ? 1 : 0,
+      shadowColor: isTopPick ? const Color(0xFFFFD700).withValues(alpha: 0.3) : null,
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           leading: Stack(
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.teal.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  _categoryIcon,
-                  color: AppColors.teal,
-                  size: 26,
-                ),
+              _BaitImageContainer(
+                category: recommendation.bait.category,
+                fallbackIcon: _categoryIcon,
+                gradient: _cardGradient,
               ),
               if (recommendation.rank <= 3)
                 Positioned(
@@ -108,10 +113,11 @@ class BaitRecommendationCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      recommendation.rank == 1 ? '🏆' : '#${recommendation.rank}',
+                      recommendation.rank == 1 ? '#1' : '#${recommendation.rank}',
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
                       ),
                     ),
                   ),
@@ -160,14 +166,7 @@ class BaitRecommendationCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   _ConfidenceBadge(level: recommendation.confidenceLevel),
                   const Spacer(),
-                  Text(
-                    '${recommendation.score.round()}%',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: _getScoreColor(recommendation.score),
-                    ),
-                  ),
+                  _ScoreGradientBadge(score: recommendation.score),
                 ],
               ),
             ],
@@ -182,7 +181,7 @@ class BaitRecommendationCard extends StatelessWidget {
                 children: [
                   const Divider(color: AppColors.cardBorder),
                   const SizedBox(height: 8),
-                  
+
                   // Recommended Colors
                   const _SectionHeader(
                     icon: Icons.palette,
@@ -201,7 +200,7 @@ class BaitRecommendationCard extends StatelessWidget {
                         .toList(),
                   ),
                   const SizedBox(height: 14),
-                  
+
                   // Size & Weight Row
                   Row(
                     children: [
@@ -226,7 +225,7 @@ class BaitRecommendationCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 14),
-                  
+
                   // Techniques
                   const _SectionHeader(
                     icon: Icons.sports,
@@ -261,7 +260,7 @@ class BaitRecommendationCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  
+
                   // Presentation Tips
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -310,7 +309,7 @@ class BaitRecommendationCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // Why Recommended
                   if (recommendation.reasons.isNotEmpty) ...[
                     const SizedBox(height: 14),
@@ -354,24 +353,97 @@ class BaitRecommendationCard extends StatelessWidget {
       ),
     );
   }
-  
-  Color _getScoreColor(double score) {
-    if (score >= 85) return const Color(0xFF22C55E);
-    if (score >= 70) return const Color(0xFFEAB308);
-    return const Color(0xFFF97316);
+}
+
+/// Bait image container with gradient background and icon fallback
+class _BaitImageContainer extends StatelessWidget {
+  final BaitCategory category;
+  final IconData fallbackIcon;
+  final Gradient? gradient;
+
+  const _BaitImageContainer({
+    required this.category,
+    required this.fallbackIcon,
+    this.gradient,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: gradient ?? LinearGradient(
+          colors: [
+            AppColors.teal.withValues(alpha: 0.2),
+            AppColors.surface.withValues(alpha: 0.3),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        category.assetPath,
+        width: 48,
+        height: 48,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Icon(
+          fallbackIcon,
+          color: AppColors.teal,
+          size: 26,
+        ),
+      ),
+    );
+  }
+}
+
+/// Score badge with gradient background
+class _ScoreGradientBadge extends StatelessWidget {
+  final double score;
+
+  const _ScoreGradientBadge({required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    final Gradient gradient;
+    if (score >= 85) {
+      gradient = AppGradients.scoreGreen;
+    } else if (score >= 70) {
+      gradient = AppGradients.scoreAmber;
+    } else {
+      gradient = const LinearGradient(
+        colors: [Color(0xFFF97316), Color(0xFFEA580C)],
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '${score.round()}%',
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 }
 
 class _ConfidenceBadge extends StatelessWidget {
   final String level;
-  
+
   const _ConfidenceBadge({required this.level});
-  
+
   @override
   Widget build(BuildContext context) {
     Color color;
     IconData icon;
-    
+
     switch (level) {
       case 'High':
         color = const Color(0xFF22C55E);
@@ -385,7 +457,7 @@ class _ConfidenceBadge extends StatelessWidget {
         color = const Color(0xFFF97316);
         icon = Icons.help_outline;
     }
-    
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -408,13 +480,13 @@ class _SectionHeader extends StatelessWidget {
   final IconData icon;
   final String title;
   final Color color;
-  
+
   const _SectionHeader({
     required this.icon,
     required this.title,
     required this.color,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -439,14 +511,14 @@ class _InfoBox extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  
+
   const _InfoBox({
     required this.icon,
     required this.label,
     required this.value,
     required this.color,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -12,7 +12,7 @@ class SkeletonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: AppColors.card,
-      highlightColor: AppColors.cardBorder,
+      highlightColor: AppColors.surfaceElevated,
       child: Container(
         height: height,
         width: width,
@@ -35,7 +35,7 @@ class SkeletonLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
       baseColor: AppColors.card,
-      highlightColor: AppColors.cardBorder,
+      highlightColor: AppColors.surfaceElevated,
       child: Container(
         width: width,
         height: height,

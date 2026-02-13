@@ -29,11 +29,78 @@ class AppColors {
   static const Color pallet = Color(0xFFEAB308);
   static const Color unknownType = Color(0xFF6B7280);
 
+  // Warm accents
+  static const Color amber = Color(0xFFF59E0B);
+  static const Color amberLight = Color(0xFFFBBF24);
+  static const Color copper = Color(0xFFE8853D);
+  static const Color deepBlue = Color(0xFF1D4ED8);
+
+  // Elevated surfaces
+  static const Color surfaceElevated = Color(0xFF243148);
+  static const Color glassTint = Color(0xFF134E4A);
+  static const Color textBright = Color(0xFFFFFFFF);
+
   // Wind speed colors
   static const Color windCalm = Color(0xFF22C55E);
   static const Color windModerate = Color(0xFFEAB308);
   static const Color windStrong = Color(0xFFF97316);
   static const Color windDangerous = Color(0xFFEF4444);
+}
+
+// ---------------------------------------------------------------------------
+// Gradient Presets
+// ---------------------------------------------------------------------------
+class AppGradients {
+  /// Amber-to-teal diagonal for hero / top-pick cards
+  static const LinearGradient hero = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFF59E0B), Color(0xFF0D9488)],
+  );
+
+  /// Subtle teal fill for standard cards
+  static const LinearGradient tealWash = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0x28134E4A), Color(0x180D9488)],
+  );
+
+  /// Warm map overlay replacing pure black
+  static const LinearGradient sunsetOverlay = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xA60F172A), // navy 65%
+      Color(0x19F59E0B), // amber 10%
+      Colors.transparent,
+      Color(0xB30F172A), // navy 70%
+    ],
+    stops: [0.0, 0.15, 0.40, 1.0],
+  );
+
+  /// Teal-to-amber gradient for glass borders
+  static const LinearGradient glassBorder = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF0D9488), Color(0xFFF59E0B)],
+  );
+
+  /// Gold gradient for #1 ranked items
+  static const LinearGradient rankGold = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFFD700), Color(0xFFF59E0B)],
+  );
+
+  /// Score badge gradient — green
+  static const LinearGradient scoreGreen = LinearGradient(
+    colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
+  );
+
+  /// Score badge gradient — amber
+  static const LinearGradient scoreAmber = LinearGradient(
+    colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -101,7 +168,7 @@ class LineTypes {
 // Glass Card Decoration
 // ---------------------------------------------------------------------------
 class GlassDecoration {
-  static BoxDecoration card({double opacity = 0.6, double radius = 12}) {
+  static BoxDecoration card({double opacity = 0.35, double radius = 12}) {
     return BoxDecoration(
       color: AppColors.surface.withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(radius),
@@ -121,7 +188,7 @@ class GlassDecoration {
       boxShadow: [
         BoxShadow(
           color: AppColors.teal.withValues(alpha: 0.08),
-          blurRadius: 24,
+          blurRadius: 32,
           offset: const Offset(0, 4),
         ),
       ],

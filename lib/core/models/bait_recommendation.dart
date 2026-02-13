@@ -63,6 +63,25 @@ extension BaitCategoryX on BaitCategory {
         return '⚡';
     }
   }
+
+  String get assetPath {
+    switch (this) {
+      case BaitCategory.tubeJig:
+        return 'assets/images/baits/tube_jig.png';
+      case BaitCategory.softPlasticMinnow:
+        return 'assets/images/baits/soft_plastic_minnow.png';
+      case BaitCategory.curlyTailGrub:
+        return 'assets/images/baits/curly_tail_grub.png';
+      case BaitCategory.hairJig:
+        return 'assets/images/baits/hair_jig.png';
+      case BaitCategory.liveMinnow:
+        return 'assets/images/baits/live_minnow.png';
+      case BaitCategory.crankbait:
+        return 'assets/images/baits/crankbait.png';
+      case BaitCategory.bladeBait:
+        return 'assets/images/baits/blade_bait.png';
+    }
+  }
 }
 
 /// Water clarity classifications

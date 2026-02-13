@@ -77,7 +77,7 @@ class BarometricTrendCard extends StatelessWidget {
                 Text(
                   '${currentPressure.toStringAsFixed(1)} mb',
                   style: const TextStyle(
-                    color: AppColors.textPrimary,
+                    color: AppColors.textBright,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),

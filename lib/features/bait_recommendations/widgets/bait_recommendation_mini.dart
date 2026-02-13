@@ -36,7 +36,7 @@ class BaitRecommendationMini extends ConsumerWidget {
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.teal.withValues(alpha: 0.3)),
+          border: Border.all(color: AppColors.amber.withValues(alpha: 0.3)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,17 +80,30 @@ class BaitRecommendationMini extends ConsumerWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFFFFD700).withValues(alpha: 0.3),
+                        AppColors.amber.withValues(alpha: 0.3),
                         AppColors.teal.withValues(alpha: 0.2),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Text('🏆', style: TextStyle(fontSize: 20)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    topPick.bait.category.assetPath,
+                    width: 36,
+                    height: 36,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => const Text(
+                      '🏆',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

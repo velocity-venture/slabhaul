@@ -10,6 +10,7 @@ final ThemeData slabHaulDarkTheme = ThemeData(
   colorScheme: const ColorScheme.dark(
     primary: AppColors.teal,
     secondary: AppColors.tealLight,
+    tertiary: AppColors.amber,
     surface: AppColors.surface,
     error: AppColors.error,
     onPrimary: Colors.white,
@@ -18,7 +19,7 @@ final ThemeData slabHaulDarkTheme = ThemeData(
     onError: Colors.white,
   ),
   appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.surface,
+    backgroundColor: AppColors.surfaceElevated,
     foregroundColor: AppColors.textPrimary,
     elevation: 0,
     scrolledUnderElevation: 0,
@@ -29,10 +30,11 @@ final ThemeData slabHaulDarkTheme = ThemeData(
       borderRadius: BorderRadius.circular(12),
       side: const BorderSide(color: AppColors.cardBorder, width: 0.5),
     ),
-    elevation: 0,
+    elevation: 1,
+    shadowColor: AppColors.teal.withValues(alpha: 0.08),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: AppColors.surface,
+    backgroundColor: AppColors.surfaceElevated,
     selectedItemColor: AppColors.teal,
     unselectedItemColor: AppColors.textMuted,
     type: BottomNavigationBarType.fixed,
