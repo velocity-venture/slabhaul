@@ -10,8 +10,12 @@ class SupabaseService {
       _initialized ? Supabase.instance.client : null;
 
   static Future<void> initialize() async {
-    final url = dotenv.env['SUPABASE_URL'] ?? '';
-    final anonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+    const urlFromDefine = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+    const anonKeyFromDefine =
+        String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+    final url = urlFromDefine.isNotEmpty ? urlFromDefine : (dotenv.env['SUPABASE_URL'] ?? '');
+    final anonKey =
+        anonKeyFromDefine.isNotEmpty ? anonKeyFromDefine : (dotenv.env['SUPABASE_ANON_KEY'] ?? '');
 
     if (url.isEmpty || anonKey.isEmpty) {
       AppLogger.warn('SupabaseService', 'Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env');

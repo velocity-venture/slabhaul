@@ -85,7 +85,7 @@ flutter pub get
 flutter run
 ```
 
-### Environment Variables (`.env`)
+### Environment Variables (`.env` or `--dart-define`)
 
 ```
 SUPABASE_URL=https://your-project.supabase.co
@@ -94,6 +94,14 @@ MAPBOX_ACCESS_TOKEN=your-mapbox-token
 ```
 
 All three are optional. Without Supabase, the app loads attractors from the bundled `assets/data/attractors.json` and auth runs in guest mode. Weather and lake levels use free public APIs (Open-Meteo, USGS) that require no keys.
+
+For local development, you can create a `.env` file (see `.env.example`). For production and CI builds, prefer `--dart-define` so secrets do not need to be bundled as assets:
+
+```
+flutter build web \
+  --dart-define=SUPABASE_URL=... \
+  --dart-define=SUPABASE_ANON_KEY=...
+```
 
 ### Supabase Setup (Optional)
 

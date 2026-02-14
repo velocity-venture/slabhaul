@@ -13,7 +13,7 @@ Future<void> main() async {
 
   // Load environment variables (fail gracefully)
   try {
-    await dotenv.load(fileName: '.env');
+    await dotenv.load(fileName: '.env', isOptional: true);
   } catch (e) {
     AppLogger.warn('main', 'Could not load .env file: $e');
   }
