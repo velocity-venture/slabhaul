@@ -4,7 +4,6 @@ import 'app_shell.dart';
 import '../features/map/screens/attractor_map_screen.dart';
 import '../features/weather/screens/weather_dashboard_screen.dart';
 import '../features/calculator/screens/calculator_screen.dart';
-import '../features/knowledge_base/screens/knowledge_base_screen.dart';
 import '../features/bait_recommendations/screens/bait_recommendations_screen.dart';
 import '../features/hotspots/screens/best_areas_screen.dart';
 import '../features/lake_level/screens/lake_level_screen.dart';
@@ -18,6 +17,9 @@ import '../features/trip_log/screens/active_trip_screen.dart';
 import '../features/trip_log/screens/trip_detail_screen.dart';
 import '../features/trip_log/screens/trip_insights_screen.dart';
 import '../features/trip_planner/screens/smart_trip_planner_screen.dart';
+import '../features/baits/bait_browser_screen.dart';
+import '../features/baits/bait_detail_screen.dart';
+import '../features/baits/submit_bait_report_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -30,6 +32,23 @@ final goRouter = GoRouter(
       path: '/login',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const LoginScreen(),
+    ),
+    // Bait Database - individual bait detail views
+    GoRoute(
+      path: '/bait/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final baitId = state.pathParameters['id']!;
+        return BaitDetailScreen(baitId: baitId);
+      },
+    ),
+    GoRoute(
+      path: '/report-bait',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final preselectedBaitId = state.uri.queryParameters['baitId'];
+        return SubmitBaitReportScreen(preselectedBaitId: preselectedBaitId);
+      },
     ),
     // Bait Recommendations - accessible from any screen
     GoRoute(
@@ -132,8 +151,8 @@ final goRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/learn',
-              builder: (context, state) => const KnowledgeBaseScreen(),
+              path: '/baits',
+              builder: (context, state) => const BaitBrowserScreen(),
             ),
           ],
         ),

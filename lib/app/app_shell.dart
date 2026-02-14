@@ -65,9 +65,9 @@ class AppShell extends ConsumerWidget {
                       label: 'Calculator',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.menu_book_outlined),
-                      activeIcon: Icon(Icons.menu_book),
-                      label: 'Learn',
+                      icon: Icon(Icons.inventory_2_outlined),
+                      activeIcon: Icon(Icons.inventory_2),
+                      label: 'Baits',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.person_outlined),
