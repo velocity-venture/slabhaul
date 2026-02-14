@@ -27,6 +27,9 @@ ios/Flutter/Flutter.podspec
 android/key.properties
 android/keystore/
 
+# Deployment credentials
+slabhaul-deploy-*.json
+
 # macOS
 .DS_Store
 *.dSYM.zip
