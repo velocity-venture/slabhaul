@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 
 // ---------------------------------------------------------------------------
-// Brand Colors
+// Brand Colors (from style guide)
 // ---------------------------------------------------------------------------
 class AppColors {
-  static const Color teal = Color(0xFF0D9488);
-  static const Color tealDark = Color(0xFF0F766E);
-  static const Color tealLight = Color(0xFF2DD4BF);
+  // Brand colors
+  static const Color brandNavy = Color(0xFF13152E);
+  static const Color brandIndigo = Color(0xFF283474);
+  static const Color brandBlue = Color(0xFF89B4E0);
 
-  static const Color background = Color(0xFF0F172A);
-  static const Color surface = Color(0xFF1E293B);
-  static const Color card = Color(0xFF334155);
-  static const Color cardBorder = Color(0xFF475569);
+  // Primary interactive (keep "teal" name to avoid 75-file rename)
+  static const Color teal = Color(0xFF283474);         // → brand indigo
+  static const Color tealDark = Color(0xFF1E2A5E);     // darker indigo
+  static const Color tealLight = Color(0xFF89B4E0);    // → brand blue
 
-  static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textSecondary = Color(0xFF94A3B8);
-  static const Color textMuted = Color(0xFF64748B);
+  // Surface colors (light theme)
+  static const Color background = Color(0xFFF8FAFC);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color card = Color(0xFFF1F5F9);
+  static const Color cardBorder = Color(0xFFE2E8F0);
+
+  // Text colors (dark on light)
+  static const Color textPrimary = Color(0xFF13152E);   // brand navy
+  static const Color textSecondary = Color(0xFF475569);
+  static const Color textMuted = Color(0xFF94A3B8);
 
   static const Color error = Color(0xFFEF4444);
   static const Color success = Color(0xFF22C55E);
@@ -36,9 +44,9 @@ class AppColors {
   static const Color deepBlue = Color(0xFF1D4ED8);
 
   // Elevated surfaces
-  static const Color surfaceElevated = Color(0xFF243148);
-  static const Color glassTint = Color(0xFF134E4A);
-  static const Color textBright = Color(0xFFFFFFFF);
+  static const Color surfaceElevated = Color(0xFFFFFFFF);
+  static const Color glassTint = Color(0xFFEFF6FF);     // light blue tint
+  static const Color textBright = Color(0xFF13152E);     // navy (was white)
 
   // Wind speed colors
   static const Color windCalm = Color(0xFF22C55E);
@@ -51,38 +59,38 @@ class AppColors {
 // Gradient Presets
 // ---------------------------------------------------------------------------
 class AppGradients {
-  /// Amber-to-teal diagonal for hero / top-pick cards
+  /// Indigo-to-blue diagonal for hero / top-pick cards
   static const LinearGradient hero = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFF59E0B), Color(0xFF0D9488)],
+    colors: [Color(0xFF283474), Color(0xFF89B4E0)],
   );
 
-  /// Subtle teal fill for standard cards
+  /// Subtle blue wash for standard cards
   static const LinearGradient tealWash = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0x28134E4A), Color(0x180D9488)],
+    colors: [Color(0x18283474), Color(0x1089B4E0)],
   );
 
-  /// Warm map overlay replacing pure black
+  /// Light scrim for map (white-to-transparent)
   static const LinearGradient sunsetOverlay = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xA60F172A), // navy 65%
-      Color(0x19F59E0B), // amber 10%
+      Color(0xCCFFFFFF), // white 80%
+      Color(0x40FFFFFF), // white 25%
       Colors.transparent,
-      Color(0xB30F172A), // navy 70%
+      Color(0x80FFFFFF), // white 50%
     ],
     stops: [0.0, 0.15, 0.40, 1.0],
   );
 
-  /// Teal-to-amber gradient for glass borders
+  /// Indigo-to-blue gradient for borders
   static const LinearGradient glassBorder = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF0D9488), Color(0xFFF59E0B)],
+    colors: [Color(0xFF283474), Color(0xFF89B4E0)],
   );
 
   /// Gold gradient for #1 ranked items
@@ -168,26 +176,33 @@ class LineTypes {
 // Glass Card Decoration
 // ---------------------------------------------------------------------------
 class GlassDecoration {
-  static BoxDecoration card({double opacity = 0.35, double radius = 12}) {
+  static BoxDecoration card({double opacity = 1.0, double radius = 12}) {
     return BoxDecoration(
-      color: AppColors.surface.withValues(alpha: opacity),
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: AppColors.cardBorder.withValues(alpha: 0.3),
+        color: AppColors.cardBorder,
       ),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x0A000000),
+          blurRadius: 8,
+          offset: Offset(0, 2),
+        ),
+      ],
     );
   }
 
   static BoxDecoration elevated({double radius = 16}) {
     return BoxDecoration(
-      color: AppColors.surface.withValues(alpha: 0.8),
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: AppColors.teal.withValues(alpha: 0.15),
+        color: AppColors.cardBorder,
       ),
       boxShadow: [
         BoxShadow(
-          color: AppColors.teal.withValues(alpha: 0.08),
+          color: AppColors.brandIndigo.withValues(alpha: 0.08),
           blurRadius: 32,
           offset: const Offset(0, 4),
         ),

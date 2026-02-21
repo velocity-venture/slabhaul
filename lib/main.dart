@@ -45,7 +45,7 @@ class SlabHaulApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'SlabHaul',
       debugShowCheckedModeBanner: false,
-      theme: slabHaulDarkTheme,
+      theme: slabHaulTheme,
       routerConfig: goRouter,
     );
   }

@@ -19,8 +19,8 @@ class BaitService {
     try {
       final client = _client;
       if (client == null) {
-        AppLogger.warn(_logContext, 'Supabase not available, returning empty brands list');
-        return [];
+        AppLogger.warn(_logContext, 'Supabase not available, using local brands');
+        return [_bps, _sjh, _crl, _stk, _sfs];
       }
 
       final response = await client
@@ -79,8 +79,12 @@ class BaitService {
     try {
       final client = _client;
       if (client == null) {
-        AppLogger.warn(_logContext, 'Supabase not available, returning empty baits list');
-        return [];
+        AppLogger.warn(_logContext, 'Supabase not available, using local bait catalog');
+        return _getLocalBaits(
+          category: category,
+          searchQuery: searchQuery,
+          limit: limit,
+        );
       }
 
       var query = client
@@ -615,4 +619,210 @@ class BaitService {
       '4"',
     ];
   }
+
+  // ============================================================================
+  // LOCAL FALLBACK BAIT DATA
+  // ============================================================================
+
+  static List<Bait> _getLocalBaits({
+    BaitCategory? category,
+    String? searchQuery,
+    int limit = 50,
+  }) {
+    var baits = _localBaitCatalog;
+    if (category != null) {
+      baits = baits.where((b) => b.category == category).toList();
+    }
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      final q = searchQuery.toLowerCase();
+      baits = baits
+          .where((b) =>
+              b.name.toLowerCase().contains(q) ||
+              (b.productDescription?.toLowerCase().contains(q) ?? false) ||
+              (b.brand?.name.toLowerCase().contains(q) ?? false))
+          .toList();
+    }
+    return baits.take(limit).toList();
+  }
+
+  static final _sfs = BaitBrand(
+    id: 'local-sfs',
+    name: 'Southern Fishing Supply',
+    description: 'Premium crappie fishing tackle',
+  );
+  static final _bps = BaitBrand(
+    id: 'local-bps',
+    name: "Bobby Garland",
+    description: 'Legendary crappie baits',
+  );
+  static final _sjh = BaitBrand(
+    id: 'local-sjh',
+    name: "Southern Pro",
+    description: 'Tournament-proven crappie lures',
+  );
+  static final _crl = BaitBrand(
+    id: 'local-crl',
+    name: "Crappie Magnet",
+    description: 'Catch more crappie',
+  );
+  static final _stk = BaitBrand(
+    id: 'local-stk',
+    name: "Strike King",
+    description: 'Strike King Lure Company',
+  );
+
+  static final List<Bait> _localBaitCatalog = [
+    Bait(
+      id: 'local-1',
+      name: 'Baby Shad',
+      category: BaitCategory.softPlastic,
+      brand: _bps,
+      brandId: 'local-bps',
+      availableColors: ['Pearl White', 'Chartreuse', 'Blue Ice', 'Monkey Milk', 'Pink/Pearl'],
+      availableSizes: ['2"'],
+      isCrappieSpecific: true,
+      productDescription: 'The #1 crappie bait in the country. Split-tail design creates lifelike swimming action.',
+      retailPriceUsd: 3.99,
+    ),
+    Bait(
+      id: 'local-2',
+      name: 'Stroll\'r',
+      category: BaitCategory.softPlastic,
+      brand: _bps,
+      brandId: 'local-bps',
+      availableColors: ['Bluegrass', 'Glacier', 'Threadfin Shad', 'Electric Chicken'],
+      availableSizes: ['2"', '2.5"'],
+      isCrappieSpecific: true,
+      productDescription: 'Spider-leg design for slow-falling action perfect for vertical jigging.',
+      retailPriceUsd: 3.99,
+    ),
+    Bait(
+      id: 'local-3',
+      name: 'Lit\'l Hustler',
+      category: BaitCategory.softPlastic,
+      brand: _sjh,
+      brandId: 'local-sjh',
+      availableColors: ['Hot Chartreuse', 'Pearl', 'Blue/Chartreuse', 'Junebug'],
+      availableSizes: ['1.5"', '2"'],
+      isCrappieSpecific: true,
+      productDescription: 'Classic tube-style bait with multiple tentacles for maximum water displacement.',
+      retailPriceUsd: 2.99,
+    ),
+    Bait(
+      id: 'local-4',
+      name: 'Crappie Magnet',
+      category: BaitCategory.softPlastic,
+      brand: _crl,
+      brandId: 'local-crl',
+      availableColors: ['Chartreuse/White', 'Pink/White', 'Black/Chartreuse', 'Electric Chicken'],
+      availableSizes: ['1.5"'],
+      isCrappieSpecific: true,
+      productDescription: 'Small profile body with a split-tail that produces a subtle swimming action crappie can\'t resist.',
+      retailPriceUsd: 3.49,
+    ),
+    Bait(
+      id: 'local-5',
+      name: 'Mr. Crappie Slab Daddy',
+      category: BaitCategory.softPlastic,
+      brand: _stk,
+      brandId: 'local-stk',
+      availableColors: ['Tuxedo Black', 'Refrigerator White', 'Hot Chicken', 'Grassy Point'],
+      availableSizes: ['2.5"', '3"'],
+      isCrappieSpecific: true,
+      productDescription: 'Wally Marshall signature series. Paddle-tail design for aggressive swimming action.',
+      retailPriceUsd: 3.29,
+    ),
+    Bait(
+      id: 'local-6',
+      name: 'Mr. Crappie Slab Slanger',
+      category: BaitCategory.jig,
+      brand: _stk,
+      brandId: 'local-stk',
+      availableColors: ['Pearl/Chartreuse', 'Black/Chartreuse', 'Blue Moon', 'Tuxedo Black/Chartreuse'],
+      availableSizes: ['1/16 oz', '1/32 oz'],
+      weightRangeMin: 0.03125,
+      weightRangeMax: 0.0625,
+      isCrappieSpecific: true,
+      productDescription: 'Round jig head with Tru-Life finish and sharp hook. Perfect for tipping with soft plastics.',
+      retailPriceUsd: 4.49,
+    ),
+    Bait(
+      id: 'local-7',
+      name: 'Road Runner Marabou Jig',
+      category: BaitCategory.jig,
+      brand: _sfs,
+      brandId: 'local-sfs',
+      availableColors: ['White', 'Chartreuse', 'Pink', 'Black'],
+      availableSizes: ['1/16 oz', '1/8 oz'],
+      weightRangeMin: 0.0625,
+      weightRangeMax: 0.125,
+      isCrappieSpecific: true,
+      productDescription: 'Spinner jig with rotating blade and marabou dressing. Vibration attracts crappie from distance.',
+      retailPriceUsd: 3.99,
+    ),
+    Bait(
+      id: 'local-8',
+      name: 'Betts Bee',
+      category: BaitCategory.jig,
+      brand: _sfs,
+      brandId: 'local-sfs',
+      availableColors: ['Black/Chartreuse', 'White', 'Yellow', 'Red/White'],
+      availableSizes: ['1/32 oz', '1/16 oz'],
+      weightRangeMin: 0.03125,
+      weightRangeMax: 0.0625,
+      isCrappieSpecific: true,
+      productDescription: 'Hair jig with chenille body and hackle collar. A classic crappie catcher for decades.',
+      retailPriceUsd: 1.99,
+    ),
+    Bait(
+      id: 'local-9',
+      name: 'Bandit 100 Series',
+      category: BaitCategory.crankbait,
+      brand: _sfs,
+      brandId: 'local-sfs',
+      availableColors: ['Chartreuse/Black Back', 'Shad', 'Crawfish', 'Firetiger'],
+      availableSizes: ['1.5"'],
+      isCrappieSpecific: false,
+      productDescription: 'Small crankbait that dives 2-5 feet. Excellent for trolling brush piles.',
+      retailPriceUsd: 5.99,
+    ),
+    Bait(
+      id: 'local-10',
+      name: 'Slab Slasher Spoon',
+      category: BaitCategory.spoon,
+      brand: _sfs,
+      brandId: 'local-sfs',
+      availableColors: ['Silver', 'Gold', 'Chartreuse', 'White'],
+      availableSizes: ['1/16 oz', '1/8 oz'],
+      weightRangeMin: 0.0625,
+      weightRangeMax: 0.125,
+      isCrappieSpecific: true,
+      productDescription: 'Lightweight flutter spoon that mimics dying shad. Deadly for vertical jigging deep brush.',
+      retailPriceUsd: 2.49,
+    ),
+    Bait(
+      id: 'local-11',
+      name: 'Beetle Spin',
+      category: BaitCategory.spinner,
+      brand: _sfs,
+      brandId: 'local-sfs',
+      availableColors: ['White', 'Chartreuse', 'Black', 'Yellow'],
+      availableSizes: ['1/16 oz', '1/8 oz'],
+      weightRangeMin: 0.0625,
+      weightRangeMax: 0.125,
+      isCrappieSpecific: false,
+      productDescription: 'Classic underspin jig with Colorado blade. Cast and retrieve near brush piles.',
+      retailPriceUsd: 2.99,
+    ),
+    Bait(
+      id: 'local-12',
+      name: 'Live Minnow (Fathead)',
+      category: BaitCategory.liveBait,
+      availableColors: ['Natural'],
+      availableSizes: ['1"', '1.5"', '2"'],
+      isCrappieSpecific: true,
+      productDescription: 'The original crappie bait. Hook through the lips or back and fish under a bobber or tight-line.',
+      retailPriceUsd: 4.99,
+    ),
+  ];
 }

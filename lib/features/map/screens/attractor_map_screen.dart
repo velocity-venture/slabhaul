@@ -149,7 +149,6 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.slabhaul.app',
                 maxZoom: 18,
-                tileBuilder: _darkTileBuilder,
               ),
 
               // Wind effects layer (bank colors, arrows, calm pockets)
@@ -258,25 +257,59 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
 
           // ----- Overlays on top of the map -----
 
-          // Lake selector + filter bar
-          const SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: 8),
-                LakeSelector(),
-                SizedBox(height: 6),
-                AttractorFilterBar(),
-              ],
+          // Lake selector + filter bar with white scrim
+          SafeArea(
+            bottom: false,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0xE6FFFFFF), // white 90%
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x14000000),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, bottom: 6),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/slabhaul_icon.png',
+                          width: 28,
+                          height: 28,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'SlabHaul',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const LakeSelector(),
+                  SizedBox(height: 6),
+                  AttractorFilterBar(),
+                  SizedBox(height: 8),
+                  ClarityOverrideBar(),
+                  SizedBox(height: 8),
+                ],
+              ),
             ),
-          ),
-
-          // Clarity override bar (below filter bar)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 90,
-            left: 12,
-            right: 12,
-            child: const ClarityOverrideBar(),
           ),
 
           // Wind overlay card (conditionally shown)
@@ -303,7 +336,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
           // Wind effects legend (shown when effects layer is enabled)
           if (windEnabled && effectsEnabled)
             Positioned(
-              top: MediaQuery.of(context).padding.top + 170,
+              top: MediaQuery.of(context).padding.top + 200,
               right: 12,
               child: const WindEffectsLegend(),
             ),
@@ -319,7 +352,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
 
           // Count badges
           Positioned(
-            top: MediaQuery.of(context).padding.top + 100,
+            top: MediaQuery.of(context).padding.top + 160,
             left: 12,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +363,7 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppColors.surface.withValues(alpha: 0.88),
+                      color: const Color(0xE6FFFFFF),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.cardBorder),
                     ),
@@ -464,137 +497,221 @@ class _AttractorMapScreenState extends ConsumerState<AttractorMapScreen>
           // Streamflow legend (when enabled)
           if (streamflowEnabled)
             Positioned(
-              top: MediaQuery.of(context).padding.top + (windEnabled && effectsEnabled ? 280 : 170),
+              top: MediaQuery.of(context).padding.top + (windEnabled && effectsEnabled ? 310 : 200),
               right: 12,
               child: const InflowLayerLegend(),
             ),
         ],
       ),
 
-      // FAB stack for map controls
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Best Areas button - navigate to ranked list
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: FloatingActionButton.small(
-              heroTag: 'best_areas',
-              backgroundColor: AppColors.success,
-              onPressed: () => context.push('/best-areas'),
-              tooltip: 'Best Areas',
-              child: const Icon(
-                Icons.local_fire_department,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-          ),
-
-          // Hotspots toggle
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: FloatingActionButton(
-              mini: true,
-              heroTag: 'hotspots_toggle',
-              backgroundColor:
-                  hotspotsEnabled ? AppColors.warning : AppColors.card,
-              onPressed: () {
-                ref.read(hotspotsEnabledProvider.notifier).state = !hotspotsEnabled;
-              },
-              tooltip: hotspotsEnabled ? 'Hide hotspots' : 'Show hotspots',
-              child: Icon(
-                Icons.local_fire_department,
-                color: hotspotsEnabled ? Colors.white : AppColors.textSecondary,
-                size: 20,
-              ),
-            ),
-          ),
-
-          // Wind effects toggle (only shown when wind is enabled)
-          if (windEnabled)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: FloatingActionButton(
-                mini: true,
-                heroTag: 'wind_effects',
-                backgroundColor:
-                    effectsEnabled ? AppColors.tealDark : AppColors.card,
-                onPressed: () {
-                  ref.read(windEffectsLayerEnabledProvider.notifier).state = 
-                      !effectsEnabled;
-                },
-                tooltip: effectsEnabled 
-                    ? 'Hide bank effects' 
-                    : 'Show bank effects',
-                child: Icon(
-                  Icons.layers,
-                  color: effectsEnabled ? Colors.white : AppColors.textSecondary,
-                  size: 20,
-                ),
-              ),
-            ),
-          
-          // Streamflow/Inflow toggle
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: FloatingActionButton(
-              mini: true,
-              heroTag: 'streamflow_toggle',
-              backgroundColor:
-                  streamflowEnabled ? AppColors.info : AppColors.card,
-              onPressed: () {
-                ref.read(streamflowEnabledProvider.notifier).state = !streamflowEnabled;
-              },
-              tooltip: streamflowEnabled ? 'Hide streamflow' : 'Show streamflow',
-              child: Icon(
-                Icons.water,
-                color: streamflowEnabled ? Colors.white : AppColors.textSecondary,
-                size: 20,
-              ),
-            ),
-          ),
-          
-          // Main wind toggle
-          FloatingActionButton(
-            mini: true,
-            heroTag: 'wind_toggle',
-            backgroundColor:
-                windEnabled ? AppColors.teal : AppColors.card,
-            onPressed: () {
-              ref.read(windEnabledProvider.notifier).state = !windEnabled;
-              if (!windEnabled) {
-                // Reset time selection when enabling
-                ref.read(selectedWindTimeProvider.notifier).state = null;
-              }
-            },
-            tooltip: windEnabled ? 'Hide wind overlay' : 'Show wind overlay',
-            child: Icon(
-              Icons.air,
-              color: windEnabled ? Colors.white : AppColors.textSecondary,
-            ),
-          ),
-        ],
+      // Compact map layer controls — a single menu FAB
+      floatingActionButton: _MapLayerMenu(
+        windEnabled: windEnabled,
+        effectsEnabled: effectsEnabled,
+        hotspotsEnabled: hotspotsEnabled,
+        streamflowEnabled: streamflowEnabled,
+        onToggleWind: () {
+          ref.read(windEnabledProvider.notifier).state = !windEnabled;
+          if (!windEnabled) {
+            ref.read(selectedWindTimeProvider.notifier).state = null;
+          }
+        },
+        onToggleEffects: () {
+          ref.read(windEffectsLayerEnabledProvider.notifier).state = !effectsEnabled;
+        },
+        onToggleHotspots: () {
+          ref.read(hotspotsEnabledProvider.notifier).state = !hotspotsEnabled;
+        },
+        onToggleStreamflow: () {
+          ref.read(streamflowEnabledProvider.notifier).state = !streamflowEnabled;
+        },
+        onBestAreas: () => context.push('/best-areas'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
-  /// Applies a dark colour filter to the OSM tiles so they blend with the
-  /// app's dark theme.
-  Widget _darkTileBuilder(
-    BuildContext context,
-    Widget tileWidget,
-    TileImage tile,
-  ) {
-    return ColorFiltered(
-      colorFilter: const ColorFilter.matrix(<double>[
-        0.40, 0, 0, 0, 0, //
-        0, 0.40, 0, 0, 0, //
-        0, 0, 0.50, 0, 0, //
-        0, 0, 0, 1, 0, //
-      ]),
-      child: tileWidget,
+}
+
+/// Collapsible layer control menu — a single FAB that expands into toggle chips.
+class _MapLayerMenu extends StatefulWidget {
+  final bool windEnabled;
+  final bool effectsEnabled;
+  final bool hotspotsEnabled;
+  final bool streamflowEnabled;
+  final VoidCallback onToggleWind;
+  final VoidCallback onToggleEffects;
+  final VoidCallback onToggleHotspots;
+  final VoidCallback onToggleStreamflow;
+  final VoidCallback onBestAreas;
+
+  const _MapLayerMenu({
+    required this.windEnabled,
+    required this.effectsEnabled,
+    required this.hotspotsEnabled,
+    required this.streamflowEnabled,
+    required this.onToggleWind,
+    required this.onToggleEffects,
+    required this.onToggleHotspots,
+    required this.onToggleStreamflow,
+    required this.onBestAreas,
+  });
+
+  @override
+  State<_MapLayerMenu> createState() => _MapLayerMenuState();
+}
+
+class _MapLayerMenuState extends State<_MapLayerMenu> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_expanded) {
+      // Collapsed: just the menu button
+      return FloatingActionButton.small(
+        heroTag: 'layer_menu',
+        backgroundColor: AppColors.surface,
+        onPressed: () => setState(() => _expanded = true),
+        tooltip: 'Map Layers',
+        child: const Icon(Icons.layers, color: AppColors.teal, size: 22),
+      );
+    }
+
+    // Expanded: show layer toggles in a compact card
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorder),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1A000000),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Close button
+          Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () => setState(() => _expanded = false),
+              child: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
+            ),
+          ),
+          const SizedBox(height: 4),
+          _LayerToggle(
+            icon: Icons.air,
+            label: 'Wind',
+            active: widget.windEnabled,
+            onTap: widget.onToggleWind,
+          ),
+          if (widget.windEnabled)
+            _LayerToggle(
+              icon: Icons.layers,
+              label: 'Bank Effects',
+              active: widget.effectsEnabled,
+              onTap: widget.onToggleEffects,
+            ),
+          _LayerToggle(
+            icon: Icons.local_fire_department,
+            label: 'Hotspots',
+            active: widget.hotspotsEnabled,
+            activeColor: AppColors.warning,
+            onTap: widget.onToggleHotspots,
+          ),
+          _LayerToggle(
+            icon: Icons.water,
+            label: 'Streamflow',
+            active: widget.streamflowEnabled,
+            activeColor: AppColors.info,
+            onTap: widget.onToggleStreamflow,
+          ),
+          const Divider(height: 12, color: AppColors.cardBorder),
+          GestureDetector(
+            onTap: widget.onBestAreas,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.local_fire_department, size: 16, color: AppColors.success),
+                  SizedBox(width: 6),
+                  Text(
+                    'Best Areas',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.success,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LayerToggle extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+  final Color? activeColor;
+  final VoidCallback onTap;
+
+  const _LayerToggle({
+    required this.icon,
+    required this.label,
+    required this.active,
+    this.activeColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? (activeColor ?? AppColors.teal) : AppColors.textMuted;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: active ? color.withValues(alpha: 0.12) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                color: active ? color : AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Icon(
+              active ? Icons.check_circle : Icons.circle_outlined,
+              size: 14,
+              color: color,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

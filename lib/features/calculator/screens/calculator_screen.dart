@@ -15,6 +15,10 @@ class CalculatorScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Image.asset('assets/images/slabhaul_icon.png'),
+        ),
         title: const Text(
           'Depth Calculator',
           style: TextStyle(fontWeight: FontWeight.w700),

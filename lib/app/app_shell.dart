@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,50 +32,45 @@ class AppShell extends ConsumerWidget {
         children: [
           Container(
             height: 0.5,
-            color: AppColors.cardBorder.withValues(alpha: 0.5),
+            color: AppColors.cardBorder,
           ),
-          ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(
-                color: AppColors.surface.withValues(alpha: 0.85),
-                padding: EdgeInsets.only(bottom: bottomPadding),
-                child: BottomNavigationBar(
-                  currentIndex: navigationShell.currentIndex,
-                  onTap: (index) => navigationShell.goBranch(
-                    index,
-                    initialLocation: index == navigationShell.currentIndex,
-                  ),
-                  backgroundColor: Colors.transparent,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.map_outlined),
-                      activeIcon: Icon(Icons.map),
-                      label: 'Map',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.cloud_outlined),
-                      activeIcon: Icon(Icons.cloud),
-                      label: 'Weather',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.calculate_outlined),
-                      activeIcon: Icon(Icons.calculate),
-                      label: 'Calculator',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.inventory_2_outlined),
-                      activeIcon: Icon(Icons.inventory_2),
-                      label: 'Baits',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person_outlined),
-                      activeIcon: Icon(Icons.person),
-                      label: 'Profile',
-                    ),
-                  ],
-                ),
+          Container(
+            color: AppColors.surface,
+            padding: EdgeInsets.only(bottom: bottomPadding),
+            child: BottomNavigationBar(
+              currentIndex: navigationShell.currentIndex,
+              onTap: (index) => navigationShell.goBranch(
+                index,
+                initialLocation: index == navigationShell.currentIndex,
               ),
+              backgroundColor: Colors.transparent,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map_outlined),
+                  activeIcon: Icon(Icons.map),
+                  label: 'Map',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.cloud_outlined),
+                  activeIcon: Icon(Icons.cloud),
+                  label: 'Weather',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.calculate_outlined),
+                  activeIcon: Icon(Icons.calculate),
+                  label: 'Calculator',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.inventory_2_outlined),
+                  activeIcon: Icon(Icons.inventory_2),
+                  label: 'Baits',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outlined),
+                  activeIcon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+              ],
             ),
           ),
         ],

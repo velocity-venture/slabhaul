@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:slabhaul/core/utils/constants.dart';
 
-/// Reusable glassmorphism container with backdrop blur and semi-transparent fill.
+/// Clean card container replacing the old glassmorphism style.
+/// Keeps the same constructor API so callers don't break.
 class GlassContainer extends StatelessWidget {
   final Widget child;
   final double blurSigma;
@@ -32,7 +31,7 @@ class GlassContainer extends StatelessWidget {
     this.borderGradient,
   });
 
-  /// Hero card — highest visual emphasis with teal tint, gradient border, glow
+  /// Hero card — white card with brand indigo left-border accent + shadow
   factory GlassContainer.hero({
     Key? key,
     required Widget child,
@@ -42,25 +41,23 @@ class GlassContainer extends StatelessWidget {
   }) {
     return GlassContainer(
       key: key,
-      blurSigma: 20,
-      opacity: 0.28,
       borderRadius: borderRadius,
       padding: padding,
       margin: margin,
-      tintColor: AppColors.glassTint,
+      tintColor: AppColors.surface,
       borderGradient: AppGradients.glassBorder,
       glow: [
         BoxShadow(
-          color: AppColors.teal.withValues(alpha: 0.15),
-          blurRadius: 24,
-          spreadRadius: 2,
+          color: AppColors.brandIndigo.withValues(alpha: 0.10),
+          blurRadius: 16,
+          spreadRadius: 1,
         ),
       ],
       child: child,
     );
   }
 
-  /// Standard card — balanced glass effect
+  /// Standard card — white card with border + light shadow
   factory GlassContainer.standard({
     Key? key,
     required Widget child,
@@ -70,8 +67,6 @@ class GlassContainer extends StatelessWidget {
   }) {
     return GlassContainer(
       key: key,
-      blurSigma: 16,
-      opacity: 0.22,
       borderRadius: borderRadius,
       padding: padding,
       margin: margin,
@@ -79,7 +74,7 @@ class GlassContainer extends StatelessWidget {
     );
   }
 
-  /// Compact card — minimal glass for small elements
+  /// Compact card — white card, minimal border
   factory GlassContainer.compact({
     Key? key,
     required Widget child,
@@ -90,8 +85,6 @@ class GlassContainer extends StatelessWidget {
   }) {
     return GlassContainer(
       key: key,
-      blurSigma: 10,
-      opacity: 0.18,
       borderRadius: borderRadius,
       padding: padding,
       margin: margin,
@@ -102,28 +95,26 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fillColor = tintColor ?? AppColors.surface;
-
-    Widget content = ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: fillColor.withValues(alpha: opacity),
-            gradient: backgroundGradient,
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: borderGradient == null
-                ? Border.all(
-                    color: borderColor ??
-                        AppColors.cardBorder.withValues(alpha: 0.4),
-                  )
-                : null,
+    Widget content = Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: tintColor ?? AppColors.surface,
+        gradient: backgroundGradient,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: borderGradient == null
+            ? Border.all(
+                color: borderColor ?? AppColors.cardBorder,
+              )
+            : null,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
 
     // Wrap with gradient border if specified

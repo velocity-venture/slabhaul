@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slabhaul/core/models/water_clarity.dart';
+import 'package:slabhaul/core/utils/constants.dart';
 import 'package:slabhaul/features/map/providers/clarity_override_provider.dart';
 import 'package:slabhaul/shared/widgets/glass_container.dart';
 
@@ -23,7 +24,7 @@ class ClarityOverrideBar extends ConsumerWidget {
           _ClarityChip(
             label: 'Auto',
             selected: override == null,
-            color: Colors.white,
+            color: AppColors.brandIndigo,
             onTap: () => ref
                 .read(manualClarityOverrideProvider.notifier)
                 .state = null,
@@ -82,10 +83,10 @@ class _ClarityChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.25) : Colors.transparent,
+          color: selected ? color.withValues(alpha: 0.15) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: selected ? color : Colors.white24,
+            color: selected ? color : AppColors.cardBorder,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -94,7 +95,7 @@ class _ClarityChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 11,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            color: selected ? color : Colors.white70,
+            color: selected ? color : AppColors.textSecondary,
           ),
         ),
       ),

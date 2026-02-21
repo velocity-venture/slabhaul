@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../core/utils/constants.dart';
 
-final ThemeData slabHaulDarkTheme = ThemeData(
-  brightness: Brightness.dark,
+final ThemeData slabHaulTheme = ThemeData(
+  brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.background,
   primaryColor: AppColors.teal,
   materialTapTargetSize: MaterialTapTargetSize.padded,
   visualDensity: VisualDensity.standard,
-  colorScheme: const ColorScheme.dark(
+  colorScheme: const ColorScheme.light(
     primary: AppColors.teal,
     secondary: AppColors.tealLight,
     tertiary: AppColors.amber,
@@ -19,10 +19,10 @@ final ThemeData slabHaulDarkTheme = ThemeData(
     onError: Colors.white,
   ),
   appBarTheme: const AppBarTheme(
-    backgroundColor: AppColors.surfaceElevated,
+    backgroundColor: AppColors.surface,
     foregroundColor: AppColors.textPrimary,
     elevation: 0,
-    scrolledUnderElevation: 0,
+    scrolledUnderElevation: 0.5,
   ),
   cardTheme: CardThemeData(
     color: AppColors.surface,
@@ -31,10 +31,10 @@ final ThemeData slabHaulDarkTheme = ThemeData(
       side: const BorderSide(color: AppColors.cardBorder, width: 0.5),
     ),
     elevation: 1,
-    shadowColor: AppColors.teal.withValues(alpha: 0.08),
+    shadowColor: Colors.black.withValues(alpha: 0.06),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: AppColors.surfaceElevated,
+    backgroundColor: AppColors.surface,
     selectedItemColor: AppColors.teal,
     unselectedItemColor: AppColors.textMuted,
     type: BottomNavigationBarType.fixed,
@@ -71,8 +71,8 @@ final ThemeData slabHaulDarkTheme = ThemeData(
     ),
   ),
   chipTheme: ChipThemeData(
-    backgroundColor: AppColors.card,
-    selectedColor: AppColors.teal.withValues(alpha: 0.3),
+    backgroundColor: AppColors.surface,
+    selectedColor: AppColors.teal.withValues(alpha: 0.15),
     labelStyle: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
     side: const BorderSide(color: AppColors.cardBorder),
     shape: RoundedRectangleBorder(
@@ -83,7 +83,7 @@ final ThemeData slabHaulDarkTheme = ThemeData(
     activeTrackColor: AppColors.teal,
     thumbColor: AppColors.teal,
     inactiveTrackColor: AppColors.card,
-    overlayColor: Color(0x290D9488),
+    overlayColor: Color(0x29283474),
   ),
   dividerColor: AppColors.cardBorder,
   textTheme: const TextTheme(

@@ -46,12 +46,12 @@ class AttractorFilterBar extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? filter.color.withValues(alpha: 0.25)
-                    : AppColors.card,
+                    ? filter.color.withValues(alpha: 0.15)
+                    : AppColors.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isSelected
-                      ? filter.color.withValues(alpha: 0.6)
+                      ? filter.color.withValues(alpha: 0.5)
                       : AppColors.cardBorder,
                 ),
               ),

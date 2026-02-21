@@ -23,7 +23,7 @@ class ProfileScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 16),
 
-              // Avatar
+              // Avatar / Icon
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
@@ -33,10 +33,13 @@ class ProfileScreen extends ConsumerWidget {
                 child: CircleAvatar(
                   radius: 40,
                   backgroundColor: AppColors.card,
-                  child: Icon(
-                    isLoggedIn ? Icons.person : Icons.person_outline,
-                    size: 40,
-                    color: AppColors.teal,
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/slabhaul_icon.png',
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

@@ -32,7 +32,7 @@ class HotspotBottomSheet extends ConsumerWidget {
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26,
+                color: Color(0x1A000000),
                 blurRadius: 12,
                 offset: Offset(0, -4),
               ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:slabhaul/core/utils/constants.dart';
 import 'package:slabhaul/core/utils/solunar_calculator.dart';
 import 'package:slabhaul/core/utils/time_ago.dart';
@@ -51,205 +49,142 @@ class _WeatherDashboardScreenState
     final nextPeriod = ref.watch(nextSolunarPeriodProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          // --- 1. Map backdrop ---
-          Positioned.fill(
-            child: FlutterMap(
-              options: MapOptions(
-                initialCenter: LatLng(lake.lat, lake.lon),
-                initialZoom: 11.0,
-                interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.none,
-                ),
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.slabhaul.app',
-                  maxZoom: 18,
-                  tileBuilder: _darkTileBuilder,
-                ),
-              ],
-            ),
-          ),
-
-          // --- 2. Gradient overlays for readability ---
-          const Positioned.fill(
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: AppGradients.sunsetOverlay,
-                ),
-              ),
-            ),
-          ),
-
-          // --- 3. Floating glass header + compact cards ---
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 4),
-                  // Glass header bar
-                  GlassContainer(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    borderRadius: 14,
-                    opacity: 0.28,
-                    tintColor: AppColors.glassTint,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _openWeatherLakePicker(context, ref),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.location_on,
-                                    color: AppColors.teal, size: 18),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              lake.name,
-                                              style: const TextStyle(
-                                                color: AppColors.textPrimary,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          const Icon(
-                                              Icons.keyboard_arrow_down,
-                                              color: AppColors.textMuted,
-                                              size: 18),
-                                        ],
-                                      ),
-                                      weatherAsync.maybeWhen(
-                                        data: (weather) => Text(
-                                          'Updated ${formatTimeAgo(weather.fetchedAt)}',
-                                          style: const TextStyle(
-                                            color: AppColors.textMuted,
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                        orElse: () => const SizedBox.shrink(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.psychology,
-                              color: AppColors.warning, size: 22),
-                          onPressed: () => context.push('/trip-planner'),
-                          tooltip: 'Smart Trip Planner',
-                          constraints: const BoxConstraints(),
-                          padding: const EdgeInsets.all(6),
-                        ),
-                        const SizedBox(width: 4),
-                        IconButton(
-                          icon: const Icon(Icons.refresh,
-                              color: AppColors.teal, size: 22),
-                          onPressed: () {
-                            ref.invalidate(weatherDataProvider);
-                            ref.invalidate(lakeConditionsProvider);
-                          },
-                          constraints: const BoxConstraints(),
-                          padding: const EdgeInsets.all(6),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Two compact summary cards side-by-side
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _CompactConditionsCard(
-                          weatherAsync: weatherAsync,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _CompactSolunarCard(
-                          solunar: solunar,
-                          nextPeriod: nextPeriod,
-                        ),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            // --- Header bar ---
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.cardBorder),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x0A000000),
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                ],
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Image.asset(
+                          'assets/images/slabhaul_icon.png',
+                          width: 32,
+                          height: 32,
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _openWeatherLakePicker(context, ref),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.location_on,
+                                  color: AppColors.teal, size: 18),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            lake.name,
+                                            style: const TextStyle(
+                                              color: AppColors.textPrimary,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: AppColors.textMuted,
+                                            size: 18),
+                                      ],
+                                    ),
+                                    weatherAsync.maybeWhen(
+                                      data: (weather) => Text(
+                                        'Updated ${formatTimeAgo(weather.fetchedAt)}',
+                                        style: const TextStyle(
+                                          color: AppColors.textMuted,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      orElse: () => const SizedBox.shrink(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.psychology,
+                            color: AppColors.warning, size: 22),
+                        onPressed: () => context.push('/trip-planner'),
+                        tooltip: 'Smart Trip Planner',
+                        constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.all(6),
+                      ),
+                      const SizedBox(width: 4),
+                      IconButton(
+                        icon: const Icon(Icons.refresh,
+                            color: AppColors.teal, size: 22),
+                        onPressed: () {
+                          ref.invalidate(weatherDataProvider);
+                          ref.invalidate(lakeConditionsProvider);
+                        },
+                        constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.all(6),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
 
-          // --- 4. DraggableScrollableSheet ---
-          DraggableScrollableSheet(
-            initialChildSize: 0.12,
-            minChildSize: 0.12,
-            maxChildSize: 0.92,
-            snap: true,
-            snapSizes: const [0.12, 0.45, 0.92],
-            builder: (context, scrollController) {
-              return GlassContainer(
-                borderRadius: 24,
-                opacity: 0.32,
-                blurSigma: 22,
-                tintColor: AppColors.glassTint,
-                child: ListView(
-                  controller: scrollController,
-                  padding: EdgeInsets.zero,
+            // --- Compact summary cards ---
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                child: Row(
                   children: [
-                    // Drag handle pill
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 10, bottom: 8),
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: AppColors.amber.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
+                    Expanded(
+                      child: _CompactConditionsCard(
+                        weatherAsync: weatherAsync,
                       ),
                     ),
-
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      child: Text(
-                        'Details',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _CompactSolunarCard(
+                        solunar: solunar,
+                        nextPeriod: nextPeriod,
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
 
-                    const SizedBox(height: 4),
-
-                    // -- All existing cards, each glass-wrapped --
-                    // Current Conditions
+            // --- All weather detail cards ---
+            SliverList(
+              delegate: SliverChildListDelegate([
+                // Current Conditions
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
@@ -599,13 +534,11 @@ class _WeatherDashboardScreenState
                         child: _TournamentModeNotice(),
                       ),
 
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
+                const SizedBox(height: 24),
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -643,21 +576,6 @@ class _WeatherDashboardScreenState
     );
   }
 
-  Widget _darkTileBuilder(
-    BuildContext context,
-    Widget tileWidget,
-    TileImage tile,
-  ) {
-    return ColorFiltered(
-      colorFilter: const ColorFilter.matrix(<double>[
-        0.40, 0, 0, 0, 0, //
-        0, 0.40, 0, 0, 0, //
-        0, 0, 0.50, 0, 0, //
-        0, 0, 0, 1, 0, //
-      ]),
-      child: tileWidget,
-    );
-  }
 }
 
 // ---------------------------------------------------------------------------

@@ -69,29 +69,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               const SizedBox(height: 60),
 
-              // Logo area
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.teal.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.phishing,
-                  size: 64,
-                  color: AppColors.teal,
-                ),
+              // Logo
+              Image.asset(
+                'assets/images/slabhaul_logo.png',
+                height: 80,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'SlabHaul',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 12),
               const Text(
                 'Your crappie fishing command center',
                 style: TextStyle(
