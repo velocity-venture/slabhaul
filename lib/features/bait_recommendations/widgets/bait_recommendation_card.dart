@@ -58,6 +58,8 @@ class BaitRecommendationCard extends StatelessWidget {
         return Icons.phishing;
       case BaitCategory.bladeBait:
         return Icons.flash_on;
+      case BaitCategory.microJig:
+        return Icons.bug_report;
     }
   }
 
@@ -117,7 +119,7 @@ class BaitRecommendationCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ),

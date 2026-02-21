@@ -38,6 +38,13 @@ class BaitRecommendationService {
       category: BaitCategory.tubeJig,
       sizes: ['1.5"', '2"', '2.5"', '3"'],
       colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'Ghost/Pearl',
+          'Translucent Smoke',
+          'Clear/Silver Flake',
+          'Watermelon Seed',
+          'Natural Shad',
+        ],
         WaterClarity.clear: [
           'Ghost/Pearl',
           'Smoke/Silver Flake',
@@ -109,6 +116,13 @@ class BaitRecommendationService {
       category: BaitCategory.softPlasticMinnow,
       sizes: ['1"', '1.5"', '2"', '2.5"'],
       colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'Translucent Shad',
+          'Ghost Minnow',
+          'Clear/Silver',
+          'Smoke',
+          'Alewife',
+        ],
         WaterClarity.clear: [
           'Translucent Shad',
           'Smoke/Silver',
@@ -180,6 +194,13 @@ class BaitRecommendationService {
       category: BaitCategory.curlyTailGrub,
       sizes: ['1.5"', '2"', '2.5"', '3"'],
       colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'Smoke/Silver',
+          'Watermelon Seed',
+          'Natural Shad',
+          'Clear/Glitter',
+          'Green Pumpkin',
+        ],
         WaterClarity.clear: [
           'Smoke/Silver',
           'Watermelon',
@@ -251,6 +272,13 @@ class BaitRecommendationService {
       category: BaitCategory.hairJig,
       sizes: ['1/32 oz', '1/16 oz', '1/8 oz', '3/16 oz'],
       colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'White',
+          'Natural Brown',
+          'Gray/White',
+          'Olive/White',
+          'Tan',
+        ],
         WaterClarity.clear: [
           'White',
           'Olive/White',
@@ -322,6 +350,7 @@ class BaitRecommendationService {
       category: BaitCategory.liveMinnow,
       sizes: ['1-1.5" (spawn)', '1.5-2" (standard)', '2-3" (trophy)', '3-4" (magnum)'],
       colorsByClarity: {
+        WaterClarity.crystalClear: ['Fathead', 'Golden Shiner', 'Small Shad'],
         WaterClarity.clear: ['Fathead', 'Golden Shiner', 'Small Shad'],
         WaterClarity.lightStain: ['Fathead', 'Golden Shiner', 'Rosy Red'],
         WaterClarity.stained: ['Fathead', 'Rosy Red', 'Any Lively'],
@@ -369,6 +398,13 @@ class BaitRecommendationService {
       category: BaitCategory.crankbait,
       sizes: ['1.5"', '2"', '2.5"'],
       colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'Natural Shad',
+          'Chrome/Blue',
+          'Ghost Minnow',
+          'Clear/Silver',
+          'Perch',
+        ],
         WaterClarity.clear: [
           'Natural Shad',
           'Chrome/Blue',
@@ -440,6 +476,13 @@ class BaitRecommendationService {
       category: BaitCategory.bladeBait,
       sizes: ['1/8 oz', '1/4 oz', '3/8 oz', '1/2 oz'],
       colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'Silver',
+          'Chrome',
+          'Natural Shad',
+          'Holographic',
+          'Gold',
+        ],
         WaterClarity.clear: [
           'Silver',
           'Chrome',
@@ -501,6 +544,84 @@ class BaitRecommendationService {
       peakSeasons: [
         CrappieSeason.winter,
         CrappieSeason.fall,
+      ],
+    ),
+
+    // Micro Jig - Post-Spawn / Finicky Fish
+    BaitProfile(
+      name: 'Micro Jig',
+      category: BaitCategory.microJig,
+      sizes: ['1"', '1.25"', '1.5"'],
+      colorsByClarity: {
+        WaterClarity.crystalClear: [
+          'Ghost/Pearl',
+          'Translucent Smoke',
+          'Clear/Silver',
+          'Natural Shad',
+          'Watermelon Seed',
+        ],
+        WaterClarity.clear: [
+          'Ghost/Pearl',
+          'Natural Shad',
+          'Smoke/Silver',
+          'Watermelon',
+          'Blue Ice',
+        ],
+        WaterClarity.lightStain: [
+          'Pearl/Chartreuse',
+          'Monkey Milk',
+          'Blue/Pearl',
+          'Threadfin Shad',
+          'Pink/White',
+        ],
+        WaterClarity.stained: [
+          'Chartreuse/White',
+          'Electric Chicken',
+          'Hot Pink',
+          'Orange/Chartreuse',
+          'Black/Chartreuse',
+        ],
+        WaterClarity.muddy: [
+          'Chartreuse',
+          'Glow White',
+          'Fluorescent Orange',
+          'White',
+          'Black',
+        ],
+      },
+      minDepthFt: 1,
+      maxDepthFt: 15,
+      minTempF: 55,
+      maxTempF: 85,
+      bestStructures: [
+        StructureType.brushPile,
+        StructureType.stakeBed,
+        StructureType.dock,
+        StructureType.standingTimber,
+        StructureType.vegetation,
+      ],
+      techniques: [
+        'Tandem rig (trailer)',
+        'Single pole jigging',
+        'Slip bobber',
+        'Dock shooting',
+        'Vertical micro-jigging',
+      ],
+      presentations: [
+        'Pendulum fall on ultra-light 1/48-1/64 oz head',
+        'Tandem: 12-18" below heavier lead jig',
+        'Dead-stick under micro float',
+        'Slow fall mimicking drifting fry',
+        'Barely twitch - let current do the work',
+      ],
+      description: 'Matches shad fry and insect larvae during post-spawn '
+          'and summer. Deadly when crappie are short-striking standard '
+          'baits. The "finesse finesse" option for pressured fish.',
+      baseEffectiveness: 0.72,
+      peakSeasons: [
+        CrappieSeason.postSpawn,
+        CrappieSeason.summer,
+        CrappieSeason.spawn,
       ],
     ),
   ];
@@ -1008,6 +1129,9 @@ class BaitRecommendationService {
     if (conditions.clarity == WaterClarity.muddy) {
       tips.add('Use scent (Gulp, minnow tip) and vibration to help '
           'fish locate your bait.');
+    } else if (conditions.clarity == WaterClarity.crystalClear) {
+      tips.add('Ultra-light line (2-4 lb fluoro), natural colors only. '
+          'Fish spook easily in crystal clear water.');
     } else if (conditions.clarity == WaterClarity.clear) {
       tips.add('Light line (4-6 lb fluoro), subtle movements. '
           'Fish can see everything.');

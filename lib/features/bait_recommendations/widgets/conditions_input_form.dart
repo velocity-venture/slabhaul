@@ -277,6 +277,8 @@ class _ClaritySelector extends StatelessWidget {
   
   IconData _getClarityIcon(WaterClarity clarity) {
     switch (clarity) {
+      case WaterClarity.crystalClear:
+        return Icons.water_drop;
       case WaterClarity.clear:
         return Icons.visibility;
       case WaterClarity.lightStain:

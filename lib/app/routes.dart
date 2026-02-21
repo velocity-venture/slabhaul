@@ -20,6 +20,7 @@ import '../features/trip_planner/screens/smart_trip_planner_screen.dart';
 import '../features/baits/bait_browser_screen.dart';
 import '../features/baits/bait_detail_screen.dart';
 import '../features/baits/submit_bait_report_screen.dart';
+import '../features/match_the_hatch/screens/match_the_hatch_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -49,6 +50,12 @@ final goRouter = GoRouter(
         final preselectedBaitId = state.uri.queryParameters['baitId'];
         return SubmitBaitReportScreen(preselectedBaitId: preselectedBaitId);
       },
+    ),
+    // Match the Hatch - AI bait selector
+    GoRoute(
+      path: '/match-the-hatch',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MatchTheHatchScreen(),
     ),
     // Bait Recommendations - accessible from any screen
     GoRoute(

@@ -23,6 +23,7 @@ enum BaitCategory {
   liveMinnow,
   crankbait,
   bladeBait,
+  microJig,
 }
 
 extension BaitCategoryX on BaitCategory {
@@ -42,6 +43,8 @@ extension BaitCategoryX on BaitCategory {
         return 'Crankbait';
       case BaitCategory.bladeBait:
         return 'Blade Bait';
+      case BaitCategory.microJig:
+        return 'Micro Jig';
     }
   }
   
@@ -61,6 +64,8 @@ extension BaitCategoryX on BaitCategory {
         return '🎣';
       case BaitCategory.bladeBait:
         return '⚡';
+      case BaitCategory.microJig:
+        return '🔬';
     }
   }
 
@@ -80,23 +85,28 @@ extension BaitCategoryX on BaitCategory {
         return 'assets/images/baits/crankbait.png';
       case BaitCategory.bladeBait:
         return 'assets/images/baits/blade_bait.png';
+      case BaitCategory.microJig:
+        return 'assets/images/baits/micro_jig.png';
     }
   }
 }
 
 /// Water clarity classifications
 enum WaterClarity {
-  clear,      // >5ft visibility
-  lightStain, // 3-5ft visibility  
-  stained,    // 1-3ft visibility
-  muddy,      // <1ft visibility
+  crystalClear, // >8ft visibility
+  clear,        // 5-8ft visibility
+  lightStain,   // 3-5ft visibility
+  stained,      // 1-3ft visibility
+  muddy,        // <1ft visibility
 }
 
 extension WaterClarityX on WaterClarity {
   String get displayName {
     switch (this) {
+      case WaterClarity.crystalClear:
+        return 'Crystal Clear (>8ft)';
       case WaterClarity.clear:
-        return 'Clear (>5ft)';
+        return 'Clear (5-8ft)';
       case WaterClarity.lightStain:
         return 'Light Stain (3-5ft)';
       case WaterClarity.stained:
@@ -105,9 +115,11 @@ extension WaterClarityX on WaterClarity {
         return 'Muddy (<1ft)';
     }
   }
-  
+
   double get visibilityFt {
     switch (this) {
+      case WaterClarity.crystalClear:
+        return 8.0;
       case WaterClarity.clear:
         return 6.0;
       case WaterClarity.lightStain:

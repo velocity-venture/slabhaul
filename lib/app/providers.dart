@@ -9,6 +9,7 @@ import '../core/services/streamflow_service.dart';
 import '../core/services/water_clarity_service.dart';
 import '../core/services/smart_trip_planner.dart';
 import '../core/services/bait_recommendation_service.dart';
+import '../core/services/match_the_hatch_engine.dart';
 
 final attractorServiceProvider = Provider<AttractorService>((ref) {
   return AttractorService();
@@ -49,4 +50,8 @@ final smartTripPlannerProvider = Provider<SmartTripPlanner>((ref) {
 final baitRecommendationServiceProvider =
     Provider<BaitRecommendationService>((ref) {
   return BaitRecommendationService();
+});
+
+final matchTheHatchEngineProvider = Provider<MatchTheHatchEngine>((ref) {
+  return MatchTheHatchEngine();
 });
