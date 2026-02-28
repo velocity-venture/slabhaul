@@ -267,6 +267,17 @@ final baitReportFormProvider = StateNotifierProvider.family<BaitReportFormNotifi
   (ref, preselectedBaitId) => BaitReportFormNotifier(preselectedBaitId),
 );
 
+/// Loads the full bait catalog for the picker modal.
+final baitCatalogProvider = FutureProvider<List<Bait>>((ref) async {
+  return BaitService.getBaits();
+});
+
+/// Resolves the selected bait by ID so we can display its name and details.
+final selectedBaitInfoProvider = FutureProvider.family<Bait?, String?>((ref, baitId) async {
+  if (baitId == null) return null;
+  return BaitService.getBaitById(baitId);
+});
+
 // ============================================================================
 // SUBMIT BAIT REPORT SCREEN
 // ============================================================================
@@ -394,6 +405,8 @@ class SubmitBaitReportScreen extends ConsumerWidget {
   }
 
   Widget _buildBaitSelection(BuildContext context, WidgetRef ref, BaitReportFormState formState, BaitReportFormNotifier formNotifier) {
+    final selectedBait = ref.watch(selectedBaitInfoProvider(formState.selectedBaitId));
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -407,7 +420,7 @@ class SubmitBaitReportScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             if (formState.selectedBaitId == null)
               ElevatedButton(
                 onPressed: () => _showBaitPicker(context, ref, formNotifier),
@@ -422,9 +435,34 @@ class SubmitBaitReportScreen extends ConsumerWidget {
                   border: Border.all(color: Colors.grey[300]!),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Bait selected'), // TODO: Show actual bait name
+                    Expanded(
+                      child: selectedBait.when(
+                        data: (bait) {
+                          if (bait == null) return const Text('Unknown bait');
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (bait.brand != null)
+                                Text(
+                                  bait.brand!.name,
+                                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                                ),
+                              Text(
+                                bait.name,
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                bait.category.displayName,
+                                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                              ),
+                            ],
+                          );
+                        },
+                        loading: () => const Text('Loading...'),
+                        error: (_, __) => const Text('Unknown bait'),
+                      ),
+                    ),
                     TextButton(
                       onPressed: () => _showBaitPicker(context, ref, formNotifier),
                       child: const Text('Change'),
@@ -439,8 +477,15 @@ class SubmitBaitReportScreen extends ConsumerWidget {
   }
 
   Widget _buildBaitDetails(BuildContext context, WidgetRef ref, BaitReportFormState formState, BaitReportFormNotifier formNotifier) {
-    // TODO: Load popular colors from bait service
-    final popularColors = ['White', 'Chartreuse', 'Yellow', 'Pink', 'Black', 'Orange', 'Red', 'Blue', 'Green'];
+    const defaultColors = ['White', 'Chartreuse', 'Yellow', 'Pink', 'Black', 'Orange', 'Red', 'Blue', 'Green'];
+    const defaultSizes = ['1/32 oz', '1/16 oz', '1/8 oz', '1.5"', '2"', '2.5"', '3"'];
+
+    final selectedBait = ref.watch(selectedBaitInfoProvider(formState.selectedBaitId));
+    final baitColors = selectedBait.valueOrNull?.availableColors;
+    final baitSizes = selectedBait.valueOrNull?.availableSizes;
+
+    final colors = (baitColors != null && baitColors.isNotEmpty) ? baitColors : defaultColors;
+    final sizes = (baitSizes != null && baitSizes.isNotEmpty) ? baitSizes : defaultSizes;
 
     return Card(
       child: Padding(
@@ -455,17 +500,29 @@ class SubmitBaitReportScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Color
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Color *', style: TextStyle(fontWeight: FontWeight.w500)),
+                Row(
+                  children: [
+                    const Text('Color *', style: TextStyle(fontWeight: FontWeight.w500)),
+                    if (baitColors != null && baitColors.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(
+                          '(from ${selectedBait.valueOrNull?.name ?? 'bait'})',
+                          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                        ),
+                      ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: popularColors.map((color) => FilterChip(
+                  children: colors.map((color) => FilterChip(
                     label: Text(color),
                     selected: formState.colorUsed == color,
                     onSelected: (_) => formNotifier.updateColorUsed(color),
@@ -474,19 +531,21 @@ class SubmitBaitReportScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Size
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Size *', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
-                TextField(
-                  onChanged: formNotifier.updateSizeUsed,
-                  decoration: const InputDecoration(
-                    hintText: 'e.g., 1/16 oz, 2", etc.',
-                    border: OutlineInputBorder(),
-                  ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: sizes.map((size) => FilterChip(
+                    label: Text(size),
+                    selected: formState.sizeUsed == size,
+                    onSelected: (_) => formNotifier.updateSizeUsed(size),
+                  )).toList(),
                 ),
               ],
             ),
@@ -697,18 +756,27 @@ class SubmitBaitReportScreen extends ConsumerWidget {
   }
 
   void _showBaitPicker(BuildContext context, WidgetRef ref, BaitReportFormNotifier formNotifier) {
-    // TODO: Implement bait picker modal
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Bait Picker'),
-        content: const Text('Bait picker coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, scrollController) => _BaitPickerContent(
+          scrollController: scrollController,
+          onBaitSelected: (bait) {
+            formNotifier.updateSelectedBait(bait.id);
+            // Clear color/size when switching baits so stale selections don't persist
+            formNotifier.updateColorUsed('');
+            formNotifier.updateSizeUsed('');
+            Navigator.of(context).pop();
+          },
+        ),
       ),
     );
   }
@@ -736,5 +804,182 @@ class SubmitBaitReportScreen extends ConsumerWidget {
         );
       }
     }
+  }
+}
+
+// ============================================================================
+// BAIT PICKER BOTTOM SHEET
+// ============================================================================
+
+class _BaitPickerContent extends ConsumerStatefulWidget {
+  final ScrollController scrollController;
+  final ValueChanged<Bait> onBaitSelected;
+
+  const _BaitPickerContent({
+    required this.scrollController,
+    required this.onBaitSelected,
+  });
+
+  @override
+  ConsumerState<_BaitPickerContent> createState() => _BaitPickerContentState();
+}
+
+class _BaitPickerContentState extends ConsumerState<_BaitPickerContent> {
+  String _searchQuery = '';
+  BaitCategory? _selectedCategory;
+
+  @override
+  Widget build(BuildContext context) {
+    final catalogAsync = ref.watch(baitCatalogProvider);
+
+    return Column(
+      children: [
+        // Drag handle
+        Container(
+          margin: const EdgeInsets.only(top: 8),
+          width: 40,
+          height: 4,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+
+        // Title
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          child: Text(
+            'Select Bait',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          child: TextField(
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Search baits...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            onChanged: (value) => setState(() => _searchQuery = value.toLowerCase()),
+          ),
+        ),
+
+        // Category filter chips
+        SizedBox(
+          height: 42,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FilterChip(
+                  label: const Text('All'),
+                  selected: _selectedCategory == null,
+                  onSelected: (_) => setState(() => _selectedCategory = null),
+                ),
+              ),
+              ...BaitCategory.values.map((cat) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FilterChip(
+                  label: Text('${cat.icon} ${cat.displayName}'),
+                  selected: _selectedCategory == cat,
+                  onSelected: (_) => setState(() {
+                    _selectedCategory = _selectedCategory == cat ? null : cat;
+                  }),
+                ),
+              )),
+            ],
+          ),
+        ),
+
+        const Divider(height: 1),
+
+        // Bait list
+        Expanded(
+          child: catalogAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(child: Text('Error loading baits: $error')),
+            data: (baits) {
+              var filtered = baits;
+
+              if (_selectedCategory != null) {
+                filtered = filtered.where((b) => b.category == _selectedCategory).toList();
+              }
+
+              if (_searchQuery.isNotEmpty) {
+                filtered = filtered.where((b) =>
+                  b.name.toLowerCase().contains(_searchQuery) ||
+                  (b.brand?.name.toLowerCase().contains(_searchQuery) ?? false) ||
+                  b.category.displayName.toLowerCase().contains(_searchQuery)
+                ).toList();
+              }
+
+              if (filtered.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off, size: 48, color: Colors.grey[400]),
+                      const SizedBox(height: 8),
+                      const Text('No baits found'),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Try a different search or category',
+                        style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.separated(
+                controller: widget.scrollController,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: filtered.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, indent: 16, endIndent: 16),
+                itemBuilder: (context, index) {
+                  final bait = filtered[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      child: Text(
+                        bait.category.icon,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    title: Text(
+                      bait.name,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      [
+                        if (bait.brand != null) bait.brand!.name,
+                        bait.category.displayName,
+                        if (bait.availableColors.isNotEmpty)
+                          '${bait.availableColors.length} colors',
+                      ].join(' · '),
+                    ),
+                    trailing: bait.isCrappieSpecific
+                        ? Icon(Icons.star, size: 18, color: Theme.of(context).primaryColor)
+                        : null,
+                    onTap: () => widget.onBaitSelected(bait),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

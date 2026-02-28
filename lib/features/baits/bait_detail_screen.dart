@@ -2,6 +2,7 @@
 // Detailed view of a specific bait with effectiveness data
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -44,9 +45,7 @@ class BaitDetailScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
-            onPressed: () {
-              // TODO: Implement sharing
-            },
+            onPressed: () => _shareBait(context, ref),
           ),
         ],
       ),
@@ -87,6 +86,29 @@ class BaitDetailScreen extends ConsumerWidget {
         icon: const Icon(Icons.report),
         label: const Text('Report Results'),
       ),
+    );
+  }
+
+  void _shareBait(BuildContext context, WidgetRef ref) {
+    final bait = ref.read(baitDetailProvider(baitId)).valueOrNull;
+    if (bait == null) return;
+
+    final buffer = StringBuffer();
+    if (bait.brand != null) buffer.write('${bait.brand!.name} ');
+    buffer.writeln(bait.name);
+    buffer.writeln('Category: ${bait.category.displayName}');
+    if (bait.retailPriceUsd != null) buffer.writeln('Price: ${bait.priceDisplay}');
+    if (bait.availableColors.isNotEmpty) {
+      buffer.writeln('Colors: ${bait.availableColors.join(', ')}');
+    }
+    if (bait.productDescription != null) {
+      buffer.writeln(bait.productDescription!);
+    }
+    buffer.write('\nShared from SlabHaul');
+
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bait details copied to clipboard')),
     );
   }
 
