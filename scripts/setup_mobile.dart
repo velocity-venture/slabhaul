@@ -38,7 +38,7 @@ Future<void> _checkPrerequisites() async {
   }
 
   // Check Android toolchain
-  final androidResult = await Process.run('flutter', ['doctor', '--android-licenses']);
+  await Process.run('flutter', ['doctor', '--android-licenses']);
   // We don't check exit code since licenses might need acceptance
   print('✅ Android toolchain available');
 
@@ -65,7 +65,7 @@ Future<void> _configureAndroid() async {
     
     // Add location permissions if not present
     if (!manifest.contains('ACCESS_FINE_LOCATION')) {
-      final permissionsBlock = '''
+      const permissionsBlock = '''
     <!-- Location permissions for GPS and lake positioning -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -130,7 +130,7 @@ Future<void> _configureiOS() async {
     
     // Add location permissions if not present
     if (!plist.contains('NSLocationWhenInUseUsageDescription')) {
-      final locationPermissions = '''
+      const locationPermissions = '''
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>SlabHaul needs location access to show nearby lakes and fishing conditions.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -184,8 +184,8 @@ Future<void> _generateAppIcons() async {
   print('🎨 Checking app icons...\n');
 
   // Check if custom icons exist
-  final androidIconPath = 'android/app/src/main/res/mipmap-hdpi/ic_launcher.png';
-  final iosIconPath = 'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png';
+  const androidIconPath = 'android/app/src/main/res/mipmap-hdpi/ic_launcher.png';
+  const iosIconPath = 'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png';
   
   final androidIconExists = File(androidIconPath).existsSync();
   final iosIconExists = File(iosIconPath).existsSync();

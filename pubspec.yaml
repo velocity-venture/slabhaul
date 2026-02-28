@@ -81,3 +81,4 @@ flutter:
     - assets/images/
     - assets/images/baits/
     - .env.example
+    - .env

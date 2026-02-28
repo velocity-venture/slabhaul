@@ -134,7 +134,7 @@ extension BaitX on Bait {
   String get weightRangeDisplay {
     if (weightRangeMin != null && weightRangeMax != null) {
       if (weightRangeMin == weightRangeMax) {
-        return '${_formatWeight(weightRangeMin!)}';
+        return _formatWeight(weightRangeMin!);
       }
       return '${_formatWeight(weightRangeMin!)} - ${_formatWeight(weightRangeMax!)}';
     } else if (weightRangeMin != null) {

@@ -140,12 +140,12 @@ void main() {
     });
 
     test('structureLabel returns raw type for unknown types', () {
-      final hs = FishingHotspot(
+      const hs = FishingHotspot(
         id: 'test', name: 'Test', latitude: 0, longitude: 0,
         lakeId: 'l', lakeName: 'L', structureType: 'custom_type',
         description: '', minDepthFt: 5, maxDepthFt: 15,
-        bestSeasons: const [], techniques: const [],
-        idealConditions: const HotspotConditions(),
+        bestSeasons: [], techniques: [],
+        idealConditions: HotspotConditions(),
       );
       expect(hs.structureLabel, 'custom_type');
     });
@@ -190,12 +190,12 @@ void main() {
   group('HotspotRating', () {
     HotspotRating makeRating(double score) {
       return HotspotRating(
-        hotspot: FishingHotspot(
+        hotspot: const FishingHotspot(
           id: 'test', name: 'Test', latitude: 0, longitude: 0,
           lakeId: 'l', lakeName: 'L', structureType: 'brush_pile',
           description: '', minDepthFt: 5, maxDepthFt: 15,
-          bestSeasons: const [], techniques: const [],
-          idealConditions: const HotspotConditions(),
+          bestSeasons: [], techniques: [],
+          idealConditions: HotspotConditions(),
         ),
         overallScore: score,
         seasonScore: score,
@@ -272,50 +272,48 @@ void main() {
     });
 
     test('windDirection maps degrees to cardinal directions', () {
-      const base = CurrentConditions(season: 'summer', hourOfDay: 12);
-
       // N
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 0).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 0).windDirection,
         'N',
       );
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 350).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 350).windDirection,
         'N',
       );
       // NE
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 45).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 45).windDirection,
         'NE',
       );
       // E
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 90).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 90).windDirection,
         'E',
       );
       // SE
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 135).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 135).windDirection,
         'SE',
       );
       // S
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 180).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 180).windDirection,
         'S',
       );
       // SW
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 225).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 225).windDirection,
         'SW',
       );
       // W
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 270).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 270).windDirection,
         'W',
       );
       // NW
       expect(
-        CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 315).windDirection,
+        const CurrentConditions(season: 'summer', hourOfDay: 12, windDirectionDeg: 315).windDirection,
         'NW',
       );
     });

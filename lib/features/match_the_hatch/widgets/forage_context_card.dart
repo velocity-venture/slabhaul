@@ -19,11 +19,11 @@ class ForageContextCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.restaurant, size: 16, color: AppColors.teal),
-              const SizedBox(width: 6),
-              const Text(
+              Icon(Icons.restaurant, size: 16, color: AppColors.teal),
+              SizedBox(width: 6),
+              Text(
                 'What Crappie Are Eating',
                 style: TextStyle(
                   fontSize: 13,

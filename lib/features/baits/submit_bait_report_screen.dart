@@ -117,7 +117,9 @@ class BaitReportFormNotifier extends StateNotifier<BaitReportFormState> {
   Future<void> _getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
       state = state.copyWith(currentPosition: position);
       AppLogger.info('BaitReportForm', 'Got current position: ${position.latitude}, ${position.longitude}');

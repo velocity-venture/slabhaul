@@ -645,33 +645,33 @@ class BaitService {
     return baits.take(limit).toList();
   }
 
-  static final _sfs = BaitBrand(
+  static const _sfs = BaitBrand(
     id: 'local-sfs',
     name: 'Southern Fishing Supply',
     description: 'Premium crappie fishing tackle',
   );
-  static final _bps = BaitBrand(
+  static const _bps = BaitBrand(
     id: 'local-bps',
-    name: "Bobby Garland",
+    name: 'Bobby Garland',
     description: 'Legendary crappie baits',
   );
-  static final _sjh = BaitBrand(
+  static const _sjh = BaitBrand(
     id: 'local-sjh',
-    name: "Southern Pro",
+    name: 'Southern Pro',
     description: 'Tournament-proven crappie lures',
   );
-  static final _crl = BaitBrand(
+  static const _crl = BaitBrand(
     id: 'local-crl',
-    name: "Crappie Magnet",
+    name: 'Crappie Magnet',
     description: 'Catch more crappie',
   );
-  static final _stk = BaitBrand(
+  static const _stk = BaitBrand(
     id: 'local-stk',
-    name: "Strike King",
+    name: 'Strike King',
     description: 'Strike King Lure Company',
   );
 
-  static final List<Bait> _localBaitCatalog = [
+  static const List<Bait> _localBaitCatalog = [
     Bait(
       id: 'local-1',
       name: 'Baby Shad',

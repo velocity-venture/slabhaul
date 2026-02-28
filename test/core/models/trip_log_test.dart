@@ -441,7 +441,7 @@ void main() {
     });
 
     test('toJson round-trip preserves data', () {
-      final original = TripStats(
+      const original = TripStats(
         totalCatches: 5,
         crappieCount: 3,
         biggestLengthInches: 15.5,
