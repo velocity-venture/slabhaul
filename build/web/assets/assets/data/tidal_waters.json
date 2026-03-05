@@ -1,0 +1,201 @@
+{
+  "description": "Tidal waters and NOAA tide stations for coastal crappie fishing areas",
+  "last_updated": "2024-02-01",
+  "stations": [
+    {
+      "id": "8770822",
+      "name": "Texas Point, Sabine Pass",
+      "latitude": 29.6894,
+      "longitude": -93.8419,
+      "state_code": "TX",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8770475",
+      "name": "Port Arthur",
+      "latitude": 29.8669,
+      "longitude": -93.9286,
+      "state_code": "TX",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8761724",
+      "name": "Grand Isle",
+      "latitude": 29.2633,
+      "longitude": -89.9572,
+      "state_code": "LA",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8761305",
+      "name": "Shell Beach",
+      "latitude": 29.8683,
+      "longitude": -89.6731,
+      "state_code": "LA",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8761927",
+      "name": "New Canal Station",
+      "latitude": 30.0272,
+      "longitude": -90.1133,
+      "state_code": "LA",
+      "timezone": "America/Chicago",
+      "notes": "Lake Pontchartrain"
+    },
+    {
+      "id": "8735180",
+      "name": "Dauphin Island",
+      "latitude": 30.2503,
+      "longitude": -88.0750,
+      "state_code": "AL",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8737048",
+      "name": "Mobile State Docks",
+      "latitude": 30.7086,
+      "longitude": -88.0397,
+      "state_code": "AL",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8729840",
+      "name": "Pensacola",
+      "latitude": 30.4044,
+      "longitude": -87.2111,
+      "state_code": "FL",
+      "timezone": "America/Chicago"
+    },
+    {
+      "id": "8726724",
+      "name": "Clearwater Beach",
+      "latitude": 27.9783,
+      "longitude": -82.8317,
+      "state_code": "FL",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "8726520",
+      "name": "St. Petersburg",
+      "latitude": 27.7606,
+      "longitude": -82.6269,
+      "state_code": "FL",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "8720218",
+      "name": "Mayport (Bar Pilots Dock)",
+      "latitude": 30.3972,
+      "longitude": -81.4281,
+      "state_code": "FL",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "8720030",
+      "name": "Fernandina Beach",
+      "latitude": 30.6714,
+      "longitude": -81.4658,
+      "state_code": "FL",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "8665530",
+      "name": "Charleston, Cooper River Entrance",
+      "latitude": 32.7808,
+      "longitude": -79.9236,
+      "state_code": "SC",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "8658163",
+      "name": "Wrightsville Beach",
+      "latitude": 34.2133,
+      "longitude": -77.7867,
+      "state_code": "NC",
+      "timezone": "America/New_York"
+    }
+  ],
+  "tidal_waters": [
+    {
+      "lake_id": "sabine-lake",
+      "name": "Sabine Lake",
+      "primary_station_id": "8770822",
+      "secondary_station_ids": ["8770475"],
+      "tidal_influence": 0.85,
+      "notes": "Large brackish estuary on TX/LA border. White crappie present in fresher upper reaches. Tides significantly affect water movement and fish positioning. Best crappie fishing in tributary creeks during outgoing tide."
+    },
+    {
+      "lake_id": "lake-pontchartrain",
+      "name": "Lake Pontchartrain",
+      "primary_station_id": "8761927",
+      "secondary_station_ids": ["8761305"],
+      "tidal_influence": 0.6,
+      "notes": "Large brackish estuary connected to Gulf. Crappie found in fresher bayous and the Tchefuncte River area. Wind-driven tides more significant than lunar. Target tributary mouths when tide is moving."
+    },
+    {
+      "lake_id": "mobile-bay-delta",
+      "name": "Mobile-Tensaw Delta",
+      "primary_station_id": "8737048",
+      "secondary_station_ids": ["8735180"],
+      "tidal_influence": 0.7,
+      "notes": "America's largest inland delta. Excellent crappie fishing in the maze of creeks and lakes. Tide influences water levels 20+ miles upriver. Rising tide pushes fish into flooded timber."
+    },
+    {
+      "lake_id": "lake-borgne",
+      "name": "Lake Borgne Area",
+      "primary_station_id": "8761305",
+      "secondary_station_ids": [],
+      "tidal_influence": 0.9,
+      "notes": "Brackish estuary with crappie in fresher tributaries. Strong tidal influence from Gulf. Fish freshwater inflows during falling tide."
+    },
+    {
+      "lake_id": "calcasieu-lake",
+      "name": "Calcasieu Lake",
+      "primary_station_id": "8768094",
+      "secondary_station_ids": [],
+      "tidal_influence": 0.75,
+      "notes": "Southwest Louisiana estuary. Crappie in Prien Lake and upper Calcasieu River. Tides affect water clarity and fish movement."
+    },
+    {
+      "lake_id": "apalachicola-bay",
+      "name": "Apalachicola Bay System",
+      "primary_station_id": "8728690",
+      "secondary_station_ids": [],
+      "tidal_influence": 0.65,
+      "notes": "Florida Panhandle estuary with crappie in river and tributary creeks. Spring crappie runs follow tide patterns."
+    },
+    {
+      "lake_id": "st-johns-river",
+      "name": "St. Johns River (Tidal Section)",
+      "primary_station_id": "8720218",
+      "secondary_station_ids": ["8720030"],
+      "tidal_influence": 0.55,
+      "notes": "North-flowing Florida river with tidal influence to Palatka. Black crappie abundant. Tide affects fishing 100+ miles from ocean. Target oxbow lakes during stable tide."
+    },
+    {
+      "lake_id": "waccamaw-river",
+      "name": "Waccamaw River / Lake Waccamaw",
+      "primary_station_id": "8661070",
+      "secondary_station_ids": [],
+      "tidal_influence": 0.4,
+      "notes": "Coastal Carolina blackwater river. Lake Waccamaw is freshwater but tidal influence affects lower river. Trophy crappie fishing."
+    },
+    {
+      "lake_id": "santee-cooper",
+      "name": "Santee Cooper Lakes (Tidal Section)",
+      "primary_station_id": "8665530",
+      "secondary_station_ids": [],
+      "tidal_influence": 0.35,
+      "notes": "Lower Santee River has tidal influence. Famous crappie lakes (Marion/Moultrie) are freshwater but river section is tidal."
+    },
+    {
+      "lake_id": "neuse-river",
+      "name": "Neuse River Estuary",
+      "primary_station_id": "8656483",
+      "secondary_station_ids": [],
+      "tidal_influence": 0.45,
+      "notes": "North Carolina coastal river. Crappie in fresher upstream sections. Wind-driven tides affect lower river fishing."
+    }
+  ]
+}

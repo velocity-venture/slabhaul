@@ -1,0 +1,481 @@
+{
+  "version": "1.0.0",
+  "description": "Water clarity zones for SlabHaul lakes. Each lake has characteristic zones with different baseline clarity levels and sensitivities to weather conditions.",
+  "lakes": [
+    {
+      "lake_id": "horseshoe_lake_ar",
+      "lake_name": "Horseshoe Lake",
+      "baseline_clarity": 3.5,
+      "clarity_class": "stained",
+      "avg_depth_ft": 12,
+      "major_inflows": ["Forked Bayou"],
+      "typical_clearing_days": 4,
+      "affected_by_generation": false,
+      "zones": [
+        {
+          "id": "horseshoe_north",
+          "name": "North Basin",
+          "lake_id": "horseshoe_lake_ar",
+          "type": "shallow",
+          "center_lat": 34.945,
+          "center_lon": -90.340,
+          "baseline_clarity": 3.0,
+          "avg_depth_ft": 8,
+          "boundary": [
+            [34.955, -90.365],
+            [34.955, -90.320],
+            [34.935, -90.320],
+            [34.935, -90.365]
+          ],
+          "notes": "Shallow cypress flats, first to stain after rain"
+        },
+        {
+          "id": "horseshoe_central",
+          "name": "Central Basin",
+          "lake_id": "horseshoe_lake_ar",
+          "type": "open_bay",
+          "center_lat": 34.930,
+          "center_lon": -90.348,
+          "baseline_clarity": 3.5,
+          "avg_depth_ft": 14,
+          "boundary": [
+            [34.935, -90.365],
+            [34.935, -90.330],
+            [34.920, -90.330],
+            [34.920, -90.365]
+          ],
+          "notes": "Main body with moderate depth"
+        },
+        {
+          "id": "horseshoe_south",
+          "name": "South Basin",
+          "lake_id": "horseshoe_lake_ar",
+          "type": "creek_arm",
+          "center_lat": 34.910,
+          "center_lon": -90.362,
+          "baseline_clarity": 2.8,
+          "avg_depth_ft": 10,
+          "boundary": [
+            [34.920, -90.375],
+            [34.920, -90.350],
+            [34.905, -90.350],
+            [34.905, -90.375]
+          ],
+          "notes": "Receives agricultural runoff, typically more stained"
+        }
+      ]
+    },
+    {
+      "lake_id": "kentucky_lake_tn",
+      "lake_name": "Kentucky Lake",
+      "baseline_clarity": 4.5,
+      "clarity_class": "typical",
+      "avg_depth_ft": 25,
+      "major_inflows": ["Tennessee River", "Big Sandy River", "Blood River"],
+      "typical_clearing_days": 5,
+      "affected_by_generation": true,
+      "zones": [
+        {
+          "id": "kentucky_blood_river",
+          "name": "Blood River",
+          "lake_id": "kentucky_lake_tn",
+          "type": "creek_arm",
+          "center_lat": 36.550,
+          "center_lon": -88.120,
+          "baseline_clarity": 3.5,
+          "avg_depth_ft": 15,
+          "boundary": [
+            [36.570, -88.140],
+            [36.570, -88.100],
+            [36.530, -88.100],
+            [36.530, -88.140]
+          ],
+          "notes": "Popular creek arm, stains quickly with runoff"
+        },
+        {
+          "id": "kentucky_main_channel",
+          "name": "Main Channel",
+          "lake_id": "kentucky_lake_tn",
+          "type": "main_channel",
+          "center_lat": 36.520,
+          "center_lon": -88.070,
+          "baseline_clarity": 5.0,
+          "avg_depth_ft": 40,
+          "boundary": [
+            [36.560, -88.090],
+            [36.560, -88.050],
+            [36.480, -88.050],
+            [36.480, -88.090]
+          ],
+          "notes": "Deep main channel, generally clearest water"
+        },
+        {
+          "id": "kentucky_big_sandy",
+          "name": "Big Sandy",
+          "lake_id": "kentucky_lake_tn",
+          "type": "creek_arm",
+          "center_lat": 36.450,
+          "center_lon": -88.050,
+          "baseline_clarity": 3.8,
+          "avg_depth_ft": 18,
+          "boundary": [
+            [36.480, -88.080],
+            [36.480, -88.020],
+            [36.420, -88.020],
+            [36.420, -88.080]
+          ],
+          "notes": "Large creek arm with varied clarity by location"
+        },
+        {
+          "id": "kentucky_paris_landing",
+          "name": "Paris Landing",
+          "lake_id": "kentucky_lake_tn",
+          "type": "open_bay",
+          "center_lat": 36.400,
+          "center_lon": -88.060,
+          "baseline_clarity": 4.5,
+          "avg_depth_ft": 22,
+          "boundary": [
+            [36.420, -88.085],
+            [36.420, -88.035],
+            [36.380, -88.035],
+            [36.380, -88.085]
+          ],
+          "notes": "Main lake area near state park"
+        }
+      ]
+    },
+    {
+      "lake_id": "pickwick_lake_tn",
+      "lake_name": "Pickwick Lake",
+      "baseline_clarity": 5.5,
+      "clarity_class": "clear",
+      "avg_depth_ft": 35,
+      "major_inflows": ["Tennessee River", "Yellow Creek"],
+      "typical_clearing_days": 4,
+      "affected_by_generation": true,
+      "zones": [
+        {
+          "id": "pickwick_dam",
+          "name": "Pickwick Dam",
+          "lake_id": "pickwick_lake_tn",
+          "type": "lower_dam",
+          "center_lat": 35.035,
+          "center_lon": -88.250,
+          "baseline_clarity": 6.5,
+          "avg_depth_ft": 50,
+          "boundary": [
+            [35.050, -88.270],
+            [35.050, -88.230],
+            [35.020, -88.230],
+            [35.020, -88.270]
+          ],
+          "notes": "Clearest water in the lake near dam"
+        },
+        {
+          "id": "pickwick_yellow_creek",
+          "name": "Yellow Creek",
+          "lake_id": "pickwick_lake_tn",
+          "type": "creek_arm",
+          "center_lat": 35.080,
+          "center_lon": -88.180,
+          "baseline_clarity": 4.0,
+          "avg_depth_ft": 20,
+          "boundary": [
+            [35.100, -88.210],
+            [35.100, -88.150],
+            [35.060, -88.150],
+            [35.060, -88.210]
+          ],
+          "notes": "Receives runoff from surrounding farmland"
+        },
+        {
+          "id": "pickwick_aqua_marina",
+          "name": "Aqua Marina Area",
+          "lake_id": "pickwick_lake_tn",
+          "type": "open_bay",
+          "center_lat": 35.020,
+          "center_lon": -88.200,
+          "baseline_clarity": 5.5,
+          "avg_depth_ft": 30,
+          "boundary": [
+            [35.040, -88.225],
+            [35.040, -88.175],
+            [35.000, -88.175],
+            [35.000, -88.225]
+          ],
+          "notes": "Good mid-lake clarity, popular fishing area"
+        }
+      ]
+    },
+    {
+      "lake_id": "dale_hollow",
+      "lake_name": "Dale Hollow Lake",
+      "baseline_clarity": 8.0,
+      "clarity_class": "clear",
+      "avg_depth_ft": 45,
+      "major_inflows": ["Obey River", "Wolf River"],
+      "typical_clearing_days": 3,
+      "affected_by_generation": true,
+      "zones": [
+        {
+          "id": "dale_hollow_dam",
+          "name": "Dam Area",
+          "lake_id": "dale_hollow",
+          "type": "lower_dam",
+          "center_lat": 36.541,
+          "center_lon": -85.430,
+          "baseline_clarity": 10.0,
+          "avg_depth_ft": 70,
+          "boundary": [
+            [36.555, -85.450],
+            [36.555, -85.410],
+            [36.527, -85.410],
+            [36.527, -85.450]
+          ],
+          "notes": "Crystal clear deep water, exceptional visibility"
+        },
+        {
+          "id": "dale_hollow_obey",
+          "name": "Obey River Arm",
+          "lake_id": "dale_hollow",
+          "type": "creek_arm",
+          "center_lat": 36.480,
+          "center_lon": -85.350,
+          "baseline_clarity": 6.0,
+          "avg_depth_ft": 30,
+          "boundary": [
+            [36.510, -85.390],
+            [36.510, -85.310],
+            [36.450, -85.310],
+            [36.450, -85.390]
+          ],
+          "notes": "Major tributary arm, slightly more stained than main lake"
+        },
+        {
+          "id": "dale_hollow_main",
+          "name": "Main Lake",
+          "lake_id": "dale_hollow",
+          "type": "main_channel",
+          "center_lat": 36.520,
+          "center_lon": -85.380,
+          "baseline_clarity": 8.0,
+          "avg_depth_ft": 50,
+          "boundary": [
+            [36.545, -85.420],
+            [36.545, -85.340],
+            [36.495, -85.340],
+            [36.495, -85.420]
+          ],
+          "notes": "One of the clearest lakes in the region"
+        }
+      ]
+    },
+    {
+      "lake_id": "weiss_lake_al",
+      "lake_name": "Weiss Lake",
+      "baseline_clarity": 3.0,
+      "clarity_class": "stained",
+      "avg_depth_ft": 15,
+      "major_inflows": ["Coosa River", "Little River"],
+      "typical_clearing_days": 6,
+      "affected_by_generation": true,
+      "zones": [
+        {
+          "id": "weiss_dam",
+          "name": "Weiss Dam",
+          "lake_id": "weiss_lake_al",
+          "type": "lower_dam",
+          "center_lat": 34.123,
+          "center_lon": -85.789,
+          "baseline_clarity": 4.0,
+          "avg_depth_ft": 25,
+          "boundary": [
+            [34.140, -85.810],
+            [34.140, -85.768],
+            [34.106, -85.768],
+            [34.106, -85.810]
+          ],
+          "notes": "Clearest section of the lake near dam"
+        },
+        {
+          "id": "weiss_little_river",
+          "name": "Little River Arm",
+          "lake_id": "weiss_lake_al",
+          "type": "creek_arm",
+          "center_lat": 34.205,
+          "center_lon": -85.620,
+          "baseline_clarity": 2.5,
+          "avg_depth_ft": 10,
+          "boundary": [
+            [34.225, -85.655],
+            [34.225, -85.585],
+            [34.185, -85.585],
+            [34.185, -85.655]
+          ],
+          "notes": "Receives significant runoff, often muddy after rain"
+        },
+        {
+          "id": "weiss_upper",
+          "name": "Upper Lake",
+          "lake_id": "weiss_lake_al",
+          "type": "upper_reservoir",
+          "center_lat": 34.280,
+          "center_lon": -85.550,
+          "baseline_clarity": 2.0,
+          "avg_depth_ft": 8,
+          "boundary": [
+            [34.310, -85.590],
+            [34.310, -85.510],
+            [34.250, -85.510],
+            [34.250, -85.590]
+          ],
+          "notes": "Shallow upper reaches, most affected by Coosa River inflow"
+        },
+        {
+          "id": "weiss_mid_lake",
+          "name": "Mid-Lake",
+          "lake_id": "weiss_lake_al",
+          "type": "open_bay",
+          "center_lat": 34.180,
+          "center_lon": -85.700,
+          "baseline_clarity": 3.0,
+          "avg_depth_ft": 16,
+          "boundary": [
+            [34.210, -85.740],
+            [34.210, -85.660],
+            [34.150, -85.660],
+            [34.150, -85.740]
+          ],
+          "notes": "Typical lake clarity, good crappie fishing"
+        }
+      ]
+    },
+    {
+      "lake_id": "grenada_lake_ms",
+      "lake_name": "Grenada Lake",
+      "baseline_clarity": 3.5,
+      "clarity_class": "variable",
+      "avg_depth_ft": 18,
+      "major_inflows": ["Yalobusha River", "Skuna River"],
+      "typical_clearing_days": 5,
+      "affected_by_generation": false,
+      "zones": [
+        {
+          "id": "grenada_dam",
+          "name": "Dam Area",
+          "lake_id": "grenada_lake_ms",
+          "type": "lower_dam",
+          "center_lat": 33.820,
+          "center_lon": -89.800,
+          "baseline_clarity": 4.5,
+          "avg_depth_ft": 30,
+          "boundary": [
+            [33.840, -89.825],
+            [33.840, -89.775],
+            [33.800, -89.775],
+            [33.800, -89.825]
+          ],
+          "notes": "Deepest and typically clearest part of lake"
+        },
+        {
+          "id": "grenada_yalobusha",
+          "name": "Yalobusha Arm",
+          "lake_id": "grenada_lake_ms",
+          "type": "upper_reservoir",
+          "center_lat": 33.920,
+          "center_lon": -89.880,
+          "baseline_clarity": 2.5,
+          "avg_depth_ft": 10,
+          "boundary": [
+            [33.960, -89.920],
+            [33.960, -89.840],
+            [33.880, -89.840],
+            [33.880, -89.920]
+          ],
+          "notes": "Upper arm receives most inflow, first to muddy"
+        },
+        {
+          "id": "grenada_mid_lake",
+          "name": "Mid-Lake",
+          "lake_id": "grenada_lake_ms",
+          "type": "open_bay",
+          "center_lat": 33.870,
+          "center_lon": -89.830,
+          "baseline_clarity": 3.5,
+          "avg_depth_ft": 18,
+          "boundary": [
+            [33.900, -89.865],
+            [33.900, -89.795],
+            [33.840, -89.795],
+            [33.840, -89.865]
+          ],
+          "notes": "Good transition zone, moderate clarity"
+        }
+      ]
+    },
+    {
+      "lake_id": "enid_lake_ms",
+      "lake_name": "Enid Lake",
+      "baseline_clarity": 3.0,
+      "clarity_class": "stained",
+      "avg_depth_ft": 12,
+      "major_inflows": ["Yocona River"],
+      "typical_clearing_days": 6,
+      "affected_by_generation": false,
+      "zones": [
+        {
+          "id": "enid_dam",
+          "name": "Dam Area",
+          "lake_id": "enid_lake_ms",
+          "type": "lower_dam",
+          "center_lat": 34.125,
+          "center_lon": -89.895,
+          "baseline_clarity": 4.0,
+          "avg_depth_ft": 22,
+          "boundary": [
+            [34.145, -89.920],
+            [34.145, -89.870],
+            [34.105, -89.870],
+            [34.105, -89.920]
+          ],
+          "notes": "Best clarity near the dam structure"
+        },
+        {
+          "id": "enid_upper",
+          "name": "Upper Lake",
+          "lake_id": "enid_lake_ms",
+          "type": "upper_reservoir",
+          "center_lat": 34.220,
+          "center_lon": -89.850,
+          "baseline_clarity": 2.0,
+          "avg_depth_ft": 8,
+          "boundary": [
+            [34.260, -89.890],
+            [34.260, -89.810],
+            [34.180, -89.810],
+            [34.180, -89.890]
+          ],
+          "notes": "Shallow upper reaches, often very stained"
+        },
+        {
+          "id": "enid_mid_lake",
+          "name": "Mid-Lake",
+          "lake_id": "enid_lake_ms",
+          "type": "open_bay",
+          "center_lat": 34.170,
+          "center_lon": -89.875,
+          "baseline_clarity": 3.0,
+          "avg_depth_ft": 14,
+          "boundary": [
+            [34.200, -89.910],
+            [34.200, -89.840],
+            [34.140, -89.840],
+            [34.140, -89.910]
+          ],
+          "notes": "Typical lake conditions"
+        }
+      ]
+    }
+  ]
+}

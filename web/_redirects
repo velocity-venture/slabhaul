@@ -1,0 +1,3 @@
+# Cloudflare Pages redirects
+https://www.slabhaulapp.com/* https://slabhaulapp.com/:splat 301
+/* /index.html 200

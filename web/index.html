@@ -16,18 +16,20 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="The Crappie Fishing Intelligence App — real-time lake conditions, solunar forecasts, and attractor maps.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0F172A">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="slabhaul">
+  <meta name="apple-mobile-web-app-title" content="SlabHaul">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <title>slabhaul</title>
+  <title>SlabHaul</title>
   <link rel="manifest" href="manifest.json">
   <style id="splash-screen-style">
     html {
@@ -97,6 +99,26 @@
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
 </head>
 <body>
+  <!-- Auth guard: redirect unauthenticated visitors to marketing site -->
+  <script>
+    (function() {
+      var hash = window.location.hash;
+      // Allow through if hash contains auth tokens (incoming redirect from login)
+      if (hash && hash.indexOf('access_token=') !== -1) return;
+      // Check for existing Supabase session in localStorage
+      var hasSession = false;
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.match(/^sb-.*-auth-token$/)) {
+          hasSession = true;
+          break;
+        }
+      }
+      if (!hasSession) {
+        window.location.replace('https://slabhaul.ai/#login');
+      }
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async=""></script>
 
 

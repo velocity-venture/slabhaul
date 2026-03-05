@@ -62,7 +62,7 @@ class TournamentModeToggle extends ConsumerWidget {
           onChanged: (_) {
             ref.read(tournamentModeProvider.notifier).toggle();
           },
-          activeThumbColor: AppColors.warning,
+          
           activeTrackColor: AppColors.warning.withValues(alpha: 0.4),
         ),
         onTap: () {
